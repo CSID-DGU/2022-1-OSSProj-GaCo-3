@@ -5,8 +5,6 @@ import pygame, os
 DIR_PATH = os.path.dirname(__file__)
 DIR_IMAGE = os.path.join(DIR_PATH, 'image')
 
-#플레이어 스테이트
-
 
 # 스프라이트 시트 클래스 
 class SpriteSheet:

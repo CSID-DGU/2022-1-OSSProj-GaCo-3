@@ -15,9 +15,9 @@ pygame.display.set_caption("악마의 성") #게임 이름
 clock = pygame.time.Clock()
 
 #배경 이미지 불러오기
-background = pygame.image.load("/home/parkteam/Desktop/2022-1-OSSProj-GaCo-3/image/map/Background.png")
+background = pygame.image.load("image/map/Background.png")
 background = pygame.transform.scale(background, (screen_width,screen_height)) #크기 지정
-ground = pygame.image.load("/home/parkteam/Desktop/2022-1-OSSProj-GaCo-3/image/map/Start_Map.png")
+ground = pygame.image.load("image/map/Start_Map.png")
 ground = pygame.transform.scale(ground, (screen_width,screen_height)) #크기 지정
 
 #캐릭터 불러오기
@@ -47,10 +47,6 @@ keyLeft_Run = False
 KeyLeft_Run = False
 
 player_rect = pygame.Rect(100,400,200,200)  # 플레이어 히트박스 #차례대로 좌상x, 좌상y, 넓이, 높이
-player_to_x=0
-player_to_y=0
-player_x_pos = 0
-player_y_pos = 0
 player_movement = [0, 0] 
 player_vspeed = 0                   # 플레이어 y가속도
 player_flytime = 0                  # 공중에 뜬 시간
@@ -62,8 +58,12 @@ player_frameTimer = 0
 player_flip = False                 # 플레이어 이미지 반전 여부 (False: RIGHT)
 player_loop = True                  # 애니메이션 루프 (True: loop, False: Reverse)
 player_animationMode = True         # 애니메이션 모드 (True: 반복, False: 한번)
-player_walkSoundToggle = False
-player_walkSoundTimer = 0
+
+#플레이어 행동별 프레임스피드
+player_stand_framespeed = 20
+player_walk_framspeed = 7
+player_run_framspeed = 7
+player_jump_framespeed = 5
 
 player_attack_timer = 0             # 플레이어 공격 타이머
 
@@ -81,9 +81,9 @@ while running:
     #걷기상태
     if player_state == 1:
         if keyLeft:
-            player_movement[0] -= 5
+            player_movement[0] -= 4
         if keyRight:
-            player_movement[0] += 5
+            player_movement[0] += 4
     
     #달리기상태
     if player_state == 2:
@@ -94,13 +94,13 @@ while running:
     #점프상태 이동속도
     if player_state == 3:
         if keyLeft_Run:
-            player_movement[0] -= 8
+            player_movement[0] -= 4
         if keyRight_Run:
-            player_movement[0] += 8
+            player_movement[0] += 4
         if keyLeft:
-            player_movement[0] -= 5
+            player_movement[0] -= 4
         if keyRight:
-            player_movement[0] += 5
+            player_movement[0] += 4
         
     #중력
     player_movement[1] += player_vspeed
@@ -144,29 +144,45 @@ while running:
             if event.key == pygame.K_LEFT: # 캐릭터를 왼쪽으로
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_L', player_frameSpeed, 5, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'walk_L', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, False)
                 keyLeft = True
                 keyRight = False
             elif event.key ==pygame.K_RIGHT: # 캐릭터를 오른쪽으로
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_R', player_frameSpeed, 5, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'walk_R', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, True)
                 keyLeft = False
                 keyRight = True
             elif event.key ==pygame.K_SPACE and player_action == 'stand_L': # 캐릭터를 왼쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,11, player_action, 'Jump_L', player_frameSpeed, 5, player_animationMode, False, player_loop, False)
+                player_frame,11, player_action, 'Jump_L', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, False)
                 keyLeft = False
                 keyRight = False
                 player_vspeed = -15
             elif event.key ==pygame.K_SPACE and player_action == 'stand_R': # 캐릭터를 오른쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Jump_R', player_frameSpeed, 5, player_animationMode, False, player_loop, True)
+                player_frame,0, player_action, 'Jump_R', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, True)
                 keyLeft = False
                 keyRight = False
                 player_vspeed = -15
+            elif event.key == pygame.K_z and event.key == pygame.K_LEFT: # 캐릭터를 왼쪽으로 달림
+                player_state = 2
+                player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
+                player_frame,0, player_action, 'Run_L', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, False)
+                keyLeft_Run = True
+                keyRight_Run = False
+                keyLeft = False
+                keyRight = False
+            elif event.key == pygame.K_z and event.key ==pygame.K_RIGHT: # 캐릭터를 오른쪽으로 달림
+                player_state = 2
+                player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
+                player_frame,0, player_action, 'Run_R', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, True)
+                keyLeft_Run = False
+                keyRight_Run = True
+                keyLeft = False
+                keyRight = False
             
     
     #걷기상태
@@ -175,7 +191,7 @@ while running:
             if event.key == pygame.K_z and keyLeft == True: # 캐릭터를 왼쪽으로 달림
                 player_state = 2
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Run_L', player_frameSpeed, 5, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'Run_L', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, False)
                 keyLeft_Run = True
                 keyRight_Run = False
                 keyLeft = False
@@ -183,7 +199,7 @@ while running:
             elif event.key == pygame.K_z and keyRight == True: # 캐릭터를 오른쪽으로 달림
                 player_state = 2
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Run_R', player_frameSpeed, 5, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'Run_R', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, True)
                 keyLeft_Run = False
                 keyRight_Run = True
                 keyLeft = False
@@ -191,26 +207,26 @@ while running:
             elif event.key == pygame.K_RIGHT and keyLeft == True: # 캐릭터를 왼쪽걷다가 오른쪽 걷기
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_R', player_frameSpeed, 5, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'walk_R', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, True)
                 keyLeft = False
                 keyRight = True
             elif event.key == pygame.K_LEFT and keyRight == True: # 캐릭터를 오른쪽걷다가 왼쪽 걷기
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_L', player_frameSpeed, 5, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'walk_L', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, False)
                 keyLeft = True
                 keyRight = False
             elif event.key ==pygame.K_SPACE and player_action == 'walk_L': # 캐릭터를 왼쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,11, player_action, 'Jump_L', player_frameSpeed, 5, player_animationMode, False, player_loop, False)
+                player_frame,11, player_action, 'Jump_L', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, False)
                 keyLeft = True
                 keyRight = False
                 player_vspeed = -15
             elif event.key ==pygame.K_SPACE and player_action == 'walk_R': # 캐릭터를 오른쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Jump_R', player_frameSpeed, 5, player_animationMode, False, player_loop, True)
+                player_frame,0, player_action, 'Jump_R', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, True)
                 keyLeft = False
                 keyRight = True
                 player_vspeed = -15
@@ -219,11 +235,11 @@ while running:
             if event.key == pygame.K_LEFT and keyLeft == True:
                 player_state = 0
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_L', player_frameSpeed, 20, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'stand_L', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, False)
                 keyLeft = False
             elif event.key == pygame.K_RIGHT and keyRight == True:
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_R', player_frameSpeed, 20, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'stand_R', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, True)
                 player_state = 0
                 keyRight = False
     
@@ -233,26 +249,26 @@ while running:
             if event.key == pygame.K_RIGHT and keyLeft_Run == True: # 캐릭터를 왼쪽달리다가 오른쪽 달리기
                 player_state = 2
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Run_R', player_frameSpeed, 5, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'Run_R', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, True)
                 keyLeft_Run = False
                 keyRight_Run = True
             elif event.key == pygame.K_LEFT and keyRight_Run == True: # 캐릭터를 오른쪽달리다가 왼쪽 달리기
                 player_state = 2
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Run_L', player_frameSpeed, 5, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'Run_L', player_frameSpeed, player_run_framspeed, player_animationMode, True, player_loop, False)
                 keyLeft_Run = True
                 keyRight_Run = False
             elif event.key ==pygame.K_SPACE and player_action == 'Run_L': # 캐릭터를 왼쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,11, player_action, 'Jump_L', player_frameSpeed, 5, player_animationMode, False, player_loop, False)
+                player_frame,11, player_action, 'Jump_L', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, False)
                 keyLeft_Run = True
                 keyRight_Run = False
                 player_vspeed = -15
             elif event.key ==pygame.K_SPACE and player_action == 'Run_R': # 캐릭터를 오른쪽으로 보며 점프
                 player_state = 3
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'Jump_R', player_frameSpeed, 5, player_animationMode, False, player_loop, True)
+                player_frame,0, player_action, 'Jump_R', player_frameSpeed, player_jump_framespeed, player_animationMode, False, player_loop, True)
                 keyLeft_Run = False
                 keyRight_Run = True
                 player_vspeed = -15
@@ -261,7 +277,7 @@ while running:
             if event.key == pygame.K_z and keyLeft_Run == True:
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_L', player_frameSpeed, 5, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'walk_L', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, False)
                 keyLeft_Run = False
                 keyRight_Run = False
                 keyLeft = True
@@ -269,7 +285,7 @@ while running:
             elif event.key == pygame.K_z and keyRight_Run == True:
                 player_state = 1
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'walk_R', player_frameSpeed, 5, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'walk_R', player_frameSpeed, player_walk_framspeed, player_animationMode, True, player_loop, True)
                 keyLeft_Run = False
                 keyRight_Run = False
                 keyLeft = False
@@ -277,7 +293,7 @@ while running:
             elif event.key == pygame.K_LEFT and keyLeft_Run == True:
                 player_state = 0
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_L', player_frameSpeed, 20, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'stand_L', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, False)
                 keyLeft_Run = False
                 keyRight_Run = False
                 keyLeft = False
@@ -285,7 +301,7 @@ while running:
             elif event.key == pygame.K_RIGHT and keyRight_Run == True:
                 player_state = 0
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_R', player_frameSpeed, 20, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'stand_R', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, True)
                 keyLeft_Run = False
                 keyRight_Run = False
                 keyLeft = False
@@ -324,10 +340,10 @@ while running:
             keyRight_Run = False
             if player_action == 'Jump_R':
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_R', player_frameSpeed, 20, player_animationMode, True, player_loop, True)
+                player_frame,0, player_action, 'stand_R', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, True)
             elif player_action == 'Jump_L':
                 player_frame, player_action, player_frameSpeed, player_animationMode, player_loop = change_playerAction(
-                player_frame,0, player_action, 'stand_L', player_frameSpeed, 20, player_animationMode, True, player_loop, False)
+                player_frame,0, player_action, 'stand_L', player_frameSpeed, player_stand_framespeed, player_animationMode, True, player_loop, False)
                 
         
 
