@@ -387,7 +387,7 @@ pygame.init() #초기화 init 호출
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) #디스플레이 뜨게 하기
 
-pygame.display.set_caption("악마의 성") #게임 이름
+pygame.display.set_caption("Devil's Castle") #게임 이름
 
 #FPS
 clock = pygame.time.Clock()
