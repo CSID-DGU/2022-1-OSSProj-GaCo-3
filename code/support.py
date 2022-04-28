@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 
 from os import walk
-import pygame
+import pygame, sys
 import pygame.image
 
 def import_folder(path):
@@ -32,3 +32,8 @@ def import_sprites_image(filename, idx, (size_x, size_y)):
             image.set_colorkey((255, 255, 255))  # 뒤에 검은배경 없앰
         surface_list.append(image)
     return surface_list
+
+def quit_check(event):
+    if event.type == pygame.QUIT:
+        pygame.quit()
+        sys.exit()
