@@ -20,10 +20,9 @@ class Game:
 
 
     def run(self):
-        # 이벤트 루프
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT: # 종료버튼 누르면 창 닫고 시스템 종료
                     pygame.quit()
                     sys.exit()
 

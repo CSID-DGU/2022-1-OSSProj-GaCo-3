@@ -6,12 +6,39 @@ from function import *
 from support import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, PLAYER_SIZE, groups):
+    def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
-        self.rect = pygame.Rect(pos[0], pos[1], PLAYER_SIZE[0], PLAYER_SIZE[1])  # 플레이어 히트박스 #차례대로 좌상x, 좌상y, 넓이, 높이
+        self.image = pygame.image.load('image/player/jumpL.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
+        self.rect = self.image.get_rect(topleft=pos)
+        #self.rect = pygame.Rect(pos[0], pos[1], PLAYER_SIZE[0], PLAYER_SIZE[1])  # 플레이어 히트박스 #차례대로 좌상x, 좌상y, 넓이, 높이
+        self.hitbox = self.rect.inflate(0,0) # 아직 변화 없음
 
+        self.frame_index = 0 #entity
+        self.animation_speed = 0.15 #entity
+        self.direction = 1 #entity # 1-> right side, -1 -> left side, 0 -> stand
+
+        #graphic setup
         self.import_player_assets()
-        self.image = self.spr['stand'][0]
+        self.status = 'stand'
+
+        # movement
+        self.movement = [0, 0] #direction ? #x
+        self.speed = 4
+        self.vspeed_walk = 1
+        self.vspeed_running = 2.5
+        self.vspeed = self.vspeed_walk  # 플레이어 y가속도
+
+        # jumping
+        self.jumping = False
+        self.jump_cooldown = 1000 # jump animation 보고 결정하기
+        self.jumping_time = None
+
+        self.flytime = 0  # 공중에 뜬 시간
+        self.state = ['stand', 'walking', 'running', 'jump', 'stand_attack', 'walking_attack', 'running_attack', 'jump_attack']
+        self.action = self.state[0]  # 플레이어 현재 행동 #x
+
+        self.obstacle_sprites = obstacle_sprites
 
         # 플레이어 컨트롤 변수
         self.keyLeft = False
@@ -19,55 +46,112 @@ class Player(pygame.sprite.Sprite):
         self.keyLeft_Run = False
         self.keyRight_Run = False
 
-        self.movement = [0, 0]
-        self.vspeed = 0  # 플레이어 y가속도
-        self.flytime = 0  # 공중에 뜬 시간
-        self.action = 'stand'  # 플레이어 현재 행동
-        self.state = 0  # (0: stand, 1: walk, 2: run, 3: jump, 4: stand_attack, 5: walk_attack, 6: run_attack, 7: jump_attack)
-        self.frame = 0  # 플레이어 애니메이션 프레임
-        self.frameSpeed = 20  # 플레이어 애니메이션 속도(낮을 수록 빠름. max 1)
-        self.frameTimer = 0
-        self.flip = False  # 플레이어 이미지 반전 여부 (False: RIGHT)
-        self.loop = True  # 애니메이션 루프 (True: loop, False: Reverse)
-        self.animationMode = True  # 애니메이션 모드 (True: 반복, False: 한번)
-
-        # 플레이어 행동별 프레임스피드
-        self.stand_framespeed = 20
-        self.walk_framspeed = 7
-        self.run_framspeed = 7
-        self.jump_framespeed = 5
-        self.attack_timer = 0  # 플레이어 공격 타이머
-
     def import_player_assets(self):
-        character_path = 'image/player/'
+        #character_path = 'image/player/'
         self.spr = {'stand':[], 'standL':[], 'walking':[], 'walkingL':[],
                     'running':[], 'runningL':[], 'jump':[], 'jumpL':[]}
 
         for spr_name in self.spr.keys():
-            print(character_path+spr_name+'.png')
-            self.spr[spr_name] = import_sprites_image(character_path + spr_name +'.png',
+            self.spr[spr_name] = import_sprites_image(spr_name +'.png',
                                                       PLAYER_IMG_INFO[spr_name]['idx'],
-                                                      PLAYER_IMG_INFO[spr_name]['size'], False)
+                                                      PLAYER_IMG_INFO[spr_name]['size'])
 
     def input(self):
+        if not self.jumping: # jump 할 때는 입력 안 받기. jump 끝나야 입력 받을 수 이씀
+            keys = pygame.key.get_pressed()
 
-        pass
+            #movement input
+            if keys[pygame.K_RIGHT]:
+                self.direction = 1
+                if keys[pygame.K_z]:
+                    self.status = 'running'
+                    self.vspeed = self.vspeed_running
+                else:
+                    self.status = 'walking'
+                    self.vspeed = self.vspeed_walk
 
-    def move(self):
-        pass
+                if keys[pygame.K_SPACE] and not self.jumping:
+                    self.jumping = True
+                    self.jumping_time = pygame.time.get_ticks()
+                    self.status = 'jump'
+
+            elif keys[pygame.K_LEFT]:
+                self.direction = -1
+                if keys[pygame.K_z]:
+                    self.status = 'runningL'
+                    self.vspeed = self.vspeed_running
+                else:
+                    self.status = 'walkingL'
+                    self.vspeed = self.vspeed_walk
+
+                if keys[pygame.K_SPACE] and not self.jumping:
+                    self.jumping = True
+                    self.jumping_time = pygame.time.get_ticks()
+                    self.status = 'jumpL'
+
+            else:
+                self.direction = 0
+
+        # stand 일 때 jump는?
+        # if keys[pygame.K_SPACE]:
+        #     self.jumpping = True
+        #     self.jumpping_time = pygame.time.get_ticks()
+        #     self.status = 'jump' if not 'L' in self.status else 'jumpL'
 
     def get_status(self):
-        pass
+        if self.direction == 0:
+            if not 'stand' in self.status:
+                # 이전 상태가 오른쪽 움직이였으면 'stand'로 상태 변경 or 왼쪽 움직임이었으면 'standL'로 상태 변경
+                self.status = 'stand' if not 'L' in self.status else 'standL'
+
+    def move(self, speed):
+        self.hitbox.x += self.direction * speed * self.vspeed
+        if self.hitbox.x < 0:
+            self.hitbox.x = 0
+        if self.hitbox.x > WIDTH:
+            self.hitbox.x = WIDTH - self.rect.width
+        self.collision('horizontal')
+
+    def cooldowns(self):
+        current_time = pygame.time.get_ticks()
 
     def animate(self):
-        pass
+        # sprite animation
+        spr = self.spr[self.status]
+
+        # loop over the frame index
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(spr):
+            if self.jumping:
+                self.jumping = False
+            self.frame_index = 0
+
+        # set the image
+        self.image = spr[int(self.frame_index)]
+        self.rect = self.image.get_rect(center = self.hitbox.center)
 
     def update(self):
         self.input()
+        self.cooldowns()
         self.get_status()
-        self.control()
         self.animate()
-        self.move()
+        self.move(self.speed)
+
+    def collision(self, direction):
+        if direction == 'horizontal':
+            for sprite in self.obstacle_sprites:
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if self.direction.x > 0: #collision occurs while moving right
+                        self.hitbox.right = sprite.hitbox.left
+                    elif self.direction.x < 0:
+                        self.hitbox.left = sprite.hitbox.right
+
+    def weve_value(self):
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else:
+            return 0
 
     def control(self):
         # 플레이어 컨트롤
@@ -113,6 +197,7 @@ class Player(pygame.sprite.Sprite):
                         self.frame = 0
                     else:
                         self.frame -= 1
+
         # reverse_loop
         else:
             self.frameTimer += 1  # 플레이어 애니메이션 타이머
@@ -124,6 +209,8 @@ class Player(pygame.sprite.Sprite):
                         self.frame = len(self.spr[self.action]) - 1
                     else:
                         self.frame += 1
+
+
 
         # 플레이어 드로우
         self.screen = pygame.display.get_surface()
@@ -189,7 +276,7 @@ class Player(pygame.sprite.Sprite):
                         self.keyRight = False
 
             # 걷기상태
-            if self.state == 1:
+            elif self.state == 1:
                 if event.type == pygame.KEYDOWN:  # 키가 눌러졌는지 확인
                     if event.key == pygame.K_z and self.keyLeft == True:  # 캐릭터를 왼쪽으로 달림
                         self.state = 2
@@ -256,7 +343,7 @@ class Player(pygame.sprite.Sprite):
                         self.keyRight = False
 
             # 달리기상태
-            if self.state == 2:
+            elif self.state == 2:
                 if event.type == pygame.KEYDOWN:  # 키가 눌러졌는지 확인
                     if event.key == pygame.K_RIGHT and self.keyLeft_Run == True:  # 캐릭터를 왼쪽달리다가 오른쪽 달리기
                         self.state = 2
@@ -328,7 +415,7 @@ class Player(pygame.sprite.Sprite):
                         self.keyLeft = False
                         self.keyRight = False
             # 점프상태
-            if self.state == 3:
+            elif self.state == 3:
                 if self.rect.bottom < 600:
                     if event.type == pygame.KEYDOWN:  # 키가 눌러졌는지 확인
                         if event.key == pygame.K_RIGHT:  # 점프상태에서 오른쪽으로 이동
