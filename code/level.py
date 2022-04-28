@@ -6,6 +6,7 @@ from settings import *
 from support import *
 from player import *
 from random import choice
+
 class Level:
     def __init__(self):
         self.player_size = (200, 200)
