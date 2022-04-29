@@ -20,10 +20,9 @@ class Game:
 
     def run(self):
         while True:
+            # 플레이어 인풋 받을 때 event 체크를 함. 그때 종료 조건 확인하기 때문에 여기서 할 필요 없지만 기능 분리를 위해 일단 살려놓음
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: # 종료버튼 누르면 창 닫고 시스템 종료
-                    pygame.quit()
-                    sys.exit()
+                quit_check(event)
 
             self.level.run()
             pygame.display.update()  # 게임 화면을 다시 그리기!

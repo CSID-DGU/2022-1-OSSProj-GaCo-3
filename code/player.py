@@ -25,18 +25,16 @@ class Player(pygame.sprite.Sprite):
         self.direction = 0 # 가만히 서 있기 : 0 / 오른쪽 방향으로 이동시 : 1 / 왼쪽 방향으로 이동시 : -1
 
         # movement
-        self.speed = 4
-        # 가속도 상수는 setting.py로 빼도 될 것 같음.
-        self.vspeed_walk = 1 # 걸을 때 가속도 상수
-        self.vspeed_running = 1.8 # 뛸 때 가속도 상수
-        self.vspeed = self.vspeed_walk  # 플레이어 가속도
+        self.WALK_SPEED = 4  # 걸을 때 속도 상수
+        self.RUNNING_SPEED = 10  # 뛸 때 속도 상수
+        self.speed = self.WALK_SPEED # 플레이어 생성시, 걷는 속도로 초기화
 
-        #플레이어 떨어질 때 중력? 그거 해야됨
-
-        # jumping
+        # jumping implementation by event.type == KEYDOWN
         self.jumping = False
-        self.jump_cooldown = 1000 # jump animation 보고 결정하기
-        self.jumping_time = None
+        self.jump_status_max = 2
+        self.jump_value = -15.0
+        self.space_number = 0
+        self.jump_start_y = self.hitbox.y
 
         self.obstacle_sprites = obstacle_sprites
 
@@ -51,8 +49,11 @@ class Player(pygame.sprite.Sprite):
         #                'running attack': {'idx': 프레임수, 'size': (적절한_사이즈, 적절한_사이즈)} 를 추가로 작성해준다.
         #   어떤 key input이 들어왔을 때 'running attack' 상태로 만들고싶은지를 고려하여
         #   아래의 input함수에 key 검사를 추가해준다.
-        self.spr = {'stand':[], 'standL':[], 'walking':[], 'walkingL':[],
-                    'running':[], 'runningL':[], 'jump':[], 'jumpL':[]}
+        self.spr = {'stand':[], 'standL':[],
+                    'walking':[], 'walkingL':[],
+                    'running':[], 'runningL':[],
+                    'stand_jump':[], 'standL_jump':[],
+                    'jump':[], 'jumpL':[]}
 
         for spr_name in self.spr.keys():
             self.spr[spr_name] = import_sprites_image(spr_name +'.png',
@@ -62,46 +63,57 @@ class Player(pygame.sprite.Sprite):
                 self.spr[spr_name].reverse()
 
     def input(self):
-        if not self.jumping: # jump 할 때는 입력 안 받기. jump 끝나야 입력 받을 수 있음
-            ## 현재 눌린 키들의 리스트.
-            # 여기에 우리가 검사할 키가 들어있는지 확인하고, 있으면 상태를 변경해줌
-            keys = pygame.key.get_pressed()
+        ## 현재 눌린 키들의 리스트.
+        # 여기에 우리가 검사할 키가 들어있는지 확인하고, 있으면 상태를 변경해줌
+        keys = pygame.key.get_pressed()
 
-            #movement input
+        #movement input
+        if not self.jumping: # jump 하고 있을 때는 다른(왼쪽, 오른쪽, 가속)키 입력은 받지 않는다.
             if keys[pygame.K_RIGHT]:
                 self.direction = 1
                 if keys[pygame.K_z]:
                     self.status = 'running'
-                    self.vspeed = self.vspeed_running
-                    #print('z pressed')
+                    self.speed = self.RUNNING_SPEED
+                    print('z pressed')
                 else:
                     self.status = 'walking'
-                    self.vspeed = self.vspeed_walk
-
-                if keys[pygame.K_SPACE]:
-                    self.jumping = True
-                    self.jumping_time = pygame.time.get_ticks()
-                    self.status = 'jump'
+                    self.speed = self.WALK_SPEED
 
             elif keys[pygame.K_LEFT]:
                 self.direction = -1
                 if keys[pygame.K_z]:
                     self.status = 'runningL'
-                    self.vspeed = self.vspeed_running
+                    self.speed = self.RUNNING_SPEED
                 else:
                     self.status = 'walkingL'
-                    self.vspeed = self.vspeed_walk
-
-                if keys[pygame.K_SPACE]:
-                    self.jumping = True
-                    self.jumping_time = pygame.time.get_ticks()
-                    self.status = 'jumpL'
+                    self.speed = self.WALK_SPEED
 
             else:
-                # stand 일 때 jump는? -> 이미지를 어떻게 할까.
-                if keys[pygame.K_SPACE]:
-                    print('stand -> jump') #상태 표시만 일단...
                 self.direction = 0
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.space_number += 1 # 스페이스바 누르면 횟수를 증가시킴
+
+                # 스페이스바 수가 우리가 설정한 점프 max 횟수(여기선 2)보다 적을 때만 점프 동작 상태로 변경
+                if self.space_number <= self.jump_status_max:
+                    # 처음 뛰었을 때 - 1단 점프 / 점프 중이지 않은 상태에서 스페이스바 입력이 들어와야 최초의 점프라고 인식
+                    if self.space_number == 1 and not self.jumping:
+                        self.jumping = True
+                        self.status = 'jump' if not 'L' in self.status else 'jumpL'
+                        self.jump_value = -10.0
+
+                    # 두 번 뛰었을 때 - 2단 점프
+                    if self.space_number == 2:
+                        self.status = 'jump' if not 'L' in self.status else 'jumpL'
+                        self.jump_value = -6.0
+                        self.frame_index = 3 # jump 이미지 시작에 고개 숙이는 부분말고 도약하는 부분부터 애니메이션 시작
+
+            # 종료 버튼 누를 때 인식 잘 못하는 경우를 위해
+            # event 루프 확인할 때는 (for event in pygame.event.get(): 사용시)
+            # 종료 버튼 눌렸을 때 종료하라고 중복되지만 써주기
+            # support.py 에 종료 조건 확인되면 종료하는 아래 함수 있음.
+            quit_check(event)
 
     def get_status(self):
         if self.direction == 0:
@@ -109,24 +121,34 @@ class Player(pygame.sprite.Sprite):
                 # 이전 상태가 오른쪽 움직이였으면 'stand'로 상태 변경 or 왼쪽 움직임이었으면 'standL'로 상태 변경
                 self.status = 'stand' if not 'L' in self.status else 'standL'
 
-    def move(self, speed):
+    def move(self):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
-        self.hitbox.x += self.direction * speed * self.vspeed
+        self.hitbox.x += self.direction * self.speed
 
         # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 안 벗어나게 해두었음.
         if self.hitbox.x < 0:
             self.hitbox.x = 0
         if self.hitbox.x + self.rect.width > WIDTH:
             self.hitbox.x = WIDTH - self.rect.width
+
+        if self.jumping:
+            self.jump()
+
+        # 충돌 검사 (현재 : 왼쪽 오른쪽 벽에 대해서 대충 구현)
         self.collision('horizontal')
 
-    def cooldowns(self):
-        current_time = pygame.time.get_ticks()
+    def jump(self):
+        # 점프할 때의 y값 변경
+        self.hitbox.y += self.jump_value
+        self.jump_value += 1
+        if self.jump_value > 10:
+            self.jump_value = 10
 
-        # 점프할 때는 self.jump_cooldown 에서 정한 시간만큼은 self.status를 바꿀 수 없다.
-        if self.jumping:
-            if current_time - self.jumping_time >= self.jump_cooldown:
-                self.jumping = False
+        if self.hitbox.y > self.jump_start_y:
+            self.jumping = False
+            self.hitbox.y = self.jump_start_y
+            self.jump_value = 0
+            self.space_number = 0
 
     def animate(self):
         # 플레이어 생성시 준비한 spr 딕셔너리에서
@@ -138,12 +160,8 @@ class Player(pygame.sprite.Sprite):
 
         # loop over the frame index
         self.frame_index += self.animation_speed
-        if self.frame_index >= len(spr):
-            self.frame_index = 0
-            ## jump할 때 상태 못 바꾸도록 하려고
-            ## 현재는 cooldowns 함수 사용했으나 또는 jump 애니메이션 끝날 때 상태 변경해주는 방법도 있음(아래 주석처리된 코드)
-            # if self.jumping:
-            #     self.jumping = False
+        if self.frame_index >= len(spr): # 스프라이트 마지막 이미지까지 보여준 뒤
+            self.frame_index = 0 # 다시 처음 이미지로 돌아가기
 
         # 위의 프레임 인덱스에 따라 플레이어 이미지를 바꿔줌
         self.image = spr[int(self.frame_index)]
@@ -179,7 +197,6 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.input()
-        self.cooldowns()
         self.get_status()
+        self.move()
         self.animate()
-        self.move(self.speed)
