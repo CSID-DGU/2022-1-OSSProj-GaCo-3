@@ -10,7 +10,7 @@ class Game:
         #general setup
         pygame.init()  # 초기화 init 호출
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))  # 디스플레이 뜨게 하기
-        pygame.display.set_caption("deca")  # 게임 이름
+        pygame.display.set_caption("The Devil's Castle")  # 게임 이름
 
         # FPS
         self.clock = pygame.time.Clock()

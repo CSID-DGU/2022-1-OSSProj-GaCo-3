@@ -74,7 +74,7 @@ class Player(pygame.sprite.Sprite):
                 if keys[pygame.K_z]:
                     self.status = 'running'
                     self.speed = self.RUNNING_SPEED
-                    print('z pressed')
+                    print('z')
                 else:
                     self.status = 'walking'
                     self.speed = self.WALK_SPEED
@@ -102,12 +102,13 @@ class Player(pygame.sprite.Sprite):
                         self.jumping = True
                         self.status = 'jump' if not 'L' in self.status else 'jumpL'
                         self.jump_value = -10.0
+                        self.frame_index = 3 # 점프할 때 고개 숙이는 부분 제외
 
                     # 두 번 뛰었을 때 - 2단 점프
                     if self.space_number == 2:
                         self.status = 'jump' if not 'L' in self.status else 'jumpL'
-                        self.jump_value = -6.0
-                        self.frame_index = 3 # jump 이미지 시작에 고개 숙이는 부분말고 도약하는 부분부터 애니메이션 시작
+                        self.jump_value = -8.0
+                        self.frame_index = 3 # 점프할 때 고개 숙이는 부분 제외
 
             # 종료 버튼 누를 때 인식 잘 못하는 경우를 위해
             # event 루프 확인할 때는 (for event in pygame.event.get(): 사용시)
@@ -125,7 +126,7 @@ class Player(pygame.sprite.Sprite):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
         self.hitbox.x += self.direction * self.speed
 
-        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 안 벗어나게 해두었음.
+        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
         if self.hitbox.x < 0:
             self.hitbox.x = 0
         if self.hitbox.x + self.rect.width > WIDTH:
@@ -144,7 +145,7 @@ class Player(pygame.sprite.Sprite):
         if self.jump_value > 10:
             self.jump_value = 10
 
-        if self.hitbox.y > self.jump_start_y:
+        if self.hitbox.y >= self.jump_start_y:
             self.jumping = False
             self.hitbox.y = self.jump_start_y
             self.jump_value = 0
