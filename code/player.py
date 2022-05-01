@@ -74,7 +74,6 @@ class Player(pygame.sprite.Sprite):
                 if keys[pygame.K_z]:
                     self.status = 'running'
                     self.speed = self.RUNNING_SPEED
-                    print('z')
                 else:
                     self.status = 'walking'
                     self.speed = self.WALK_SPEED
