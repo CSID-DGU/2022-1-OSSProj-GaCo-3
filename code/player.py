@@ -125,11 +125,11 @@ class Player(pygame.sprite.Sprite):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
         self.hitbox.x += self.direction * self.speed
 
-        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
-        if self.hitbox.x < 0:
-            self.hitbox.x = 0
-        if self.hitbox.x + self.rect.width > WIDTH:
-            self.hitbox.x = WIDTH - self.rect.width
+        # # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
+        # if self.hitbox.x < 0:
+        #     self.hitbox.x = 0
+        # if self.hitbox.x + self.rect.width > WIDTH:
+        #     self.hitbox.x = WIDTH - self.rect.width
 
         if self.jumping:
             self.jump()
