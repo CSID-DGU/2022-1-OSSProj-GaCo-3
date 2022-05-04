@@ -6,6 +6,7 @@ from settings import *
 from support import *
 from player import *
 from random import choice
+from debug import *
 
 class Level():
     def __init__(self):

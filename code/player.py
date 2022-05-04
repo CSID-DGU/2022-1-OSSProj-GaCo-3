@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
 
         # jumping implementation by event.type == KEYDOWN
         self.jumping = False
-        self.Jump_power = -25
+        self.Jump_power = -22
         self.jump_value = self.Jump_power
         self.ground_line = self.hitbox.y
 
@@ -198,16 +198,34 @@ class Player(pygame.sprite.Sprite):
         # 점프할 때의 y값 변경
         self.hitbox.y += self.jump_value
         self.jump_value += 0.05*df
-        if self.jump_value >= 0:
-            self.status_num=3
+        if self.status == 'jump':
+            if self.jump_value >= 0:
+                self.status_num = 3
+                self.status = 'fall'
+        if self.status == 'jumpL':
+            if self.jump_value >= 0:
+                self.status_num = 3
+                self.status = 'fallL'
         if self.jump_value > 15:
             self.jump_value = 15
 
+        #점프에서 착지
         if self.hitbox.y >= self.ground_line:
             self.jumping = False
             self.hitbox.y = self.ground_line
             self.jump_value = self.Jump_power
             self.status_num=0
+            self.speed = self.RUNNING_SPEED
+            if self.direction == 0:
+                if self.status == 'fall':
+                    self.status = 'idle'
+                if self.status == 'fallL':
+                    self.status = 'idleL'
+            else:
+                if self.status == 'fall':
+                    self.status = 'run'
+                if self.status == 'fallL':
+                    self.status = 'runL'
 
     def animate(self,df):
         # 플레이어 생성시 준비한 spr 딕셔너리에서
