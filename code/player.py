@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
 
         # movement
         self.RUNNING_SPEED = 0.4  # 뛸 때 속도 상수
-        self.JUMPMOVE_SPEED = 0.3
+        self.JUMPMOVE_SPEED = 0.2
         self.speed = self.RUNNING_SPEED # 플레이어 생성시, 걷는 속도로 초기화
 
         # jumping implementation by event.type == KEYDOWN
