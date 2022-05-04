@@ -15,7 +15,7 @@ def import_folder(path):
     return surface_list
 
 def import_sprites_image(filename, idx, (size_x, size_y)):
-    path = 'image/player/'
+    path = 'image/player2/'
     surface_list = []
     max_col = max_index = max_row = idx
     baseImage = pygame.image.load(path+filename).convert()
@@ -26,10 +26,13 @@ def import_sprites_image(filename, idx, (size_x, size_y)):
         image = pygame.Surface((width, height))
         image.blit(baseImage, (0, 0), ((i % max_row) * width, (i // max_col) * height, width, height))
         image = pygame.transform.scale(image, (size_x, size_y))
+        image.set_colorkey((0, 0, 0))  # 뒤에 흰배경 없앰
+        """"
         if 'L' in filename: # 둘 차이 : 왼쪽 오른쪽 방향 <- 이미지 반전하고 저장할 때 달라진 것 같음
             image.set_colorkey((0, 0, 0))  # 뒤에 흰배경 없앰
         else:
             image.set_colorkey((255, 255, 255))  # 뒤에 검은배경 없앰
+        """""
         surface_list.append(image)
     return surface_list
 

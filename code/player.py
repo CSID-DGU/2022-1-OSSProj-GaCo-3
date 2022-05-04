@@ -7,34 +7,34 @@ from support import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
-        self.image = pygame.image.load('image/player/stand.png').convert_alpha()
+        self.image = pygame.image.load('image/player2/idle.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
 
         #graphic setup
         self.import_player_assets()
-        self.status = 'stand' # 시작은 오른쪽 방향을 보고 서있기
+        self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
+        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: death, 5: hitted, 6: attack, 7: attack2
 
         # animation 바꿀 때 사용
         self.frame_index = 0
-        self.animation_speed = 0.25
+        self.animation_speed = 0.5
 
         # move(이동)함수, collision(충돌 검사)함수 등에 사용
         # 플레이어의 이동 방향
         self.direction = 0 # 가만히 서 있기 : 0 / 오른쪽 방향으로 이동시 : 1 / 왼쪽 방향으로 이동시 : -1
 
         # movement
-        self.WALK_SPEED = 4  # 걸을 때 속도 상수
-        self.RUNNING_SPEED = 10  # 뛸 때 속도 상수
-        self.speed = self.WALK_SPEED # 플레이어 생성시, 걷는 속도로 초기화
+        self.RUNNING_SPEED = 0.4  # 뛸 때 속도 상수
+        self.JUMPMOVE_SPEED = 0.3
+        self.speed = self.RUNNING_SPEED # 플레이어 생성시, 걷는 속도로 초기화
 
         # jumping implementation by event.type == KEYDOWN
         self.jumping = False
-        self.jump_status_max = 2
-        self.jump_value = -15.0
-        self.space_number = 0
-        self.jump_start_y = self.hitbox.y
+        self.Jump_power = -25
+        self.jump_value = self.Jump_power
+        self.ground_line = self.hitbox.y
 
         self.obstacle_sprites = obstacle_sprites
 
@@ -42,18 +42,22 @@ class Player(pygame.sprite.Sprite):
         # 플레이어를 생성할 때 스프라이트 이미지 세트들도 함께 저장한다.
         # 스프라이트 구현할 때 편하게 하기 위해 각 상태의 이름은 이미지 폴더에 실재하는 이름과 같게 바꿨음
         # 더 많은 상태를 추가하고 싶을 경우,
-        #   예를들어 'running attack.png' 이미지를 불러오고 싶다면
+        #   예를들어 'run attack.png' 이미지를 불러오고 싶다면
         #          아래의 self.spr 딕셔너리에
-        #               'running attack':[] 으로 key:item을 추가해준다.
+        #               'run attack1':[] 으로 key:item을 추가해준다.
         #          settings.py 에 있는 PLAYER_IMG_INFO 에도
-        #                'running attack': {'idx': 프레임수, 'size': (적절한_사이즈, 적절한_사이즈)} 를 추가로 작성해준다.
-        #   어떤 key input이 들어왔을 때 'running attack' 상태로 만들고싶은지를 고려하여
+        #                'run attack1': {'idx': 프레임수, 'size': (적절한_사이즈, 적절한_사이즈)} 를 추가로 작성해준다.
+        #   어떤 key input이 들어왔을 때 'run attack1' 상태로 만들고싶은지를 고려하여
         #   아래의 input함수에 key 검사를 추가해준다.
-        self.spr = {'stand':[], 'standL':[],
-                    'walking':[], 'walkingL':[],
-                    'running':[], 'runningL':[],
-                    'stand_jump':[], 'standL_jump':[],
-                    'jump':[], 'jumpL':[]}
+        self.spr = {'idle':[], 'idleL':[],
+                    'run':[], 'runL':[],
+                    'jump':[], 'jumpL':[],
+                    'fall':[], 'fallL':[],
+                    'death':[], 'deathL':[],
+                    'hitted':[], 'hittedL':[],
+                    'attack1':[], 'attack1L':[],
+                    'attack2':[], 'attack2L':[]
+                    }
 
         for spr_name in self.spr.keys():
             self.spr[spr_name] = import_sprites_image(spr_name +'.png',
@@ -66,102 +70,174 @@ class Player(pygame.sprite.Sprite):
         ## 현재 눌린 키들의 리스트.
         # 여기에 우리가 검사할 키가 들어있는지 확인하고, 있으면 상태를 변경해줌
         keys = pygame.key.get_pressed()
-
-        #movement input
-        if not self.jumping: # jump 하고 있을 때는 다른(왼쪽, 오른쪽, 가속)키 입력은 받지 않는다.
-            if keys[pygame.K_RIGHT]:
-                self.direction = 1
-                if keys[pygame.K_z]:
-                    self.status = 'running'
-                    self.speed = self.RUNNING_SPEED
-                else:
-                    self.status = 'walking'
-                    self.speed = self.WALK_SPEED
-
-            elif keys[pygame.K_LEFT]:
-                self.direction = -1
-                if keys[pygame.K_z]:
-                    self.status = 'runningL'
-                    self.speed = self.RUNNING_SPEED
-                else:
-                    self.status = 'walkingL'
-                    self.speed = self.WALK_SPEED
-
-            else:
-                self.direction = 0
-
+        
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.space_number += 1 # 스페이스바 누르면 횟수를 증가시킴
-
-                # 스페이스바 수가 우리가 설정한 점프 max 횟수(여기선 2)보다 적을 때만 점프 동작 상태로 변경
-                if self.space_number <= self.jump_status_max:
-                    # 처음 뛰었을 때 - 1단 점프 / 점프 중이지 않은 상태에서 스페이스바 입력이 들어와야 최초의 점프라고 인식
-                    if self.space_number == 1 and not self.jumping:
-                        self.jumping = True
-                        self.status = 'jump' if not 'L' in self.status else 'jumpL'
-                        self.jump_value = -10.0
-                        self.frame_index = 3 # 점프할 때 고개 숙이는 부분 제외
-
-                    # 두 번 뛰었을 때 - 2단 점프
-                    if self.space_number == 2:
-                        self.status = 'jump' if not 'L' in self.status else 'jumpL'
-                        self.jump_value = -8.0
-                        self.frame_index = 3 # 점프할 때 고개 숙이는 부분 제외
-
-            # 종료 버튼 누를 때 인식 잘 못하는 경우를 위해
-            # event 루프 확인할 때는 (for event in pygame.event.get(): 사용시)
-            # 종료 버튼 눌렸을 때 종료하라고 중복되지만 써주기
-            # support.py 에 종료 조건 확인되면 종료하는 아래 함수 있음.
             quit_check(event)
+            #정지상태
+            if self.status_num==0:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+                    self.direction = 1
+                    self.status = 'run'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+                    self.direction = -1
+                    self.status = 'runL'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.status=='idle':
+                    self.direction = 0
+                    self.status = 'jump'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.status=='idleL':
+                    self.direction = 0
+                    self.status = 'jumpL'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+            if self.status_num==1:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and self.status=='runL':
+                    self.direction = 1
+                    self.status = 'run'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and self.status=='run':
+                    self.direction = -1
+                    self.status = 'runL'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.status=='run':
+                    self.direction = 1
+                    self.status = 'jump'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.status=='runL':
+                    self.direction = -1
+                    self.status = 'jumpL'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+                if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT and self.status=='run':
+                    self.direction = 0
+                    self.status = 'idle'
+                    self.status_num = 0
+                    self.speed = self.RUNNING_SPEED
+                if event.type == pygame.KEYUP and event.key == pygame.K_LEFT and self.status=='runL':
+                    self.direction = 0
+                    self.status = 'idleL'
+                    self.status_num = 0
+                    self.speed = self.RUNNING_SPEED
+            if self.status_num==2:
+                if keys[pygame.K_RIGHT]:
+                    self.direction = 1
+                    self.status = 'jump'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+                if keys[pygame.K_LEFT]:
+                    self.direction = -1
+                    self.status = 'jumpL'
+                    self.status_num = 2
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+            if self.status_num==3:
+                if keys[pygame.K_RIGHT]:
+                    self.direction = 1
+                    self.status = 'fall'
+                    self.status_num = 3
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+                if keys[pygame.K_LEFT]:
+                    self.direction = -1
+                    self.status = 'fallL'
+                    self.status_num = 3
+                    self.jumping = True
+                    self.speed = self.JUMPMOVE_SPEED
+            """"
+            if self.status_num==4:
+                if keys[pygame.K_RIGHT]:
+                    self.direction = 1
+                    self.status = 'run'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+            if self.status_num==5:
+                if keys[pygame.K_RIGHT]:
+                    self.direction = 1
+                    self.status = 'run'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+            if self.status_num==6:
+                if keys[pygame.K_RIGHT]:
+                    self.direction = 1
+                    self.status = 'run'
+                    self.status_num = 1
+                    self.speed = self.RUNNING_SPEED
+            """""
+        #quit_check(event)
 
-    def get_status(self):
-        if self.direction == 0:
-            if not 'stand' in self.status:
-                # 이전 상태가 오른쪽 움직이였으면 'stand'로 상태 변경 or 왼쪽 움직임이었으면 'standL'로 상태 변경
-                self.status = 'stand' if not 'L' in self.status else 'standL'
-
-    def move(self):
+    def move(self,df):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
-        self.hitbox.x += self.direction * self.speed
+        self.hitbox.x += self.direction * self.speed * df
 
-        # # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
-        # if self.hitbox.x < 0:
-        #     self.hitbox.x = 0
-        # if self.hitbox.x + self.rect.width > WIDTH:
-        #     self.hitbox.x = WIDTH - self.rect.width
+        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
+        if self.hitbox.x < 0:
+            self.hitbox.x = 0
+        if self.hitbox.x + self.rect.width > WIDTH:
+            self.hitbox.x = WIDTH - self.rect.width
 
         if self.jumping:
-            self.jump()
+            self.jump(df)
 
         # 충돌 검사 (현재 : 왼쪽 오른쪽 벽에 대해서 대충 구현)
         self.collision('horizontal')
 
-    def jump(self):
+    def jump(self,df):
         # 점프할 때의 y값 변경
         self.hitbox.y += self.jump_value
-        self.jump_value += 1
-        if self.jump_value > 10:
-            self.jump_value = 10
+        self.jump_value += 0.05*df
+        if self.jump_value >= 0:
+            self.status_num=3
+        if self.jump_value > 15:
+            self.jump_value = 15
 
-        if self.hitbox.y >= self.jump_start_y:
+        if self.hitbox.y >= self.ground_line:
             self.jumping = False
-            self.hitbox.y = self.jump_start_y
-            self.jump_value = 0
-            self.space_number = 0
+            self.hitbox.y = self.ground_line
+            self.jump_value = self.Jump_power
+            self.status_num=0
 
-    def animate(self):
+    def animate(self,df):
         # 플레이어 생성시 준비한 spr 딕셔너리에서
         # self.status에 맞는 스프라이트 세트를 가져온다.
         spr = self.spr[self.status]
-
+        #0: idle, 1: run, 2: jump, 3: fall, 4: death, 5: hitted, 6: attack, 7: attack2
         # 기본적으로 0.33이나, 플레이어가 뛰어가는 동작을 하면 이미지를 더 빠르게 바꾸기 위해 speed를 높게 설정한다.
-        self.animation_speed = 0.33 if not 'running' in self.status else 1.0
-
+        if self.status_num==0:
+            self.animation_speed = 0.01
+        if self.status_num==1:
+            self.animation_speed = 0.008
+        if self.status_num==2:
+            self.animation_speed = 0.02
+        if self.status_num==3:
+            self.animation_speed = 0.02
+        if self.status_num==4:
+            self.animation_speed = 0.01
+        if self.status_num==5:
+            self.animation_speed = 0.01
+        if self.status_num==6:
+            self.animation_speed = 0.01
+        
         # loop over the frame index
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(spr): # 스프라이트 마지막 이미지까지 보여준 뒤
+        self.frame_index += self.animation_speed*df
+        if self.frame_index >= len(spr) and (self.status != 'jump' and self.status != 'jumpL'): # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = 0 # 다시 처음 이미지로 돌아가기
+            
+        # once frame index
+        if self.frame_index >= len(spr) and (self.status == 'jump' or self.status == 'jumpL'): # 스프라이트 마지막 이미지까지 보여준 뒤
+            self.frame_index = len(spr)-1 #  마지막 프레임에서 고정
 
         # 위의 프레임 인덱스에 따라 플레이어 이미지를 바꿔줌
         self.image = spr[int(self.frame_index)]
@@ -195,8 +271,7 @@ class Player(pygame.sprite.Sprite):
         else:
             return 0
 
-    def update(self):
+    def update(self,df):
         self.input()
-        self.get_status()
-        self.move()
-        self.animate()
+        self.move(df)
+        self.animate(df)
