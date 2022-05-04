@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-
+#
 import pygame, sys
 from settings import *
 from player import *
