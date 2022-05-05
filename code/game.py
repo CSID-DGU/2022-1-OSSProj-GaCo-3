@@ -26,6 +26,7 @@ class Game:
                 
             print(self.level.player.status)
             print(self.level.player.status_num)
+            print(self.level.player.frame_index)
             
 
             df = self.clock.tick(FPS) # 게임 화면의 초당 프레임 수를 설정

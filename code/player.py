@@ -28,12 +28,13 @@ class Player(pygame.sprite.Sprite):
 
         # movement
         self.RUNNING_SPEED = 0.4  # 뛸 때 속도 상수
-        self.JUMPMOVE_SPEED = 0.2
+        self.JUMPMOVE_SPEED = 0.3
+        self.DASHATTACK_SPEED = 1.0
         self.speed = self.RUNNING_SPEED # 플레이어 생성시, 걷는 속도로 초기화
 
         # jumping implementation by event.type == KEYDOWN
         self.jumping = False
-        self.Jump_power = -22
+        self.Jump_power = -1.4
         self.jump_value = self.Jump_power
         self.ground_line = self.hitbox.y
 
@@ -88,6 +89,10 @@ class Player(pygame.sprite.Sprite):
                     self.control(0,'attack1',0,4,False,self.RUNNING_SPEED)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_a and self.status=='idleL':
                     self.control(0,'attack1L',0,4,False,self.RUNNING_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='idle':
+                    self.control(0,'attack2',0,5,False,self.RUNNING_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='idleL':
+                    self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
             #달리기상태
             if self.status_num==1:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and self.status=='runL':
@@ -102,6 +107,10 @@ class Player(pygame.sprite.Sprite):
                     self.control(0,'attack1',0,4,False,self.RUNNING_SPEED)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_a and self.status=='runL':
                     self.control(0,'attack1L',0,4,False,self.RUNNING_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='run':
+                    self.control(0,'attack2',0,5,False,self.RUNNING_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='runL':
+                    self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
                 if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT and self.status=='run':
                     self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
                 if event.type == pygame.KEYUP and event.key == pygame.K_LEFT and self.status=='runL':
@@ -112,20 +121,24 @@ class Player(pygame.sprite.Sprite):
                     self.control(1,'jump',0,2,True,self.JUMPMOVE_SPEED)
                 if keys[pygame.K_LEFT]:
                     self.control(-1,'jumpL',0,2,True,self.JUMPMOVE_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='jump':
+                    self.control(1,'attack2',0,5,True,self.DASHATTACK_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='jumpL':
+                    self.control(-1,'attack2L',0,5,True,self.DASHATTACK_SPEED)
             #떨어지는상태
             if self.status_num==3:
                 if keys[pygame.K_RIGHT]:
                     self.control(1,'fall',0,3,True,self.JUMPMOVE_SPEED)
                 if keys[pygame.K_LEFT]:
                     self.control(-1,'fallL',0,3,True,self.JUMPMOVE_SPEED)
-            #공격1상태
-            if self.status_num==4:
-                if self.frame_index == 6:
-                    if self.status == 'attack1':
-                        self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                    if self.status == 'attack1L':
-                        self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-    
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='fall':
+                    self.control(1,'attack2',0,5,True,self.DASHATTACK_SPEED)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s and self.status=='fallL':
+                    self.control(-1,'attack2L',0,5,True,self.DASHATTACK_SPEED)
+        #공격1상태, 공격2상태(각각 프레임이 일정수치에 가면 다음 상태로 넘어가도록 해줌)
+        self.attack()
+        
+    #각종 상태 컨트롤해주는 함수
     def control(self, direction, status, index, num, isjumping, speed):
         self.direction = direction
         self.status = status
@@ -151,11 +164,25 @@ class Player(pygame.sprite.Sprite):
 
         # 충돌 검사 (현재 : 왼쪽 오른쪽 벽에 대해서 대충 구현)
         self.collision('horizontal')
+    
+    def attack(self):
+        if self.status_num==4:
+            if self.frame_index == 6:
+                if self.status == 'attack1':
+                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                if self.status == 'attack1L':
+                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+        if self.status_num==5:
+            if self.frame_index == 6:
+                if self.status == 'attack2':
+                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                if self.status == 'attack2L':
+                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
 
     def jump(self,df):
         # 점프할 때의 y값 변경
-        self.hitbox.y += self.jump_value
-        self.jump_value += 0.05*df
+        self.hitbox.y += self.jump_value*df
+        self.jump_value += 0.004*df
         if self.status == 'jump':
             if self.jump_value >= 0:
                 self.status_num = 3
@@ -168,22 +195,26 @@ class Player(pygame.sprite.Sprite):
             self.jump_value = 15
 
         #점프에서 착지
+        keys = pygame.key.get_pressed()
         if self.hitbox.y >= self.ground_line:
             self.jumping = False
             self.hitbox.y = self.ground_line
             self.jump_value = self.Jump_power
-            self.status_num=0
             self.speed = self.RUNNING_SPEED
             if self.direction == 0:
                 if self.status == 'fall':
-                    self.status = 'idle'
+                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
                 if self.status == 'fallL':
-                    self.status = 'idleL'
+                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
             else:
-                if self.status == 'fall':
-                    self.status = 'run'
-                if self.status == 'fallL':
-                    self.status = 'runL'
+                if self.status == 'fall' and keys[pygame.K_RIGHT]:
+                    self.control(1,'run',0,1,False,self.RUNNING_SPEED)
+                elif self.status == 'fall' and not keys[pygame.K_RIGHT]:
+                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                elif self.status == 'fallL' and keys[pygame.K_LEFT]:
+                    self.control(-1,'runL',0,1,False,self.RUNNING_SPEED)
+                elif self.status == 'fallL' and not keys[pygame.K_LEFT]:
+                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
 
     def animate(self,df):
         # 플레이어 생성시 준비한 spr 딕셔너리에서
@@ -200,9 +231,9 @@ class Player(pygame.sprite.Sprite):
         if self.status_num==3:
             self.animation_speed = 0.01
         if self.status_num==4:
-            self.animation_speed = 0.01
+            self.animation_speed = 0.015
         if self.status_num==5:
-            self.animation_speed = 0.008
+            self.animation_speed = 0.007
         if self.status_num==6:
             self.animation_speed = 0.01
         
