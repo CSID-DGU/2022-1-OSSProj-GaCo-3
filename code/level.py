@@ -75,6 +75,8 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
 
         self.display_surface.blit(self.background_sky_surf, sky_offset_pos)
         self.display_surface.blit(self.background_floor_surf, add_Coordinate(floor_offset_pos, (0, -150)))
+        #플레이어 히트박스 그리기
+        pygame.draw.rect(self.display_surface,(255,255,255),player.hitbox,5)
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)
