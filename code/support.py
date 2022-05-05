@@ -40,3 +40,23 @@ def quit_check(event):
     if event.type == pygame.QUIT:
         pygame.quit()
         sys.exit()
+
+def add_Coordinate(coor1, coor2):
+    """
+    add coor2 to coor1
+    :param coor1: coordinate 1
+    :param coor2: coordinate 2
+    :return: (coor1[0] + coor2[0], coor1[1] + coor2[1]) -> tuple.
+    """
+    res = map(lambda x, y : x + y, coor1, coor2)
+    return res
+
+def sub_Coordinate(coor1, coor2):
+    """
+    subtract coor2 from coor1
+    :param coor1: coordinate 1
+    :param coor2: coordinate 2
+    :return: (coor1[0] - coor2[0], coor1[1] - coor2[1]) -> tuple.
+    """
+    res = map(lambda x, y : x - y, coor1, coor2)
+    return res
