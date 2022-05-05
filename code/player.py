@@ -3,6 +3,7 @@
 import pygame
 from settings import *
 from support import *
+from debug import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
@@ -182,11 +183,12 @@ class Player(pygame.sprite.Sprite):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
         self.hitbox.x += self.direction * self.speed * df
 
-        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
+        # # 플레이어가 지정된 화면 밖으로 벗어나지 못하게 함.
+        # # 카메라 구현 과정에서 이대로 둘 것인지 obstacle 그룹을 만들어서 경계를 관리할 것인지 결정할 필요가 있음
         if self.hitbox.x < 0:
             self.hitbox.x = 0
-        if self.hitbox.x + self.rect.width > WIDTH:
-            self.hitbox.x = WIDTH - self.rect.width
+        if self.hitbox.x > 3200: # 바닥 이미지 크기 설정할 때 함께 바꿔주던가 해야함
+            self.hitbox.x = 3200
 
         if self.jumping:
             self.jump(df)
