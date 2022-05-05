@@ -43,9 +43,7 @@ class Monster(pygame.sprite.Sprite):
         self.animation_time = 0.0
         self.animation_time_max = 0.1
 
-        # move(이동)함수, collision(충돌 검사)함수 등에 사용
-        # 플레이어의 이동 방향
-        self.direction = -1 # 가만히 서 있기 : 0 / 오른쪽 방향으로 이동시 : 1 / 왼쪽 방향으로 이동시 : -1
+        self.direction = -1
 
         # movement
         self.speed = 4
@@ -83,20 +81,13 @@ class Monster(pygame.sprite.Sprite):
                 self.status = 'idleR' if not 'L' in self.status else 'idleL'
 
     def move(self):
-        # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.
-        
         #self.hitbox.x += self.direction * self.speed
 
-        # 카메라 하면서 바꿔야 하는 부분. 일단 임시로 화면 width 안 벗어나게 해두었음.
         if self.hitbox.x < 0:
             self.hitbox.x = 0
         if self.hitbox.x + self.rect.width > WIDTH:
             self.hitbox.x = WIDTH - self.rect.width
 
-        # if self.jumping:
-        #     self.jump()
-
-        # 충돌 검사 (현재 : 왼쪽 오른쪽 벽에 대해서 대충 구현)
         self.collision('horizontal')
 
     def jump(self):
@@ -113,11 +104,7 @@ class Monster(pygame.sprite.Sprite):
             self.space_number = 0
 
     def animate(self, df):
-        # 플레이어 생성시 준비한 spr 딕셔너리에서
-        # self.status에 맞는 스프라이트 세트를 가져온다.
         spr = self.spr[self.status]
-
-        # 기본적으로 0.33이나, 플레이어가 뛰어가는 동작을 하면 이미지를 더 빠르게 바꾸기 위해 speed를 높게 설정한다.
         self.animation_speed = 0.33 if not 'running' in self.status else 1.0
 
         # loop over the frame index
@@ -140,14 +127,6 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
     def collision(self, direction):
-        # 파이게임은 충돌시에 아래 위 어느 방향에서 충돌했는지 알려주지 않음
-        # 따라서 direction값으로 어느 방향으로 충돌검사 할 것인지를 인자로 받고
-        # 만약 horizontal이면,
-        #   self.direction이 0보다 클 때는 오른쪽으로 움직이다 충돌한 것이므로
-        #       self.hitbox의 오른쪽과 방해물의 왼쪽 충돌검사를 한다.
-        #   self.direction이 0보다 작을 때는, 왼쪽으로 움직이다 충돌한 것이므로
-        #       self.hitbox의 왼쪽과 방해물의 왼쪽 충돌검사를 한다.
-        # 충돌할 경우, 방해물을 통과하여 지나가지 못하도록 self.hitbox의 위치를 조정한다.
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -157,10 +136,6 @@ class Monster(pygame.sprite.Sprite):
                         self.hitbox.left = sprite.hitbox.right
 
     def weve_value(self):
-        # 7시간 강의에서 나왔던 함수
-        # 이미지의 투명도를 시간에 따라 조절하여 이미지가 깜빡거리도록 할 수 있음
-        # 플레이어가 공격받거나 약해지거나 죽을 때 사용할 수 있을 듯함.
-        # 현재 코드에서는 사용하고 있지 않음
         value = sin(pygame.time.get_ticks())
         if value >= 0:
             return 255

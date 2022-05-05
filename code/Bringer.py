@@ -72,10 +72,7 @@ class Bringer(Monster):
         super(Bringer, self).input()
 
     def get_status(self):
-        if self.direction == 0:
-            if not 'idle' in self.status:
-                # 이전 상태가 오른쪽 움직이였으면 'stand'로 상태 변경 or 왼쪽 움직임이었으면 'standL'로 상태 변경
-                self.status = 'idleR' if not 'L' in self.status else 'idleL'
+        super(Bringer, self).get_status()
 
     def move(self):
        super(Bringer, self).move()
