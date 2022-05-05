@@ -5,6 +5,7 @@ import pygame
 from settings import *
 from support import *
 from player import *
+from Bringer import *
 from random import choice
 from debug import *
 
@@ -25,10 +26,13 @@ class Level:
     def create_map(self):
         # player 생성
         self.player = Player((100, 400), PLAYER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+        # monster 생성
+        self.monster = Bringer((700, 325), BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
     def run(self,df):
         self.visible_sprites.custom_draw(self.player)
         self.player.update(df)
+        self.monster.update(df)
         debug("player : " + str(self.player.rect))
         debug("hitbox : " + str(self.player.hitbox), 10, 40)
 
