@@ -149,7 +149,6 @@ class Player(pygame.sprite.Sprite):
         self.status_num = num
         self.jumping = isjumping
         self.speed = speed
-                    
 
     def move(self,df):
         # 나중에 플레이어와 사물이 부딪힐 때를 대비해 player.rect 자체가 아니라 좀 더 작은 충돌 범위(hitbox)를 검사한다.

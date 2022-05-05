@@ -29,6 +29,8 @@ class Level:
     def run(self,df):
         self.visible_sprites.custom_draw(self.player)
         self.player.update(df)
+        debug("player : " + str(self.player.rect))
+        debug("hitbox : " + str(self.player.hitbox), 10, 40)
 
 
 class CameraGroup(pygame.sprite.Group): # Not implemented yet
@@ -60,12 +62,12 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
 
     def custom_draw(self, player):
         # offset setting
-        if player.rect.centerx <= self.left_x_point: # 시작 화면으로부터 left_x_point 범위에 플레이어가 있을 때는 카메라 이동 없음
+        if player.hitbox.centerx <= self.left_x_point: # 시작 화면으로부터 left_x_point 범위에 플레이어가 있을 때는 카메라 이동 없음
             self.offset[0] = self.left_x_point - self.half_width
-        elif player.rect.centerx >= self.right_x_point: # right_x_point 부터 끝 장면까지 범위에 플레이어가 있을 때는 카메라 이동 없음
+        elif player.hitbox.centerx >= self.right_x_point: # right_x_point 부터 끝 장면까지 범위에 플레이어가 있을 때는 카메라 이동 없음
             self.offset[0] = self.right_x_point - self.half_width
         else: # left_x_point ~ right_x_point 사이에 플레이어가 있을 때는 플레이어가 중심에 있을 수 있도록 카메라를 이동시킴
-            self.offset[0] = player.rect.centerx - self.half_width
+            self.offset[0] = player.hitbox.centerx - self.half_width
 
         # 멀리 있는 물체가 더 느리게 변화하고 바닥 물체가 더 빠르게 변화하므로 바닥이 멀리 있는 물체보다 이미지 사이즈가 커야함.
         # 스케일을 맞춰볼까? :
@@ -75,8 +77,11 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
 
         self.display_surface.blit(self.background_sky_surf, sky_offset_pos)
         self.display_surface.blit(self.background_floor_surf, add_Coordinate(floor_offset_pos, (0, -150)))
-        #플레이어 히트박스 그리기
-        pygame.draw.rect(self.display_surface,(255,255,255),player.hitbox,5)
+
+        # 플레이어 히트박스 그리기
+        pygame.draw.rect(self.display_surface, (255, 255, 255),
+                         sub_Coordinate(player.hitbox, (self.offset[0], self.offset[1],
+                                                        0, 0)), 3)
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)
