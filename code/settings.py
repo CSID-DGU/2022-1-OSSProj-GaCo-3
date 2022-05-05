@@ -15,3 +15,11 @@ PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': (300, 300)}, 'idleL': {'idx': 11,
                      'attack1': {'idx': 7, 'size': (300, 300)}, 'attack1L': {'idx': 7, 'size': (300, 300)},
                      'attack2': {'idx': 7, 'size': (300, 300)}, 'attack2L': {'idx': 7, 'size': (300, 300)}
                      }
+# monster2 settings
+BRINGER_SIZE = (420, 279)
+BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 8, 'size': BRINGER_SIZE},
+                     'walkL': {'idx': 8, 'size': BRINGER_SIZE}, 'walkR': {'idx': 8, 'size': BRINGER_SIZE},
+                     'attackL': {'idx': 10, 'size': BRINGER_SIZE}, 'attackR': {'idx': 10, 'size': BRINGER_SIZE},
+                     'deathL':{'idx': 10, 'size': BRINGER_SIZE}, 'deathR':{'idx': 10, 'size': BRINGER_SIZE}, 
+                     'castL': {'idx': 9, 'size': BRINGER_SIZE}, 'castR': {'idx': 9, 'size': BRINGER_SIZE},
+                     'hurtL': {'idx': 3, 'size': BRINGER_SIZE}, 'hurtR': {'idx': 3, 'size': BRINGER_SIZE}}
