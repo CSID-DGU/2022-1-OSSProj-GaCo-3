@@ -56,11 +56,11 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
         # left 포인트보다 왼쪽에 있을 경우에는 오프셋은 left_x_point가 기준이된다. 반대의 경우도 마찬가지다. # custom_draw의 해당 코드에 또 주석 달아놓았음
 
         #creating the floor s
-        self.background_mountain_surf = pygame.image.load('image/map/forest.png')
-        self.background_mountain_surf = pygame.transform.scale(self.background_mountain_surf, (1900, 570))
+        self.background_mountain_surf = pygame.image.load('image/map/background.png')
+        self.background_mountain_surf = pygame.transform.scale(self.background_mountain_surf, (1900, 720))
         self.background_mountain_rect = self.background_mountain_surf.get_rect(topleft=(0,0))
 
-        self.background_floor_surf = pygame.image.load('image/map/floor_size.png')
+        self.background_floor_surf = pygame.image.load('image/map/new_floor.png')
         self.background_floor_surf = pygame.transform.scale(self.background_floor_surf, (2500, 800)) # 화면 변화 속도가 달라서 바닥만 대충 크게 리사이즈함. 이미지 리소스 바꾸면 값 바꿀 것
         self.background_floor_rect = self.background_floor_surf.get_rect(topleft=(0,0))
 
