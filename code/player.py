@@ -270,6 +270,10 @@ class Player(pygame.sprite.Sprite):
                     elif self.direction.x < 0:
                         self.hitbox.left = sprite.hitbox.right
 
+    def set_pos(self, (x, y)): # 장면 바뀔 때 플레이어 위치 초기화하는 함수
+        self.rect.topleft = (x, y)
+        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8)
+
     def weve_value(self):
         # 7시간 강의에서 나왔던 함수
         # 이미지의 투명도를 시간에 따라 조절하여 이미지가 깜빡거리도록 할 수 있음

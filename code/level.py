@@ -11,6 +11,10 @@ from debug import *
 
 class Level:
     def __init__(self):
+        # game state for scene transition
+        self.game_state = 'intro' # intro 부터 시작
+        self.level_start_time = None
+
         #get the display surface
         self.display_surface = pygame.display.get_surface()
 
@@ -23,20 +27,103 @@ class Level:
 
     def create_map(self):
         # player 생성
-        self.player = Player((100, 400), PLAYER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player(PLAYER_COOR_ini, PLAYER_SIZE, [self.visible_sprites], self.obstacle_sprites)
         # monster 생성
-        self.monster = Bringer((700, 325), BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+        self.monster = Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
 
     def run(self,df):
+        # self.game_state 에 따라 장면이 전환됨
+
+        if self.game_state == 'intro': # 마우스 클릭시 레벨1로
+            self.intro()
+
+        if self.game_state == 'level1': # 일정 시간 지난 뒤 레벨2로
+            self.level1(df)
+
+        if self.game_state == 'level2': # 일정 시간 지난 뒤 레벨3으로
+            self.level2(df)
+
+        if self.game_state == 'level3': # 일정 시간 지난 뒤 엔딩으로
+            self.level3(df)
+
+        if self.game_state == 'ending': # 일정 시간 지난 뒤 엔딩으로
+            self.ending()
+
+    def intro(self):
+        self.display_surface.fill((0, 0, 0))
+        debug('intro', WIDTH//2, HEIGHT//2)
+        for event in pygame.event.get():
+            quit_check(event)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.level_start_time = pygame.time.get_ticks()
+                self.game_state = 'level1'
+
+        pygame.display.flip()
+
+    def level1(self, df): #몬스터1
         self.visible_sprites.custom_draw(self.player)
         self.player.update(df)
         self.monster.update(df)
-        debug("player : " + str(self.player.rect))
-        debug("hitbox : " + str(self.player.hitbox), 10, 40)
 
+        debug('level1', WIDTH // 2, HEIGHT // 2)
 
-class CameraGroup(pygame.sprite.Group): # Not implemented yet
+        # 몬스터 상호작용 때 수정해야 함
+        current_time = pygame.time.get_ticks()
+        if current_time - self.level_start_time > 1500:
+            # 플레이어 위치 초기화
+            self.player.set_pos(PLAYER_COOR_ini)
+            self.game_state = 'level2'
+
+        pygame.display.flip()
+
+    def level2(self, df): #몬스터2
+        self.visible_sprites.custom_draw(self.player)
+        self.player.update(df)
+        self.monster.update(df) # 몬스터 객체 새로 만드는 코드 필요
+
+        debug('level2', WIDTH // 2, HEIGHT // 2)
+
+        # 몬스터 상호작용 때 수정해야 함
+        current_time = pygame.time.get_ticks()
+        if current_time - self.level_start_time > 3000:
+            # 플레이어 위치 초기화
+            self.player.set_pos(PLAYER_COOR_ini)
+            self.game_state = 'level3'
+
+        pygame.display.flip()
+
+    def level3(self, df): #몬스터3
+        self.visible_sprites.custom_draw(self.player)
+        self.player.update(df)
+        self.monster.update(df) #마찬가지로 몬스터 객체 새로 만드는 코드 필요
+
+        debug('level3', WIDTH // 2, HEIGHT // 2)
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.level_start_time > 4500:
+            # 플레이어 위치 초기화
+            self.player.set_pos(PLAYER_COOR_ini)
+            self.game_state = 'ending'
+
+        # 몬스터 상호작용 때 수정해야 함
+        # for event in pygame.event.get():
+        #     quit_check(event)
+        #     if event.type == pygame.MOUSEBUTTONDOWN:
+        #          self.game_state = 'ending'
+        pygame.display.flip()
+
+    def ending(self):
+        self.display_surface.fill((0, 0, 0))
+        debug('ending', WIDTH // 2, HEIGHT // 2)
+
+        for event in pygame.event.get():
+            quit_check(event)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                 self.game_state = 'intro'
+        pygame.display.flip()
+
+class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
     def __init__(self):
         # general settings
         super(CameraGroup, self).__init__()
@@ -74,7 +161,6 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
             self.offset[0] = player.hitbox.centerx - self.half_width
 
         # 멀리 있는 물체가 더 느리게 변화하고 바닥 물체가 더 빠르게 변화하므로 바닥이 멀리 있는 물체보다 이미지 사이즈가 커야함.
-        # 스케일을 맞춰볼까? :
         floor_offset_pos = sub_Coordinate(self.background_floor_rect.topleft, self.offset)
         sky_offset_pos = sub_Coordinate(self.background_mountain_rect.topleft, self.offset)
         sky_offset_pos[0] *= 0.3 # 멀리있는 하늘은 x포지션의 변화 속도를 가까이있는 바닥보다 느리게 만들기
