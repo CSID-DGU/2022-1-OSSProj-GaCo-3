@@ -31,6 +31,7 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0)#이미지 사각형의 크기 줄여 HitBox로 사용 
         self.scale = MONSTER_SIZE
+        self.display_surface = pygame.display.get_surface()
 
         #graphic setup
         self.import_monster_assets()
@@ -42,6 +43,9 @@ class Monster(pygame.sprite.Sprite):
         self.animation_speed = 0.25
         self.animation_time = 0.0
         self.animation_time_max = 0.1
+        self.animation_end = False
+
+        self.CameraOffset = [0,0]
 
         self.direction = -1
 
@@ -81,12 +85,13 @@ class Monster(pygame.sprite.Sprite):
                 self.status = 'idleR' if not 'L' in self.status else 'idleL'
 
     def move(self):
-        #self.hitbox.x += self.direction * self.speed
+        if 'walk' in self.status:
+            self.hitbox.x += self.direction * self.speed
 
         if self.hitbox.x < 0:
             self.hitbox.x = 0
-        if self.hitbox.x + self.rect.width > WIDTH:
-            self.hitbox.x = WIDTH - self.rect.width
+        # if self.hitbox.x + self.rect.width > WIDTH:
+        #     self.hitbox.x = WIDTH - self.rect.width
 
         self.collision('horizontal')
 
@@ -106,6 +111,7 @@ class Monster(pygame.sprite.Sprite):
     def animate(self, df):
         spr = self.spr[self.status]
         self.animation_speed = 0.33 if not 'running' in self.status else 1.0
+        self.animation_end = False
 
         # loop over the frame index
         #self.frame_index += self.animation_speed
@@ -121,6 +127,7 @@ class Monster(pygame.sprite.Sprite):
 
         if self.frame_index >= len(spr): # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = 0 # 다시 처음 이미지로 돌아가기
+            self.animation_end = True
 
         # 위의 프레임 인덱스에 따라 플레이어 이미지를 바꿔줌
         self.image = spr[int(self.frame_index)]

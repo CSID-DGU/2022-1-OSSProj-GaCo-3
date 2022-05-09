@@ -30,8 +30,11 @@ class Level:
         self.monster = Bringer((700, 325), BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
     def run(self,df):
-        self.visible_sprites.custom_draw(self.player)
+        self.visible_sprites.custom_draw(self.player, self.monster)
         self.player.update(df)
+
+        #몬스터에게 플레이어 위치 전달 후 업데이트 
+        self.monster.setTargetPos(self.player.rect[0])
         self.monster.update(df)
         debug("player : " + str(self.player.rect))
         debug("hitbox : " + str(self.player.hitbox), 10, 40)
@@ -64,7 +67,7 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
         self.background_floor_surf = pygame.transform.scale(self.background_floor_surf, (3500, 897)) # 화면 변화 속도가 달라서 바닥만 대충 크게 리사이즈함. 이미지 리소스 바꾸면 값 바꿀 것
         self.background_floor_rect = self.background_floor_surf.get_rect(topleft=(0,0))
 
-    def custom_draw(self, player):
+    def custom_draw(self, player, monster):
         # offset setting
         if player.hitbox.centerx <= self.left_x_point: # 시작 화면으로부터 left_x_point 범위에 플레이어가 있을 때는 카메라 이동 없음
             self.offset[0] = self.left_x_point - self.half_width
@@ -86,6 +89,17 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
         pygame.draw.rect(self.display_surface, (255, 255, 255),
                          sub_Coordinate(player.hitbox, (self.offset[0], self.offset[1],
                                                         0, 0)), 3)
+        # 몬스터 히트박스 그리기
+        pygame.draw.rect(self.display_surface, (255, 255, 255),
+                         sub_Coordinate(monster.hitbox, (self.offset[0] - monster.OffsetX, self.offset[1],
+                                                        0, 0)), 3)
+        #몬스터 인스턴스에 오프셋 전달
+        monster.CameraOffset = self.offset
+
+        # pygame.draw.rect(self.display_surface, (255, 255, 255),
+        #                  sub_Coordinate(monster.hitbox, (self.offset[0] - monster.scale[0]/4, self.offset[1],
+        #                                                 0, 0)), 3)
+                                                
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)
