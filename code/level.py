@@ -38,6 +38,8 @@ class Level:
         self.monster.update(df)
         debug("player : " + str(self.player.rect))
         debug("hitbox : " + str(self.player.hitbox), 10, 40)
+        debug("player_state : " + str(self.player.status_num), 10, 80)
+        debug("player_status : " + str(self.player.status), 10, 120)
 
 
 class CameraGroup(pygame.sprite.Group): # Not implemented yet
