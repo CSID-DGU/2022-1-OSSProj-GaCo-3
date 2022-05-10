@@ -38,6 +38,8 @@ class Level:
         self.monster.update(df)
         debug("player : " + str(self.player.rect))
         debug("hitbox : " + str(self.player.hitbox), 10, 40)
+        debug("player_state : " + str(self.player.status_num), 10, 80)
+        debug("player_status : " + str(self.player.status), 10, 120)
 
 
 class CameraGroup(pygame.sprite.Group): # Not implemented yet
@@ -95,6 +97,9 @@ class CameraGroup(pygame.sprite.Group): # Not implemented yet
                                                         0, 0)), 3)
         #몬스터 인스턴스에 오프셋 전달
         monster.CameraOffset = self.offset
+
+        #플레이어 인스턴스에 오프셋 전달
+        player.CameraOffset = self.offset
 
         # pygame.draw.rect(self.display_surface, (255, 255, 255),
         #                  sub_Coordinate(monster.hitbox, (self.offset[0] - monster.scale[0]/4, self.offset[1],
