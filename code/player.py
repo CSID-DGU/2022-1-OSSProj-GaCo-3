@@ -12,6 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
+        self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
 
         #graphic setup
         self.import_player_assets()
@@ -40,6 +41,11 @@ class Player(pygame.sprite.Sprite):
         self.ground_line = self.hitbox.y
 
         self.obstacle_sprites = obstacle_sprites
+
+        #카메라받기
+        self.CameraOffset = [0,0]
+
+        self.display_surface = pygame.display.get_surface()
 
     def import_player_assets(self):
         # 플레이어를 생성할 때 스프라이트 이미지 세트들도 함께 저장한다.
@@ -165,18 +171,33 @@ class Player(pygame.sprite.Sprite):
         # 충돌 검사 (현재 : 왼쪽 오른쪽 벽에 대해서 대충 구현)
         self.collision('horizontal')
     
+    #공격상태, 공격상태에서 어택박스 크기 조절까지, 프레임끝나면 행동 변경
     def attack(self):
         if self.status_num == 4:
-            if self.frame_index == 6:
-                if self.status == 'attack1':
+            if self.status == 'attack1':
+                self.attackBox.x = self.hitbox.x
+                self.attackBox.width = PLAYER_SIZE[0]/3
+                self.attackBox.height = PLAYER_SIZE[1]/2
+                if self.frame_index == 6:
                     self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                if self.status == 'attack1L':
+            if self.status == 'attack1L':
+                self.attackBox.x = self.hitbox.x - PLAYER_SIZE[0] / 5
+                self.attackBox.width = PLAYER_SIZE[0]/3
+                self.attackBox.height = PLAYER_SIZE[1]/2
+                if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
         if self.status_num == 5:
-            if self.frame_index == 6:
-                if self.status == 'attack2':
+            if self.status == 'attack2':
+                self.attackBox.x = self.hitbox.x
+                self.attackBox.width = PLAYER_SIZE[0]*3/5
+                self.attackBox.height = PLAYER_SIZE[1]/2
+                if self.frame_index == 6:
                     self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                if self.status == 'attack2L':
+            if self.status == 'attack2L':
+                self.attackBox.x = self.hitbox.x - PLAYER_SIZE[0] / 2
+                self.attackBox.width = PLAYER_SIZE[0]*3/5
+                self.attackBox.height = PLAYER_SIZE[1]/2
+                if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
 
     def jump(self,df):
@@ -283,3 +304,11 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move(df)
         self.animate(df)
+        #어택 박스 정보 갱신
+        attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
+        #어택 박스 높이 조절
+        attack_playerhitbox[1] = self.hitbox.y - PLAYER_SIZE[1]/4
+        #attack animation notify
+        if 'attack' in self.status:
+            if(self.frame_index < 7 and self.frame_index > 2):
+                pygame.draw.rect(self.display_surface,(255, 255, 255), attack_playerhitbox, 3)
