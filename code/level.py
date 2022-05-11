@@ -39,6 +39,14 @@ class Level:
         if self.game_state == 'intro':  # 마우스 클릭시 레벨1로
             self.intro(df)
 
+        #몬스터에게 플레이어 위치 전달 후 업데이트 
+        self.monster.setTargetPos(self.player.rect[0])
+        self.monster.update(df)
+        debug("player : " + str(self.player.rect))
+        debug("hitbox : " + str(self.player.hitbox), 10, 40)
+        debug("player_state : " + str(self.player.status_num), 10, 80)
+        debug("player_status : " + str(self.player.status), 10, 120)
+
         if self.game_state == 'level1':  # 엔터 키 입력 시 레벨2로
             self.level1(df)
 
@@ -192,6 +200,10 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
     def custom_draw(self, player, game_state):
         # game state에 따라서 배경 변화
 
+<<<<<<< HEAD
+=======
+    def custom_draw(self, player, monster):
+>>>>>>> main
         # offset setting
         if player.hitbox.centerx <= self.left_x_point: # 시작 화면으로부터 left_x_point 범위에 플레이어가 있을 때는 카메라 이동 없음
             self.offset[0] = self.left_x_point - self.half_width
@@ -208,6 +220,20 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
 
         self.display_surface.blit(self.background_mountain_surf, sky_offset_pos)
         self.display_surface.blit(self.background_floor_surf, add_Coordinate(floor_offset_pos, (0, -80)))
+
+        # 플레이어 히트박스 그리기
+        pygame.draw.rect(self.display_surface, (255, 255, 255),
+                         sub_Coordinate(player.hitbox, (self.offset[0], self.offset[1],
+                                                        0, 0)), 3)
+        # 몬스터 히트박스 그리기
+        pygame.draw.rect(self.display_surface, (255, 255, 255),
+                         sub_Coordinate(monster.hitbox, (self.offset[0] - monster.OffsetX, self.offset[1],
+                                                        0, 0)), 3)
+        #몬스터 인스턴스에 오프셋 전달
+        monster.CameraOffset = self.offset
+
+        #플레이어 인스턴스에 오프셋 전달
+        player.CameraOffset = self.offset
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)

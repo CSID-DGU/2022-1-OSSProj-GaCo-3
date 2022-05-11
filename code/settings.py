@@ -34,3 +34,6 @@ MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'im
                 'level3': {'background': 'image/map/castle.png', 'floor': 'image/map/floor.png'},
                 'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
 
+# monster2 spell settings
+BRINGER_SPELL_SIZE = (560, 372)
+BRINGER_SPELL_INFO = {'spell': {'idx': 16, 'size': BRINGER_SPELL_SIZE}}
