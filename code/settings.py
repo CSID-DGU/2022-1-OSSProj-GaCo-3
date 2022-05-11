@@ -27,3 +27,10 @@ BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 
                      'castL': {'idx': 9, 'size': BRINGER_SIZE}, 'castR': {'idx': 9, 'size': BRINGER_SIZE},
                      'hurtL': {'idx': 3, 'size': BRINGER_SIZE}, 'hurtR': {'idx': 3, 'size': BRINGER_SIZE}}
 
+# 장면 이미지 정보들
+MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},
+                'level1': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},
+                'level2': {'background': 'image/map/castle.png', 'floor': 'image/map/floor.png'},
+                'level3': {'background': 'image/map/castle.png', 'floor': 'image/map/floor.png'},
+                'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
+
