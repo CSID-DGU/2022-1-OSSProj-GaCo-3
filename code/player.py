@@ -44,7 +44,6 @@ class Player(pygame.sprite.Sprite):
 
         #카메라받기
         self.CameraOffset = [0,0]
-
         self.display_surface = pygame.display.get_surface()
 
     def import_player_assets(self):
@@ -139,8 +138,7 @@ class Player(pygame.sprite.Sprite):
                 self.control(1,'attack2',0,5,True,self.DASHATTACK_SPEED)
             if keys[pygame.K_s] and self.status=='fallL':
                 self.control(-1,'attack2L',0,5,True,self.DASHATTACK_SPEED)
-            
-            
+
         #공격1상태, 공격2상태(각각 프레임이 일정수치에 가면 다음 상태로 넘어가도록 해줌)
         self.attack()
         #hitbox, attackbox
@@ -162,8 +160,8 @@ class Player(pygame.sprite.Sprite):
         # # 카메라 구현 과정에서 이대로 둘 것인지 obstacle 그룹을 만들어서 경계를 관리할 것인지 결정할 필요가 있음
         if self.hitbox.x < 0:
             self.hitbox.x = 0
-        if self.hitbox.x > 3200: # 바닥 이미지 크기 설정할 때 함께 바꿔주던가 해야함
-            self.hitbox.x = 3200
+        if self.hitbox.x > 2800: # 바닥 이미지 크기 설정할 때 함께 바꿔주던가 해야함
+            self.hitbox.x = 2800
 
         if self.jumping:
             self.jump(df)
@@ -289,6 +287,15 @@ class Player(pygame.sprite.Sprite):
                     elif self.direction.x < 0:
                         self.hitbox.left = sprite.hitbox.right
 
+    def set_pos(self, (x, y)): # 장면 바뀔 때 위치 초기화하는 함수
+        self.rect.topleft = (x, y)
+        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8)
+
+    def set_state_ini(self):
+        self.status = 'idle'  # 시작은 오른쪽 방향을 보고 서있기
+        self.status_num = 0  # 0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death
+        self.set_pos(PLAYER_COOR_ini)
+
     def weve_value(self):
         # 7시간 강의에서 나왔던 함수
         # 이미지의 투명도를 시간에 따라 조절하여 이미지가 깜빡거리도록 할 수 있음
@@ -300,10 +307,11 @@ class Player(pygame.sprite.Sprite):
         else:
             return 0
 
-    def update(self,df):
+    def update(self, df):
         self.input()
         self.move(df)
         self.animate(df)
+
         #어택 박스 정보 갱신
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
         #어택 박스 높이 조절
