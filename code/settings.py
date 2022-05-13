@@ -27,6 +27,9 @@ BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 
                      'castL': {'idx': 9, 'size': BRINGER_SIZE}, 'castR': {'idx': 9, 'size': BRINGER_SIZE},
                      'hurtL': {'idx': 3, 'size': BRINGER_SIZE}, 'hurtR': {'idx': 3, 'size': BRINGER_SIZE}}
 
+# 게임 장면 이름
+GAME_STATES = ['intro', 'level1', 'level2', 'level3', 'ending']
+
 # 장면 이미지 정보들
 MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},
                 'level1': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},

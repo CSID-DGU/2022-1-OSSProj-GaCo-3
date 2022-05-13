@@ -42,14 +42,8 @@ class Player(pygame.sprite.Sprite):
 
         self.obstacle_sprites = obstacle_sprites
 
-        # game state 변환 테스트용
-        self.change_stage = False
-        self.can_change = True
-        self.change_event_time = None
-        self.change_stage_cool = 500
         #카메라받기
         self.CameraOffset = [0,0]
-
         self.display_surface = pygame.display.get_surface()
 
     def import_player_assets(self):
@@ -83,11 +77,6 @@ class Player(pygame.sprite.Sprite):
     #플레이어 키이벤트
     def input(self):
         keys = pygame.key.get_pressed()
-        # game state 변환 테스트용 입력
-        if keys[pygame.K_RETURN] and self.can_change:
-            self.change_event_time = pygame.time.get_ticks()
-            self.change_stage = True
-            self.can_change = False
 
         #정지상태
         if self.status_num==0:
@@ -306,7 +295,6 @@ class Player(pygame.sprite.Sprite):
         self.status = 'idle'  # 시작은 오른쪽 방향을 보고 서있기
         self.status_num = 0  # 0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death
         self.set_pos(PLAYER_COOR_ini)
-        self.change_stage = False
 
     def weve_value(self):
         # 7시간 강의에서 나왔던 함수
@@ -319,17 +307,10 @@ class Player(pygame.sprite.Sprite):
         else:
             return 0
 
-    def coolsdown(self):
-        current_time = pygame.time.get_ticks()
-        if self.can_change == False:
-            if current_time - self.change_event_time > self.change_stage_cool:
-                self.can_change = True
-
     def update(self, df):
         self.input()
         self.move(df)
         self.animate(df)
-        self.coolsdown()
 
         #어택 박스 정보 갱신
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
