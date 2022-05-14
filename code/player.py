@@ -160,8 +160,8 @@ class Player(pygame.sprite.Sprite):
         # # 카메라 구현 과정에서 이대로 둘 것인지 obstacle 그룹을 만들어서 경계를 관리할 것인지 결정할 필요가 있음
         if self.hitbox.x < 0:
             self.hitbox.x = 0
-        if self.hitbox.x > 2800: # 바닥 이미지 크기 설정할 때 함께 바꿔주던가 해야함
-            self.hitbox.x = 2800
+        if self.hitbox.x > 2450: # 바닥 이미지 크기 설정할 때 함께 바꿔주던가 해야함
+            self.hitbox.x = 2450
 
         if self.jumping:
             self.jump(df)
