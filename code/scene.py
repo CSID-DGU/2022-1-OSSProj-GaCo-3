@@ -26,6 +26,7 @@ class Scene:
 
         # background setting
         self.visibile_sprites= visible_sprites
+        self.visibile_sprites.background_setting(self.game_state)
 
         # for fade in/out
         self.fade_surf = pygame.Surface((WIDTH, HEIGHT))
