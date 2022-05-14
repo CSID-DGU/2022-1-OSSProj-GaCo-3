@@ -34,7 +34,7 @@ GAME_STATES = ['intro', 'level1', 'level2', 'level3', 'ending']
 MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},
                 'level1': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'},
                 'level2': {'background': 'image/map/castle.png', 'floor': 'image/map/floor.png'},
-                'level3': {'background': 'image/map/castle.png', 'floor': 'image/map/floor.png'},
+                'level3': {'background': 'image/map/boss_background.png', 'floor': 'image/map/boss_background.png'},
                 'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
 
 # monster2 spell settings
