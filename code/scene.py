@@ -88,7 +88,7 @@ class Scene:
             self.display_surface.blit(self.fade_surf, (0, 0))
             pygame.display.update()
 
-    # Boss 할 때 혹시 사용할까 싶어서?ㅇ
+    # Boss 할 때 혹시 사용할까 싶어서?
     def shake(self):
         pass
 
