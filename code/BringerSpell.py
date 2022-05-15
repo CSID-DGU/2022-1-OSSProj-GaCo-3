@@ -119,5 +119,6 @@ class BringerSpell(pygame.sprite.Sprite):
     def getHitBox(self):
         attackBox = pygame.Rect(self.hitbox)
         attackBox = attackBox.inflate(-self.scale[0]/16, -self.scale[1]/3)
+        return attackBox
 
 

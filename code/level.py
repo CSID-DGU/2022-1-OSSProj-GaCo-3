@@ -42,7 +42,7 @@ class Level:
         self.scene.update(df)
         self.scene_manager(self.scene)
 
-    def mosnter_create(self, game_state):
+    def monster_create(self, game_state):
         if game_state == 'level1': # monster1 생성 후 바꿔야함
             return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
@@ -74,5 +74,5 @@ class Level:
             self.game_state = GAME_STATES[self.scene_num]
 
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
-            self.monster = self.mosnter_create(self.game_state)  # 몬스터 생성
+            self.monster = self.monster_create(self.game_state)  # 몬스터 생성
             self.scene = Scene(self.player, self.monster, self.scene_num, self.game_state, self.visible_sprites)  # 다음 장면 생성

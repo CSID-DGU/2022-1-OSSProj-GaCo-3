@@ -15,6 +15,25 @@ class Player(pygame.sprite.Sprite):
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
 
+        #공격력
+        self.AttackPower = 10
+        #체력
+        self.hp = PLAYER_HP
+        #무적시간
+        self.hittedTime = 0
+
+        #충돌관련 받아올 변수들
+        #받아올 몬스터 박스들
+        self.monsterHitbox = [0,0,0,0]
+        self.monsterAttackbox = [0,0,0,0]
+        self.monsterSpellAttackbox = pygame.Rect(0,0,0,0)
+        #몬스터가 공격중인가?
+        self.monsterisAttack = False
+        #몬스터 마법이 공격중인가?
+        self.monsterspellisAttack = False
+        #몬스터의 공격력
+        self.monsterPower = 0
+
         #graphic setup
         self.import_player_assets()
         self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
@@ -324,3 +343,19 @@ class Player(pygame.sprite.Sprite):
                 self.isAttack = True
             else:
                 self.isAttack = False
+        #충돌구현
+        #플레이어 어택박스, 몬스터 히트박스 충돌시
+        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0:
+            self.hp -= self.monsterPower
+            self.hittedTime = 0.5
+        #플레이어 어택박스, 몬스터 히트박스 충돌시
+        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0:
+            self.hp -= self.monsterPower
+            self.hittedTime = 0.5
+        
+        #데미지 사이 시간
+        self.hittedTime -= df/ 1000.0
+
+    #플레이어 위치 중간값x반환
+    def getPlayerMiddle(self):
+        return self.hitbox.x+ self.hitbox.width/2
