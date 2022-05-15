@@ -77,6 +77,11 @@ class Bringer(Monster):
 
         #마법 공격 쿨타임
         self.CastTime += df/ 1000.0
+
+        posX = self.targetPos
+        #중앙값으로 거리 계산 하기 위해 사이즈의 일정 비율을 더해준다.
+        monsterPosX = self.getHitBox()[0] + self.scale[0]/8
+        distanceX = monsterPosX - posX
        
         if ('hurt' in self.status) | ('death' in self.status) | ('attack' in self.status) | ('cast' in self.status)| ('idle' in self.status):
             if not self.animation_end:
@@ -94,12 +99,8 @@ class Bringer(Monster):
             else:
                 self.IdleTime = 0.0
 
-        posX = self.targetPos
-        monsterPosX = self.hitbox.topleft[0] - self.OffsetX
-        distanceX = monsterPosX - posX
-
         if self.CastTime < self.CastTimeMax:
-            if abs(distanceX) > 80:
+            if abs(distanceX) > 200:
                 if(distanceX)>=0:
                     self.status = 'walkL'
                     self.direction = -1
@@ -164,5 +165,12 @@ class Bringer(Monster):
 
     def setTargetPos(self, posX):
         self.targetPos = posX
+    
+    def getHitBox(self):
+        hitbox = self.hitbox.inflate(-BRINGER_SIZE[0]/4, -BRINGER_SIZE[1]/5*2)
+        return  sub_Coordinate(hitbox, (0 - self.OffsetX, -BRINGER_SIZE[1]/5, 0, 0))
+
+    def getAttackBox(self):
+        return self.attackbox                                              
 
  

@@ -28,7 +28,7 @@ class BringerSpell(pygame.sprite.Sprite):
         self.image = pygame.image.load('image/Monster/bringer/spell.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-SIZE[0]/3*2, 0)#이미지 사각형의 크기 줄여 HitBox로 사용 
+        self.hitbox = self.rect.inflate(-SIZE[0]/4*3, 0)#이미지 사각형의 크기 줄여 HitBox로 사용 
         self.scale = SIZE
         self.CameraOffset = [0,0]
         self.isAttack = False
@@ -63,7 +63,7 @@ class BringerSpell(pygame.sprite.Sprite):
 
     def ON(self, posX):
         self.SkillON = True
-        self.hitbox.x = posX + self.scale[0]/8
+        self.hitbox.x = posX - self.scale[0]/16
         self.hitbox.y = 250
 
     def animate(self, df):
@@ -106,10 +106,18 @@ class BringerSpell(pygame.sprite.Sprite):
     def update(self, df):
         self.animate(df)
         #어택 박스 정보 갱신
-        attack_hitbox = sub_Coordinate(self.hitbox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
+        attackBox = pygame.Rect(self.hitbox)
+        attackBox = attackBox.inflate(-self.scale[0]/16, -self.scale[1]/3)
+        attack_hitbox = sub_Coordinate(attackBox, (self.CameraOffset[0], self.CameraOffset[1]-self.scale[1]/4, 0, 0))
+        
         if(self.frame_index < 11 and self.frame_index > 6):
             pygame.draw.rect(self.display_surface,(255, 255, 255), attack_hitbox, 3)
             self.isAttack = True
         else:
             self.isAttack = False
+
+    def getHitBox(self):
+        attackBox = pygame.Rect(self.hitbox)
+        attackBox = attackBox.inflate(-self.scale[0]/16, -self.scale[1]/3)
+
 

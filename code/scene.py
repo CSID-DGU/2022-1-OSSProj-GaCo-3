@@ -50,9 +50,9 @@ class Scene:
         self.player.update(df)
 
         # 몬스터에게 플레이어 위치 전달 후 업데이트 # 용준? 코드인 것 같음
-        self.monster.setTargetPos(self.player.rect[0])
+        self.monster.setTargetPos(self.player.hitbox[0])
         self.monster.update(df)
-        debug("monster_hitbox : " + str(self.monster.hitbox), 10, 0)
+        debug("monster_hitbox : " + str(self.monster.getHitBox()), 10, 0)
         debug("player_hitbox : " + str(self.player.hitbox), 10, 40)
         debug("player_isAttack : " + str(self.player.isAttack), 10, 80)
         debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
@@ -174,5 +174,5 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
                                                         0, 0)), 3)
         # 몬스터 히트박스 그리기
         pygame.draw.rect(self.display_surface, (255, 255, 255),
-                         sub_Coordinate(monster.hitbox, (self.offset[0] - monster.OffsetX, self.offset[1],
+                         sub_Coordinate(monster.getHitBox(), (self.offset[0] , self.offset[1],
                                                         0, 0)), 3)
