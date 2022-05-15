@@ -34,7 +34,7 @@ class Bringer(Monster):
         self.isAttack = False
 
         #공격력
-        self.AttackPower = 10
+        self.AttackPower = 40
         #체력
         self.hp = BRINGER_HP
         #무적시간
