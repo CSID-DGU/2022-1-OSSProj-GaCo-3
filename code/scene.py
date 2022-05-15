@@ -52,10 +52,11 @@ class Scene:
         # 몬스터에게 플레이어 위치 전달 후 업데이트 # 용준? 코드인 것 같음
         self.monster.setTargetPos(self.player.rect[0])
         self.monster.update(df)
-        debug("player : " + str(self.player.rect))
-        debug("hitbox : " + str(self.player.hitbox), 10, 40)
-        debug("player_state : " + str(self.player.status_num), 10, 80)
-        debug("player_status : " + str(self.player.status), 10, 120)
+        debug("monster_hitbox : " + str(self.monster.hitbox), 10, 0)
+        debug("player_hitbox : " + str(self.player.hitbox), 10, 40)
+        debug("player_isAttack : " + str(self.player.isAttack), 10, 80)
+        debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
+        debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
 
         self.fade_in()
         debug(self.game_state, WIDTH // 2, HEIGHT // 2) #게임 장면 바뀌는 거 확인용

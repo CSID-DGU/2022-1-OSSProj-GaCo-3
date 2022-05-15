@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
+        self.isAttack = False
 
         #graphic setup
         self.import_player_assets()
@@ -318,5 +319,8 @@ class Player(pygame.sprite.Sprite):
         attack_playerhitbox[1] = self.hitbox.y - PLAYER_SIZE[1]/4
         #attack animation notify
         if 'attack' in self.status:
-            if(self.frame_index < 7 and self.frame_index > 2):
+            if(self.frame_index < 6 and self.frame_index > 2):
                 pygame.draw.rect(self.display_surface,(255, 255, 255), attack_playerhitbox, 3)
+                self.isAttack = True
+            else:
+                self.isAttack = False
