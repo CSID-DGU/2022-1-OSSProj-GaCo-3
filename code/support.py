@@ -60,3 +60,10 @@ def sub_Coordinate(coor1, coor2):
     """
     res = map(lambda x, y : x - y, coor1, coor2)
     return res
+
+#사각형충돌처리함수
+def collision_check(A, B):
+    if A.top < B.bottom and B.top < A.bottom and A.left < B.right and B.left < A.right:
+        return True
+    else:
+        return False

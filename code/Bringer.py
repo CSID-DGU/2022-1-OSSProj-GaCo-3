@@ -31,7 +31,7 @@ class Bringer(Monster):
 
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
         self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
-
+        self.isAttack = False
     def spellON(self):
         TargetPos = self.targetPos
         self.spell.ON(TargetPos)
@@ -151,7 +151,9 @@ class Bringer(Monster):
         if 'attack' in self.status:
             if(self.frame_index < 7 and self.frame_index > 3):
                 pygame.draw.rect(self.display_surface,(255, 255, 255), attack_hitbox, 3)
-                
+                self.isAttack = True
+            else:
+                self.isAttack = False
 
         elif 'cast' in self.status and self.animation_end:
             self.spellON()
