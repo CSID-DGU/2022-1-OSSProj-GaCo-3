@@ -32,6 +32,14 @@ class Bringer(Monster):
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
         self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
         self.isAttack = False
+
+        #공격력
+        self.AttackPower = 40
+        #체력
+        self.hp = BRINGER_HP
+        #무적시간
+        self.hittedTime = 0
+
     def spellON(self):
         TargetPos = self.targetPos
         self.spell.ON(TargetPos)
@@ -161,7 +169,16 @@ class Bringer(Monster):
            
         
         self.spell.CameraOffset = self.CameraOffset
-        self.spell.update(df)  
+        self.spell.update(df)
+
+        #충돌
+        #플레이어 어택박스, 몬스터 히트박스 충돌시
+        if collision_check(self.playerAttackbox,self.getHitBox()) and self.playerisAttack and self.hittedTime < 0:
+            self.hp -= self.playerPower
+            self.hittedTime = 0.5
+        
+        #데미지 사이 시간
+        self.hittedTime -= df/ 1000.0
 
     def setTargetPos(self, posX):
         self.targetPos = posX
@@ -171,6 +188,9 @@ class Bringer(Monster):
         return  sub_Coordinate(hitbox, (0 - self.OffsetX, -BRINGER_SIZE[1]/5, 0, 0))
 
     def getAttackBox(self):
-        return self.attackbox                                              
+        return self.attackBox 
+
+    def getSpellAttackBox(self):
+        return self.spell.getHitBox()                                             
 
  

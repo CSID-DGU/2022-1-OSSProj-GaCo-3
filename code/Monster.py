@@ -47,6 +47,15 @@ class Monster(pygame.sprite.Sprite):
 
         self.CameraOffset = [0,0]
 
+        #충돌관련 받아올 변수들
+        #받아올 플레이어 박스들
+        self.playerHitbox = pygame.Rect(0,0,0,0)
+        self.playerAttackbox = pygame.Rect(0,0,0,0)
+        #플레이어가 공격중인가?
+        self.playerisAttack = False
+        #플레이어의 공격력
+        self.playerPower = 0
+
         self.direction = -1
 
         # movement

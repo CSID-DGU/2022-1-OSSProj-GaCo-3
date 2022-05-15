@@ -62,8 +62,9 @@ def sub_Coordinate(coor1, coor2):
     return res
 
 #사각형충돌처리함수
+#A: 사각형, B: 리스트형태
 def collision_check(A, B):
-    if A.top < B.bottom and B.top < A.bottom and A.left < B.right and B.left < A.right:
+    if A.top < B[1]+B[3] and B[1] < A.bottom and A.left < B[0]+B[2] and B[0] < A.right:
         return True
     else:
         return False

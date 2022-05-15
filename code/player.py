@@ -15,6 +15,25 @@ class Player(pygame.sprite.Sprite):
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
 
+        #공격력
+        self.AttackPower = 10
+        #체력
+        self.hp = PLAYER_HP
+        #무적시간
+        self.hittedTime = 0
+
+        #충돌관련 받아올 변수들
+        #받아올 몬스터 박스들
+        self.monsterHitbox = [0,0,0,0]
+        self.monsterAttackbox = [0,0,0,0]
+        self.monsterSpellAttackbox = pygame.Rect(0,0,0,0)
+        #몬스터가 공격중인가?
+        self.monsterisAttack = False
+        #몬스터 마법이 공격중인가?
+        self.monsterspellisAttack = False
+        #몬스터의 공격력
+        self.monsterPower = 0
+
         #graphic setup
         self.import_player_assets()
         self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
@@ -139,10 +158,14 @@ class Player(pygame.sprite.Sprite):
                 self.control(1,'attack2',0,5,True,self.DASHATTACK_SPEED)
             if keys[pygame.K_s] and self.status=='fallL':
                 self.control(-1,'attack2L',0,5,True,self.DASHATTACK_SPEED)
+        
 
         #공격1상태, 공격2상태(각각 프레임이 일정수치에 가면 다음 상태로 넘어가도록 해줌)
         self.attack()
-        #hitbox, attackbox
+        #피격상태
+        self.hitted()
+        #사망
+        self.dead()
         
     #각종 상태 컨트롤해주는 함수
     def control(self, direction, status, index, num, isjumping, speed):
@@ -198,6 +221,25 @@ class Player(pygame.sprite.Sprite):
                 self.attackBox.height = PLAYER_SIZE[1]/2
                 if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+    def hitted(self):
+        if self.status_num == 6 and self.frame_index==3:
+            if self.jumping == False:
+                if not 'L' in self.status:
+                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+            else:
+                if not 'L' in self.status:
+                    self.control(0,'fall',0,3,True,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'fallL',0,3,True,self.RUNNING_SPEED)
+    
+    def dead(self):
+        if self.status_num == 7 and self.frame_index==10:
+            self.hp = PLAYER_HP
+            self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+            self.hitbox.x = 231
+            self.hitbox.y = 551
 
     def jump(self,df):
         # 점프할 때의 y값 변경
@@ -255,7 +297,9 @@ class Player(pygame.sprite.Sprite):
         if self.status_num==5:
             self.animation_speed = 0.007
         if self.status_num==6:
-            self.animation_speed = 0.01
+            self.animation_speed = 0.007
+        if self.status_num==7:
+            self.animation_speed = 0.007
         
         # loop over the frame index
         self.frame_index += self.animation_speed*df
@@ -264,7 +308,8 @@ class Player(pygame.sprite.Sprite):
             
         # once frame index
         if self.frame_index >= len(spr)-1 and (self.status == 'jump' or self.status == 'jumpL' or self.status == 'attack1' or self.status == 'attack1L'
-                                              or self.status == 'attack2' or self.status == 'attack2L'): # 스프라이트 마지막 이미지까지 보여준 뒤
+                                              or self.status == 'attack2' or self.status == 'attack2L' or self.status == 'hitted' or self.status == 'hittedL'
+                                              or self.status == 'death' or self.status == 'deathL'): # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = len(spr)-1 #  마지막 프레임에서 고정
 
         # 위의 프레임 인덱스에 따라 플레이어 이미지를 바꿔줌
@@ -324,3 +369,56 @@ class Player(pygame.sprite.Sprite):
                 self.isAttack = True
             else:
                 self.isAttack = False
+        #충돌구현
+        #몬스터 어택박스, 플레이어 히트박스 충돌시
+        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0:
+            self.hp -= self.monsterPower
+            self.hittedTime = 0.5
+            #피격상태
+            if self.jumping == True:
+                if not 'L' in self.status:
+                    self.control(0,'hitted',0,6,True,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'hittedL',0,6,True,self.RUNNING_SPEED)
+            else:
+                if not 'L' in self.status:
+                    self.control(0,'hitted',0,6,False,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
+        #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
+        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0:
+            self.hp -= self.monsterPower
+            self.hittedTime = 0.5
+            #피격상태
+            if self.jumping == True:
+                if not 'L' in self.status:
+                    self.control(0,'hitted',0,6,True,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'hittedL',0,6,True,self.RUNNING_SPEED)
+            else:
+                if not 'L' in self.status:
+                    self.control(0,'hitted',0,6,False,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
+        
+        #데미지 사이 시간
+        self.hittedTime -= df/ 1000.0
+
+        #사망
+        if self.hp <= 0:
+            self.hp = PLAYER_HP
+            self.hittedTime = 10 #사망시 10초간 무적
+            if self.jumping == True:
+                if not 'L' in self.status:
+                    self.control(0,'death',0,7,True,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'deathL',0,7,True,self.RUNNING_SPEED)
+            else:
+                if not 'L' in self.status:
+                    self.control(0,'death',0,7,False,self.RUNNING_SPEED)
+                else:
+                    self.control(0,'deathL',0,7,False,self.RUNNING_SPEED)
+
+    #플레이어 위치 중간값x반환
+    def getPlayerMiddle(self):
+        return self.hitbox.x+ self.hitbox.width/2

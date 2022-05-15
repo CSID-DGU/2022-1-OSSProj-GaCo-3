@@ -49,14 +49,16 @@ class Scene:
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
-        # 몬스터에게 플레이어 위치 전달 후 업데이트 # 용준? 코드인 것 같음
+        # 디버그 코드
         self.monster.setTargetPos(self.player.hitbox[0])
         self.monster.update(df)
-        debug("monster_hitbox : " + str(self.monster.getHitBox()), 10, 0)
-        debug("player_hitbox : " + str(self.player.hitbox), 10, 40)
-        debug("player_isAttack : " + str(self.player.isAttack), 10, 80)
-        debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
-        debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
+        debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
+        debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
+        debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
+        debug("player_hp : " + str(self.player.hp), 10, 160)
+        debug("monster_hp : " + str(self.monster.hp), 10, 120)
+        #debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
+        #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
 
         self.fade_in()
         debug(self.game_state, WIDTH // 2, HEIGHT // 2) #게임 장면 바뀌는 거 확인용
@@ -136,6 +138,9 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
 
         self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
+        self.hitbox_attackbox_transfer(player, monster) # player, monster에게 서로의 hitbox, attackbox 전달
+        self.playerinfo_transfer(player, monster) #monster에게 player 공격력, 공격중인지 전달
+        self.monsterinfo_transfer(player, monster) #player에게 monster가 공격력, 공격중인지 전달
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)
@@ -166,6 +171,24 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         monster.CameraOffset = self.offset
         #플레이어 인스턴스에 오프셋 전달
         player.CameraOffset = self.offset
+    
+    def hitbox_attackbox_transfer(self, player, monster):
+        #몬스터 인스턴스에 플레이어 박스들 전달
+        monster.playerHitbox = player.hitbox
+        monster.playerAttackbox = player.attackBox
+        #플레이어 인스턴스에 몬스터2 박스들 전달
+        player.monsterHitbox = monster.getHitBox()
+        player.monsterAttackbox = monster.getAttackBox()
+        player.monsterSpellAttackbox = monster.getSpellAttackBox()
+
+    def playerinfo_transfer(self, player, monster):
+        monster.playerisAttack = player.isAttack
+        monster.playerPower = player.AttackPower
+    
+    def monsterinfo_transfer(self, player, monster):
+        player.monsterisAttack = monster.isAttack
+        player.monsterspellisAttack = monster.spell.isAttack
+        player.monsterPower = monster.AttackPower
 
     def hitbox_draw(self, player, monster):
         # 플레이어 히트박스 그리기
