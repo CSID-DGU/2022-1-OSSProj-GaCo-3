@@ -2,7 +2,11 @@
 
 ## "Devil's Castle" Game
 
-### develop language & tools
-* python 2.7
-* pygame
+### Support Operating Systems
+* OS that have installed python3
+
+### Develop language & tools
+* Language : python3
+* Library : pygame==2.1.2
+
 
