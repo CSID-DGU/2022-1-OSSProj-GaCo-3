@@ -130,3 +130,6 @@ dmypy.json
 
 # ref
 ref
+
+# idea files
+.idea/
