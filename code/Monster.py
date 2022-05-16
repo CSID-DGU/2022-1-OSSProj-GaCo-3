@@ -5,7 +5,7 @@ from settings import *
 from support import *
 from game import *
 
-def import_monster_image(path, filename, idx, (size_x, size_y)):
+def import_monster_image(path, filename, idx, size):
     surface_list = []
     max_col = max_index = max_row = idx
     baseImage = pygame.image.load(path+filename).convert()
@@ -15,7 +15,7 @@ def import_monster_image(path, filename, idx, (size_x, size_y)):
     for i in range(max_index):  # 스프라이트 시트의 각 인덱스에 자른 이미지 저장
         image = pygame.Surface((width, height))
         image.blit(baseImage, (0, 0), ((i % max_row) * width, (i // max_col) * height, width, height))
-        image = pygame.transform.scale(image, (size_x, size_y))
+        image = pygame.transform.scale(image, size)
         image.set_colorkey((0, 0, 0))  # 뒤에 흰배경 없앰
         surface_list.append(image)
     return surface_list

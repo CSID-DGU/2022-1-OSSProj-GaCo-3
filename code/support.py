@@ -14,7 +14,7 @@ def import_folder(path):
             surface_list.append(image_surf)
     return surface_list
 
-def import_sprites_image(filename, idx, (size_x, size_y)):
+def import_sprites_image(filename, idx, size):
     path = 'image/player2/'
     surface_list = []
     max_col = max_index = max_row = idx
@@ -25,7 +25,7 @@ def import_sprites_image(filename, idx, (size_x, size_y)):
     for i in range(max_index):  # 스프라이트 시트의 각 인덱스에 자른 이미지 저장
         image = pygame.Surface((width, height))
         image.blit(baseImage, (0, 0), ((i % max_row) * width, (i // max_col) * height, width, height))
-        image = pygame.transform.scale(image, (size_x, size_y))
+        image = pygame.transform.scale(image, size)
         image.set_colorkey((0, 0, 0))  # 뒤에 흰배경 없앰
         """"
         if 'L' in filename: # 둘 차이 : 왼쪽 오른쪽 방향 <- 이미지 반전하고 저장할 때 달라진 것 같음
@@ -41,16 +41,6 @@ def quit_check(event):
         pygame.quit()
         sys.exit()
 
-def add_Coordinate(coor1, coor2):
-    """
-    add coor2 to coor1
-    :param coor1: coordinate 1
-    :param coor2: coordinate 2
-    :return: (coor1[0] + coor2[0], coor1[1] + coor2[1]) -> tuple.
-    """
-    res = map(lambda x, y : x + y, coor1, coor2)
-    return res
-
 def sub_Coordinate(coor1, coor2):
     """
     subtract coor2 from coor1
@@ -58,7 +48,7 @@ def sub_Coordinate(coor1, coor2):
     :param coor2: coordinate 2
     :return: (coor1[0] - coor2[0], coor1[1] - coor2[1]) -> tuple.
     """
-    res = map(lambda x, y : x - y, coor1, coor2)
+    res = list(map(lambda x, y : x - y, coor1, coor2))
     return res
 
 #사각형충돌처리함수

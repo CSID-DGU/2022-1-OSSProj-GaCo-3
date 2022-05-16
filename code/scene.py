@@ -107,7 +107,8 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.half_height = self.display_surface.get_height() // 2 # 층 만들면 그때 사용할 예정
 
         # 오프셋 세팅
-        self.offset = [0, 0]
+        #self.offset = [0, 0]
+        self.offset = pygame.math.Vector2()
 
         # 오프셋 변경 기준 x점
         self.left_x_point = 640 # 이 오프셋 포인트 기준으로 플레이어가 오른쪽으로 향하면 그 후로는 플레이어가 화면 중심에 있음
@@ -126,15 +127,15 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
 
         # 배경 오프셋 위치 설정
         # 멀리 있는 물체가 더 느리게 변화하고 바닥 물체가 더 빠르게 변화하므로 바닥이 멀리 있는 물체보다 이미지 사이즈가 커야함.
-        floor_offset_pos = sub_Coordinate(self.background_floor_rect.topleft, self.offset)
-        sky_offset_pos = sub_Coordinate(self.background_mountain_rect.topleft, self.offset)
+        floor_offset_pos = self.background_floor_rect.topleft - self.offset
+        sky_offset_pos = self.background_mountain_rect.topleft - self.offset
 
         if game_state == 'level1':
             sky_offset_pos[0] *= 0.3 # 멀리있는 하늘은 x포지션의 변화 속도를 가까이있는 바닥보다 느리게 만들기
 
         # 배경 오프셋에 맞춰 배경(바닥, 벽)그리기
         self.display_surface.blit(self.background_mountain_surf, sky_offset_pos)
-        self.display_surface.blit(self.background_floor_surf, add_Coordinate(floor_offset_pos, (0, -80)))
+        self.display_surface.blit(self.background_floor_surf, floor_offset_pos + (0, -80) )
 
         self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
@@ -143,7 +144,7 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.monsterinfo_transfer(player, monster) #player에게 monster가 공격력, 공격중인지 전달
 
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
-            offset_position = sub_Coordinate(sprite.rect.topleft, self.offset)
+            offset_position = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_position)
 
     def background_setting(self, game_state):
@@ -160,11 +161,11 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
 
     def set_offset(self, player):
         if player.hitbox.centerx <= self.left_x_point: # 시작 화면으로부터 left_x_point 범위에 플레이어가 있을 때는 카메라 이동 없음
-            self.offset[0] = self.left_x_point - self.half_width
+            self.offset.x = self.left_x_point - self.half_width
         elif player.hitbox.centerx >= self.right_x_point: # right_x_point 부터 끝 장면까지 범위에 플레이어가 있을 때는 카메라 이동 없음
-            self.offset[0] = self.right_x_point - self.half_width
+            self.offset.x = self.right_x_point - self.half_width
         else: # left_x_point ~ right_x_point 사이에 플레이어가 있을 때는 플레이어가 중심에 있을 수 있도록 카메라를 이동시킴
-            self.offset[0] = player.hitbox.centerx - self.half_width
+            self.offset.x = player.hitbox.centerx - self.half_width
 
     def offset_transfer(self, player, monster):
         #몬스터 인스턴스에 오프셋 전달
