@@ -3,6 +3,6 @@
 ## "Devil's Castle" Game
 
 ### develop language & tools
-* python 2.7
+* python 3
 * pygame
 
