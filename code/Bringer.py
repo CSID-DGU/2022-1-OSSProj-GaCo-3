@@ -1,4 +1,5 @@
 # -*-coding:utf-8-*-
+from random import getstate
 import pygame
 from settings import *
 from support import *
@@ -32,6 +33,7 @@ class Bringer(Monster):
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
         self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
         self.isAttack = False
+        self.isDead = False
 
         #공격력
         self.AttackPower = 40
@@ -72,7 +74,20 @@ class Bringer(Monster):
        super(Bringer, self).jump()
 
     def animate(self, df):
-       super(Bringer, self).animate(df)
+        dt = df
+
+        #피격 모션인 경우 애니메이션이 느리게 재생되도록 줄어든 델타타임을 인자로 넘김
+        if 'hurt' in self.status:
+            dt /= 2.0
+
+        super(Bringer, self).animate(dt)
+
+        spr = self.spr[self.status]
+        if 'death' in self.status and self.animation_end:
+            #임시적 조치로 죽음 모션의 마지막 프레임일 경우 화면 밖으로 내보낸다.
+            self.kill()
+            self.hitbox.x = 90000
+            return
 
     def collision(self, direction):
         super(Bringer, self).collision(direction)
@@ -82,6 +97,9 @@ class Bringer(Monster):
         self.prev_status = self.status
 
         origindir = self.look_direction
+        spr = self.spr[self.status]
+        if 'death' in self.status and self.animation_end:
+            return
 
         #마법 공격 쿨타임
         self.CastTime += df/ 1000.0
@@ -176,6 +194,18 @@ class Bringer(Monster):
         if collision_check(self.playerAttackbox,self.getHitBox()) and self.playerisAttack and self.hittedTime < 0:
             self.hp -= self.playerPower
             self.hittedTime = 0.5
+
+            if not 'attack' in self.status and not 'cast' in self.status:
+                if self.look_direction == 1:
+                    self.status = 'hurtR'
+                else:
+                    self.status = 'hurtL'
+            
+            if self.hp <= 0:
+                    if self.look_direction == 1:
+                        self.status = 'deathR'
+                    else:
+                        self.status = 'deathL'
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0
