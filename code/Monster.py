@@ -5,22 +5,6 @@ from settings import *
 from support import *
 from game import *
 
-def import_monster_image(path, filename, idx, size):
-    surface_list = []
-    max_col = max_index = max_row = idx
-    baseImage = pygame.image.load(path+filename).convert()
-    width = baseImage.get_width() / max_col
-    height = baseImage.get_height()
-
-    for i in range(max_index):  # 스프라이트 시트의 각 인덱스에 자른 이미지 저장
-        image = pygame.Surface((width, height))
-        image.blit(baseImage, (0, 0), ((i % max_row) * width, (i // max_col) * height, width, height))
-        image = pygame.transform.scale(image, size)
-        image.set_colorkey((0, 0, 0))  # 뒤에 흰배경 없앰
-        surface_list.append(image)
-    return surface_list
-
-
 class Monster(pygame.sprite.Sprite):
     def __init__(self, pos, MONSTER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
@@ -75,7 +59,7 @@ class Monster(pygame.sprite.Sprite):
         #             'castL':[], 'castR':[],
         #             'hurtL':[], 'hurtR':[]}
         for spr_name in self.spr.keys():
-            self.spr[spr_name] = import_monster_image(path, spr_name +'.png',
+            self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
                                                       MonsterInfo[spr_name]['idx'],
                                                       MonsterInfo[spr_name]['size'])
             if 'R' in spr_name: #오른쪽방향일 경우 이미지 순서 뒤집어서 정렬해주기

@@ -88,7 +88,8 @@ class Player(pygame.sprite.Sprite):
                     }
 
         for spr_name in self.spr.keys():
-            self.spr[spr_name] = import_sprites_image(spr_name +'.png',
+            path = 'image/player2/'
+            self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
                                                       PLAYER_IMG_INFO[spr_name]['idx'],
                                                       PLAYER_IMG_INFO[spr_name]['size'])
             if 'L' in spr_name: #왼쪽방향일 경우 이미지 순서 뒤집어서 정렬해주기 -> 애니메이션 구현할 때 편하게 하려고 뒤집어줌.
