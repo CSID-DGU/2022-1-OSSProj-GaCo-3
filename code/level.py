@@ -74,5 +74,6 @@ class Level:
             self.game_state = GAME_STATES[self.scene_num]
 
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
+            self.monster.spell.kill() # 몬스터 스펠 죽이기
             self.monster = self.monster_create(self.game_state)  # 몬스터 생성
             self.scene = Scene(self.player, self.monster, self.scene_num, self.game_state, self.visible_sprites)  # 다음 장면 생성
