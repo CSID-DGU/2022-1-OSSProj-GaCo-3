@@ -14,8 +14,7 @@ def import_folder(path):
             surface_list.append(image_surf)
     return surface_list
 
-def import_sprites_image(filename, idx, size):
-    path = 'image/player2/'
+def import_sprites_image(path, filename, idx, size):
     surface_list = []
     max_col = max_index = max_row = idx
     baseImage = pygame.image.load(path+filename).convert()
