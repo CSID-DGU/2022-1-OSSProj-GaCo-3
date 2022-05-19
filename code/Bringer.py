@@ -57,21 +57,7 @@ class Bringer(Monster):
                     'castL':[], 'castR':[],
                     'hurtL':[], 'hurtR':[]}
 
-        super(Bringer, self).import_monster_assets('image/Monster/bringer/', BRINGER_IMG_INFO)
-
-    def input(self):
-        keys = pygame.key.get_pressed()
-
-        super(Bringer, self).input()
-
-    def get_status(self):
-        super(Bringer, self).get_status()
-
-    def move(self):
-       super(Bringer, self).move()
-
-    def jump(self):
-       super(Bringer, self).jump()
+        super(Bringer, self).import_monster_assets('image/Monster/bringer/', BRINGER_IMG_INFO, 'R')
 
     def animate(self, df):
         dt = df
@@ -88,9 +74,6 @@ class Bringer(Monster):
             self.kill()
             self.hitbox.x = 90000
             return
-
-    def collision(self, direction):
-        super(Bringer, self).collision(direction)
 
     def AI(self, df):
         #구체적인 AI구현

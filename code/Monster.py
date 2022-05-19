@@ -49,7 +49,7 @@ class Monster(pygame.sprite.Sprite):
 
         self.obstacle_sprites = obstacle_sprites
 
-    def import_monster_assets(self, path, MonsterInfo):
+    def import_monster_assets(self, path, MonsterInfo, reverse_key):
         
         #자식 클래스에서 지정 해준 후 호출
         # self.spr = {'idleL':[], 'idleR':[],
@@ -62,14 +62,8 @@ class Monster(pygame.sprite.Sprite):
             self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
                                                       MonsterInfo[spr_name]['idx'],
                                                       MonsterInfo[spr_name]['size'])
-            if 'R' in spr_name: #오른쪽방향일 경우 이미지 순서 뒤집어서 정렬해주기
+            if reverse_key in spr_name: #오른쪽방향일 경우 이미지 순서 뒤집어서 정렬해주기
                 self.spr[spr_name].reverse()
-
-    def input(self):
-        ## 몬스터 디버그 용
-        #상태가 이전과 달라졌을 경우 프레임 인덱스 초기화
-        if(self.prev_status != self.status):
-            self.frame_index = 0        
 
     def get_status(self):
         if self.direction == 0:
@@ -146,7 +140,6 @@ class Monster(pygame.sprite.Sprite):
         self.move()
 
     def update(self, df):
-        self.input()
         self.AI(df)
         self.animate(df)
 
