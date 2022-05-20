@@ -97,7 +97,6 @@ class Monster(pygame.sprite.Sprite):
 
     def animate(self, df):
         spr = self.spr[self.status]
-        self.animation_speed = 0.33 if not 'running' in self.status else 1.0
         self.animation_end = False
 
         # loop over the frame index
