@@ -33,10 +33,6 @@ class Abyss(Monster):
     def spellON(self): # 얘는 하는 일이 너무 적음. 수정 필요할 듯
         self.spell.ON(self.targetPos)
 
-    def attack(self):
-        # __init__()에 self.attackBox 가 똑같이 정의되어 있는데, 왜 어택박스를 또 만들었지?
-        self.attackbox = pygame.Rect(self.rect[0], self.rect[1], self.scale[0] / 2, self.scale[1])
-
     def import_monster_assets(self):
         self.spr = {'idleL':[], 'idleR':[],
                     'runL':[], 'runR':[],
@@ -61,6 +57,10 @@ class Abyss(Monster):
             self.kill()
             self.hitbox.x = 90000
             return
+
+    def AI(self, df):
+
+        pass
 
     def update(self, df):
         self.AI(df)
