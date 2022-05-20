@@ -11,6 +11,7 @@ from Bringer import *
 from random import choice
 from debug import *
 from scene import *
+from abyss import *
 
 class Level:
     def __init__(self):
@@ -44,7 +45,7 @@ class Level:
 
     def monster_create(self, game_state):
         if game_state == 'level1': # monster1 생성 후 바꿔야함
-            return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+            return Abyss(ABYSS_COOR_ini, ABYSS_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
         if game_state == 'level2':
             return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)

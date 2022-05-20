@@ -13,7 +13,7 @@ class BringerSpell(pygame.sprite.Sprite):
         self.image = pygame.image.load('image/Monster/bringer/spell.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-SIZE[0]/4*3, 0)#이미지 사각형의 크기 줄여 HitBox로 사용 
+        self.hitbox = self.rect.inflate(-SIZE[0]/4*3, 0)#이미지 사각형의 크기 줄여 HitBox로 사용
         self.scale = SIZE
         self.CameraOffset = [0,0]
         self.isAttack = False

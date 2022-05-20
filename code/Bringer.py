@@ -27,10 +27,10 @@ class Bringer(Monster):
 
         self.targetPos = 200.0
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
-        self.OffsetX = BRINGER_SIZE[0]/4
+        self.hitbox = pygame.Rect(self.rect[0] , self.rect[1], MONSTER_SIZE[0]/2, MONSTER_SIZE[1])
+        self.OffsetX = MONSTER_SIZE[0]/4
 
-        self.attackBox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
+        self.attackBox = pygame.Rect(self.rect[0] , self.rect[1], MONSTER_SIZE[0]/2, MONSTER_SIZE[1])
         self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
         self.isAttack = False
         self.isDead = False
@@ -57,21 +57,7 @@ class Bringer(Monster):
                     'castL':[], 'castR':[],
                     'hurtL':[], 'hurtR':[]}
 
-        super(Bringer, self).import_monster_assets('image/Monster/bringer/', BRINGER_IMG_INFO)
-
-    def input(self):
-        keys = pygame.key.get_pressed()
-
-        super(Bringer, self).input()
-
-    def get_status(self):
-        super(Bringer, self).get_status()
-
-    def move(self):
-       super(Bringer, self).move()
-
-    def jump(self):
-       super(Bringer, self).jump()
+        super(Bringer, self).import_monster_assets('image/Monster/bringer/', BRINGER_IMG_INFO, 'R')
 
     def animate(self, df):
         dt = df
@@ -88,9 +74,6 @@ class Bringer(Monster):
             self.kill()
             self.hitbox.x = 90000
             return
-
-    def collision(self, direction):
-        super(Bringer, self).collision(direction)
 
     def AI(self, df):
         #구체적인 AI구현
