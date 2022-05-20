@@ -27,10 +27,10 @@ class Bringer(Monster):
 
         self.targetPos = 200.0
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
-        self.OffsetX = BRINGER_SIZE[0]/4
+        self.hitbox = pygame.Rect(self.rect[0] , self.rect[1], MONSTER_SIZE[0]/2, MONSTER_SIZE[1])
+        self.OffsetX = MONSTER_SIZE[0]/4
 
-        self.attackBox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
+        self.attackBox = pygame.Rect(self.rect[0] , self.rect[1], MONSTER_SIZE[0]/2, MONSTER_SIZE[1])
         self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
         self.isAttack = False
         self.isDead = False
