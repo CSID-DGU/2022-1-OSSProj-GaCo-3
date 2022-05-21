@@ -49,9 +49,10 @@ class Scene:
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
-        # 디버그 코드
-        self.monster.setTargetPos(self.player.hitbox[0])
+        self.monster.setTargetPos(self.player.hitbox.x) # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
+
+        # 디버그 코드
         debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
         debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
         debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
@@ -194,9 +195,7 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
     def hitbox_draw(self, player, monster):
         # 플레이어 히트박스 그리기
         pygame.draw.rect(self.display_surface, (255, 255, 255),
-                         sub_Coordinate(player.hitbox, (self.offset[0], self.offset[1],
-                                                        0, 0)), 3)
+                         sub_Coordinate(player.hitbox, (self.offset[0], self.offset[1], 0, 0)), 3)
         # 몬스터 히트박스 그리기
-        pygame.draw.rect(self.display_surface, (255, 255, 255),
-                         sub_Coordinate(monster.getHitBox(), (self.offset[0] , self.offset[1],
-                                                        0, 0)), 3)
+        pygame.draw.rect(self.display_surface, (255, 0, 0),
+                         sub_Coordinate(monster.getHitBox(), (self.offset[0] , self.offset[1], 0, 0)), 3)

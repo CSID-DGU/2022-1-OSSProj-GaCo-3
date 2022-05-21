@@ -46,9 +46,6 @@ class Bringer(Monster):
         TargetPos = self.targetPos
         self.spell.ON(TargetPos)
 
-    def attack(self):
-        self.attackbox = pygame.Rect(self.rect[0] , self.rect[1],BRINGER_SIZE[0]/2,BRINGER_SIZE[1])
-
     def import_monster_assets(self):
         self.spr = {'idleL':[], 'idleR':[],
                     'walkL':[], 'walkR':[],
@@ -201,7 +198,7 @@ class Bringer(Monster):
         return  sub_Coordinate(hitbox, (0 - self.OffsetX, -BRINGER_SIZE[1]/5, 0, 0))
 
     def getAttackBox(self):
-        return self.attackBox 
+        return self.attackBox
 
     def getSpellAttackBox(self):
         return self.spell.getHitBox()                                             
