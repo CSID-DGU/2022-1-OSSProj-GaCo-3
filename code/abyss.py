@@ -6,6 +6,7 @@ from game import *
 from Monster import *
 from level import *
 from debug import *
+from AbyssSpell import *
 
 class Abyss(Monster):
     def __init__(self, pos, MONSTER_SIZE, groups, obstacle_sprites):
@@ -20,12 +21,11 @@ class Abyss(Monster):
 
         # 공격
         self.targetPos = 200.0 # 맨 처음에 플레이어 위치를 타겟으로 설정하는 건가?
-        # self.attackBox = pygame.Rect((self.hitbox.left, self.hitbox.top), (MONSTER_SIZE[0] // 3, MONSTER_SIZE[1] // 4))
         self.attackBox = pygame.Rect(self.hitbox.topleft, (MONSTER_SIZE[0]//2, MONSTER_SIZE[1]//2))
         self.attackBox.topright = self.hitbox.topleft
 
         # 아직 어비스 주문 마법을 생성하지 않았으므로 브링어의 주문을 일단 생성
-        self.spell = BringerSpell((-500, -500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
+        self.spell = AbyssSpell((-500, -500), groups, self.obstacle_sprites)
         # spell 공격 상태 및 쿨타임 설정
         self.can_spell = True
         self.spell_time = None
@@ -63,17 +63,11 @@ class Abyss(Monster):
         spr = self.spr[self.status]
         self.animation_end = False
 
-        # loop over the frame index
-        # self.frame_index += self.animation_speed
-
-        # DeltaTime이용해서 애니메이션 프레임 처리
-        # =============================================================
         self.animation_time += df / 1000.0
 
         if self.animation_time >= self.animation_time_max:
             self.animation_time = 0
             self.frame_index += 1
-        # ===============================================================
 
         if self.frame_index >= len(spr):  # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = 0  # 다시 처음 이미지로 돌아가기
@@ -90,11 +84,10 @@ class Abyss(Monster):
         if 'attack2' in self.status: # 마법 공격 상태일 경우
             if self.frame_index == len(spr) - 1:
                 self.status = 'idleL' if 'L' in self.status else 'idleR' # 이미지 재생이 끝나면 idle 상태로 바꾸기.
-                self.spell.ON(self.targetPos)  # 사용자 위치에 마법 사용
+                self.spell.ON(self.targetPos, self.attackBox.center)  # 사용자 위치에 마법 사용
 
 
         if 'death' in self.status and self.animation_end:
-            print('death and animation end')
             #임시적 조치로 죽음 모션의 마지막 프레임일 경우 화면 밖으로 내보낸다.
             self.kill()
             self.hitbox.x = 90000
@@ -168,7 +161,6 @@ class Abyss(Monster):
         #self.get_status()
         self.move()
         self.coodsdown()
-        debug("abyss status : "+str(self.status), 800, 50)
 
         # 어택 박스 정보 갱신
         if self.direction == -1:
@@ -187,20 +179,13 @@ class Abyss(Monster):
                 self.isAttack = False
 
         # # attack2를 준비 이미지라고 가정, 해당 스프라이트가 다 재생되면 마법을 사용함.
-        # elif 'attack2' in self.status and self.animation_end:
-        #     self.spell.ON(self.targetPos) #사용자 위치에 마법 사용
-        #     # self.spellON()
 
         self.spell.CameraOffset = self.CameraOffset
         self.spell.update(df)
 
         # 충돌
-        # 플레이어 어택박스, 몬스터 히트박스 충돌시
-        # if collision_check(self.playerAttackbox, self.getHitBox()) and self.playerAttackbox and self.hittedTime < 0:
-        # if collision_check(self.playerAttackbox, self.getHitBox()) and self.playerAttackbox and self.can_hurt and self.playerisAttack:
         # 플레이어 어택박스, 몬스터 히트박스 충돌 and 몬스터가 피격 가능 상태 and 플레이어가 공격 중일 경우
         if collision_check(self.playerAttackbox,self.getHitBox()) and self.can_hurt and self.playerisAttack:
-            print('attacked')
             self.hp -= self.playerPower
             self.status = 'hurtL' if self.direction == -1 else 'hurtR'
             self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
