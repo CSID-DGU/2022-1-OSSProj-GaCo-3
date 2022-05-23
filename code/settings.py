@@ -52,6 +52,9 @@ MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'im
                 'level3': {'background': 'image/map/boss_background.png', 'floor': 'image/map/boss_background.png'},
                 'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
 
+# monster1 spell settings
+ABYSS_SPELL_SIZE = (100, 100)
+
 # monster2 spell settings
 BRINGER_SPELL_SIZE = (560, 372)
 BRINGER_SPELL_INFO = {'spell': {'idx': 16, 'size': BRINGER_SPELL_SIZE}}
