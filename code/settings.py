@@ -28,6 +28,7 @@ ABYSS_COOR_ini = (700, 385)
 ABYSS_IMG_INFO = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'size': ABYSS_SIZE},
                   'runL': {'idx': 8, 'size': ABYSS_SIZE}, 'runR': {'idx': 8, 'size': ABYSS_SIZE},
                   'attack1L': {'idx': 8, 'size': ABYSS_SIZE}, 'attack1R': {'idx': 8, 'size': ABYSS_SIZE},
+                  'attack2L': {'idx': 8, 'size': ABYSS_SIZE}, 'attack2R':{'idx':8, 'size': ABYSS_SIZE},
                   'deathL':{'idx': 7, 'size': ABYSS_SIZE}, 'deathR':{'idx': 7, 'size': ABYSS_SIZE},
                   'hurtL': {'idx': 4, 'size': ABYSS_SIZE}, 'hurtR': {'idx': 4, 'size': ABYSS_SIZE} }
 
