@@ -4,6 +4,7 @@ import pygame
 from settings import *
 from support import *
 from debug import *
+from soundManager import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
@@ -17,6 +18,10 @@ class Player(pygame.sprite.Sprite):
 
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
+
+        #테스트용으로 약공격 사운드 로드
+        soundManager.load_sound('test_attack', 'sound/sword_slash.wav')
+        self.attackSound = soundManager.find_sound('test_attack')
 
         #공격력
         self.AttackPower = 10
@@ -214,6 +219,7 @@ class Player(pygame.sprite.Sprite):
                 self.attackBox.height = PLAYER_SIZE[1]/2
                 if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+            self.attackSound.play()
         if self.status_num == 5:
             if self.status == 'attack2':
                 self.attackBox.x = self.hitbox.x
