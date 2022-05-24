@@ -5,7 +5,6 @@ from settings import *
 from support import *
 from debug import *
 from soundManager import *
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
@@ -44,10 +43,12 @@ class Player(pygame.sprite.Sprite):
         #몬스터의 공격력
         self.monsterPower = 0
 
+        #낙뢰마법
+
         #graphic setup
         self.import_player_assets()
         self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
-        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death
+        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death, 8:thunder, 9:stone
 
         # animation 바꿀 때 사용
         self.frame_index = 0
@@ -370,6 +371,8 @@ class Player(pygame.sprite.Sprite):
         self.move(df)
         self.animate(df)
 
+        #낙뢰주문
+
         #어택 박스 정보 갱신
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
         #어택 박스 높이 조절
@@ -450,3 +453,5 @@ class Player(pygame.sprite.Sprite):
     #플레이어 위치 중간값x반환
     def getPlayerMiddle(self):
         return self.hitbox.x+ self.hitbox.width/2
+
+    #플레이어 낙뢰주문 위치 반환

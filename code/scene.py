@@ -139,10 +139,14 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.display_surface.blit(self.background_floor_surf, floor_offset_pos + (0, -80) )
 
         # UI 추가
-
-
         self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.bar_draw(player, monster) # player 체력, 마나바 그리기, monster 체력바 그리기
+        self.skillicon_setting() # 스킬 아이콘 세팅
+
+        # 배경 오프셋에 맞춰 스킬 ui그리기
+        self.display_surface.blit(self.skill_thunder_icon, (50, 650))
+        self.display_surface.blit(self.skill_stone_icon, (150, 650))
+
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
         self.hitbox_attackbox_transfer(player, monster) # player, monster에게 서로의 hitbox, attackbox 전달
         self.playerinfo_transfer(player, monster) #monster에게 player 공격력, 공격중인지 전달
@@ -213,3 +217,11 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         # 몬스터 체력 그리기
         pygame.draw.rect(self.display_surface, (255, 0, 0),
                          sub_Coordinate(monster.healthbar, (self.offset[0], self.offset[1], 0, 0)), 0)
+
+    def skillicon_setting(self):
+        #스킬아이콘 세팅
+        self.skill_thunder_icon = pygame.image.load('image/UI/thunder_icon.png')
+        self.skill_thunder_icon = pygame.transform.scale(self.skill_thunder_icon, (40, 40))
+
+        self.skill_stone_icon = pygame.image.load('image/UI/stone_icon.png')
+        self.skill_stone_icon = pygame.transform.scale(self.skill_stone_icon, (40, 40))

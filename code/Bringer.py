@@ -35,7 +35,8 @@ class Bringer(Monster):
         self.isAttack = False
         self.isDead = False
 
-        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], BRINGER_SIZE[0]/2, BRINGER_SIZE[1]/32) # 체력바
+        # 체력바
+        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], BRINGER_SIZE[0]/2, BRINGER_SIZE[1]/32)
 
         #공격력
         self.AttackPower = 40
