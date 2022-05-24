@@ -379,13 +379,17 @@ class Player(pygame.sprite.Sprite):
             if self.jumping == True:
                 if not 'L' in self.status:
                     self.control(0,'hitted',0,6,True,self.RUNNING_SPEED)
+                    self.isAttack = False
                 else:
                     self.control(0,'hittedL',0,6,True,self.RUNNING_SPEED)
+                    self.isAttack = False
             else:
                 if not 'L' in self.status:
                     self.control(0,'hitted',0,6,False,self.RUNNING_SPEED)
+                    self.isAttack = False
                 else:
                     self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
+                    self.isAttack = False
         #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
         if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0:
             self.hp -= self.monsterPower
@@ -394,13 +398,17 @@ class Player(pygame.sprite.Sprite):
             if self.jumping == True:
                 if not 'L' in self.status:
                     self.control(0,'hitted',0,6,True,self.RUNNING_SPEED)
+                    self.isAttack = False
                 else:
                     self.control(0,'hittedL',0,6,True,self.RUNNING_SPEED)
+                    self.isAttack = False
             else:
                 if not 'L' in self.status:
                     self.control(0,'hitted',0,6,False,self.RUNNING_SPEED)
+                    self.isAttack = False
                 else:
                     self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
+                    self.isAttack = False
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0
