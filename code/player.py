@@ -12,6 +12,9 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
+        self.healthbar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
+        self.manabar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16 + PLAYER_SIZE[1]/32,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
+
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
 
@@ -19,6 +22,8 @@ class Player(pygame.sprite.Sprite):
         self.AttackPower = 10
         #체력
         self.hp = PLAYER_HP
+        #마나
+        self.mana = PLAYER_MANA
         #무적시간
         self.hittedTime = 0
 
@@ -363,6 +368,14 @@ class Player(pygame.sprite.Sprite):
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
         #어택 박스 높이 조절
         attack_playerhitbox[1] = self.hitbox.y - PLAYER_SIZE[1]/4
+
+        self.healthbar.x = self.hitbox.x - PLAYER_SIZE[1]/12;
+        self.healthbar.y = self.hitbox.y - PLAYER_SIZE[1]/6;
+        self.healthbar[2] = PLAYER_SIZE[0]/3 / PLAYER_HP * self.hp;
+        self.manabar.x = self.hitbox.x - PLAYER_SIZE[1]/12;
+        self.manabar.y = self.hitbox.y + PLAYER_SIZE[1]/32 - PLAYER_SIZE[1]/6;
+        self.manabar[2] = PLAYER_SIZE[0]/3 / PLAYER_MANA * self.mana;
+
         #attack animation notify
         if 'attack' in self.status:
             if(self.frame_index < 6 and self.frame_index > 2):

@@ -138,7 +138,11 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.display_surface.blit(self.background_mountain_surf, sky_offset_pos)
         self.display_surface.blit(self.background_floor_surf, floor_offset_pos + (0, -80) )
 
+        # UI 추가
+
+
         self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
+        self.bar_draw(player, monster) # player 체력, 마나바 그리기, monster 체력바 그리기
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
         self.hitbox_attackbox_transfer(player, monster) # player, monster에게 서로의 hitbox, attackbox 전달
         self.playerinfo_transfer(player, monster) #monster에게 player 공격력, 공격중인지 전달
@@ -199,3 +203,11 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         # 몬스터 히트박스 그리기
         pygame.draw.rect(self.display_surface, (255, 0, 0),
                          sub_Coordinate(monster.getHitBox(), (self.offset[0] , self.offset[1], 0, 0)), 3)
+
+    def bar_draw(self, player, monster):
+        # 플레이어 체력, 마나 그리기
+        pygame.draw.rect(self.display_surface, (255, 0, 0),
+                         sub_Coordinate(player.healthbar, (self.offset[0], self.offset[1], 0, 0)), 0)
+        pygame.draw.rect(self.display_surface, (0, 0, 255),
+                         sub_Coordinate(player.manabar, (self.offset[0], self.offset[1], 0, 0)), 0)
+        # 몬스터 체력 그리기
