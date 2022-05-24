@@ -211,3 +211,5 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         pygame.draw.rect(self.display_surface, (0, 0, 255),
                          sub_Coordinate(player.manabar, (self.offset[0], self.offset[1], 0, 0)), 0)
         # 몬스터 체력 그리기
+        pygame.draw.rect(self.display_surface, (255, 0, 0),
+                         sub_Coordinate(monster.healthbar, (self.offset[0], self.offset[1], 0, 0)), 0)
