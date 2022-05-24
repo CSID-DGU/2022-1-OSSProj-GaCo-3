@@ -6,6 +6,7 @@ FPS     = 60
 
 # characters hp info
 PLAYER_HP = 100
+PLAYER_MANA = 100
 ABYSS_HP = 100
 BRINGER_HP = 150
 

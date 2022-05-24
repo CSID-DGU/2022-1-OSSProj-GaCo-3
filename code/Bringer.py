@@ -35,6 +35,8 @@ class Bringer(Monster):
         self.isAttack = False
         self.isDead = False
 
+        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], BRINGER_SIZE[0]/2, BRINGER_SIZE[1]/32) # 체력바
+
         #공격력
         self.AttackPower = 40
         #체력
@@ -153,6 +155,12 @@ class Bringer(Monster):
 
         #어택 박스 정보 갱신
         attack_hitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))               
+
+        #체력바 위치 갱신
+        self.healthbar.x = self.getHitBox()[0] - BRINGER_SIZE[1]/5;
+        self.healthbar.y = self.hitbox.y + BRINGER_SIZE[1]/3;
+
+        self.healthbar[2] = BRINGER_SIZE[0]/2 / BRINGER_HP * self.hp
 
        #attack animation notify
         if 'attack' in self.status:
