@@ -5,7 +5,6 @@ from settings import *
 from support import *
 from debug import *
 from soundManager import *
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
@@ -28,9 +27,17 @@ class Player(pygame.sprite.Sprite):
         #체력
         self.hp = PLAYER_HP
         #마나
-        self.mana = PLAYER_MANA
+        self.mp = PLAYER_MP
         #무적시간
         self.hittedTime = 0
+
+        #쿨타임
+        self.thunder_cool = 5
+        self.stone_cool = 3
+
+        #포션
+        self.hp_potion = 3
+        self.mp_potion = 3
 
         #충돌관련 받아올 변수들
         #받아올 몬스터 박스들
@@ -44,10 +51,12 @@ class Player(pygame.sprite.Sprite):
         #몬스터의 공격력
         self.monsterPower = 0
 
+        #낙뢰마법
+
         #graphic setup
         self.import_player_assets()
         self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
-        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death
+        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death, 8:thunder, 9:stone
 
         # animation 바꿀 때 사용
         self.frame_index = 0
@@ -107,6 +116,14 @@ class Player(pygame.sprite.Sprite):
 
     #플레이어 키이벤트
     def input(self):
+        for event in pygame.event.get():
+            #아이템사용
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_z and self.hp_potion >=1:
+                self.hp_potion-=1
+                self.hp = PLAYER_HP
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_x and self.mp_potion >=1:
+                self.mp_potion-=1
+                self.mp = PLAYER_MP
         keys = pygame.key.get_pressed()
 
         #정지상태
@@ -370,6 +387,8 @@ class Player(pygame.sprite.Sprite):
         self.move(df)
         self.animate(df)
 
+        #낙뢰주문
+
         #어택 박스 정보 갱신
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
         #어택 박스 높이 조절
@@ -380,7 +399,7 @@ class Player(pygame.sprite.Sprite):
         self.healthbar[2] = PLAYER_SIZE[0]/3 / PLAYER_HP * self.hp;
         self.manabar.x = self.hitbox.x - PLAYER_SIZE[1]/12;
         self.manabar.y = self.hitbox.y + PLAYER_SIZE[1]/32 - PLAYER_SIZE[1]/6;
-        self.manabar[2] = PLAYER_SIZE[0]/3 / PLAYER_MANA * self.mana;
+        self.manabar[2] = PLAYER_SIZE[0]/3 / PLAYER_MP * self.mp;
 
         #attack animation notify
         if 'attack' in self.status:
@@ -450,3 +469,5 @@ class Player(pygame.sprite.Sprite):
     #플레이어 위치 중간값x반환
     def getPlayerMiddle(self):
         return self.hitbox.x+ self.hitbox.width/2
+
+    #플레이어 낙뢰주문 위치 반환

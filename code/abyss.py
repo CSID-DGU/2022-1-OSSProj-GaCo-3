@@ -34,7 +34,8 @@ class Abyss(Monster):
         self.isAttack = False
         self.isDead = False
 
-        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], ABYSS_SIZE[0]/2, ABYSS_SIZE[1]/32) # 체력바
+        # 체력바
+        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], ABYSS_SIZE[0]/2, ABYSS_SIZE[1]/32)
 
         # attack1 상태 및 쿨타임 설정
         self.can_attack = True
