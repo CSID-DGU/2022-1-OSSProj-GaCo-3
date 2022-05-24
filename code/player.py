@@ -27,9 +27,17 @@ class Player(pygame.sprite.Sprite):
         #체력
         self.hp = PLAYER_HP
         #마나
-        self.mana = PLAYER_MANA
+        self.mp = PLAYER_MP
         #무적시간
         self.hittedTime = 0
+
+        #쿨타임
+        self.thunder_cool = 5
+        self.stone_cool = 3
+
+        #포션
+        self.hp_potion = 3
+        self.mp_potion = 3
 
         #충돌관련 받아올 변수들
         #받아올 몬스터 박스들
@@ -108,6 +116,14 @@ class Player(pygame.sprite.Sprite):
 
     #플레이어 키이벤트
     def input(self):
+        for event in pygame.event.get():
+            #아이템사용
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_z and self.hp_potion >=1:
+                self.hp_potion-=1
+                self.hp = PLAYER_HP
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_x and self.mp_potion >=1:
+                self.mp_potion-=1
+                self.mp = PLAYER_MP
         keys = pygame.key.get_pressed()
 
         #정지상태
@@ -383,7 +399,7 @@ class Player(pygame.sprite.Sprite):
         self.healthbar[2] = PLAYER_SIZE[0]/3 / PLAYER_HP * self.hp;
         self.manabar.x = self.hitbox.x - PLAYER_SIZE[1]/12;
         self.manabar.y = self.hitbox.y + PLAYER_SIZE[1]/32 - PLAYER_SIZE[1]/6;
-        self.manabar[2] = PLAYER_SIZE[0]/3 / PLAYER_MANA * self.mana;
+        self.manabar[2] = PLAYER_SIZE[0]/3 / PLAYER_MP * self.mp;
 
         #attack animation notify
         if 'attack' in self.status:

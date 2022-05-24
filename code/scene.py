@@ -11,6 +11,9 @@ from Bringer import *
 from random import choice
 from debug import *
 
+pygame.init()
+font = pygame.font.Font(None, 30)
+
 class Scene:
     def __init__(self, player, monster, scene_num, game_state, visible_sprites):
         self.display_surface = pygame.display.get_surface()
@@ -141,11 +144,23 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         # UI 추가
         self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.bar_draw(player, monster) # player 체력, 마나바 그리기, monster 체력바 그리기
-        self.skillicon_setting() # 스킬 아이콘 세팅
+        self.icon_setting() # 아이콘 세팅
 
-        # 배경 오프셋에 맞춰 스킬 ui그리기
+        # ui그리기
         self.display_surface.blit(self.skill_thunder_icon, (50, 650))
         self.display_surface.blit(self.skill_stone_icon, (150, 650))
+        self.display_surface.blit(self.Health_Potion_icon, (250, 650))
+        self.display_surface.blit(self.Mana_Potion_icon, (350, 650))
+
+        # 글자쓰기
+        debug_surf = font.render(str(player.thunder_cool), True, (0, 0, 0)) #낙뢰마법 쿨
+        self.display_surface.blit(debug_surf, (100, 650))
+        debug_surf = font.render(str(player.stone_cool), True, (0, 0, 0)) #염력마법 쿨
+        self.display_surface.blit(debug_surf, (200, 650))
+        debug_surf = font.render(str(player.hp_potion), True, (0, 0, 0)) #체력포션 개수
+        self.display_surface.blit(debug_surf, (300, 650))
+        debug_surf = font.render(str(player.mp_potion), True, (0, 0, 0)) #마나포션 개수
+        self.display_surface.blit(debug_surf, (400, 650))
 
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
         self.hitbox_attackbox_transfer(player, monster) # player, monster에게 서로의 hitbox, attackbox 전달
@@ -218,10 +233,16 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         pygame.draw.rect(self.display_surface, (255, 0, 0),
                          sub_Coordinate(monster.healthbar, (self.offset[0], self.offset[1], 0, 0)), 0)
 
-    def skillicon_setting(self):
-        #스킬아이콘 세팅
+    def icon_setting(self):
+        #아이콘 세팅
         self.skill_thunder_icon = pygame.image.load('image/UI/thunder_icon.png')
         self.skill_thunder_icon = pygame.transform.scale(self.skill_thunder_icon, (40, 40))
 
         self.skill_stone_icon = pygame.image.load('image/UI/stone_icon.png')
         self.skill_stone_icon = pygame.transform.scale(self.skill_stone_icon, (40, 40))
+
+        self.Health_Potion_icon = pygame.image.load('image/UI/Health_Potion.png')
+        self.Health_Potion_icon = pygame.transform.scale(self.Health_Potion_icon, (40, 40))
+
+        self.Mana_Potion_icon = pygame.image.load('image/UI/Mana_Potion.png')
+        self.Mana_Potion_icon = pygame.transform.scale(self.Mana_Potion_icon, (40, 40))
