@@ -19,6 +19,8 @@ class Scene:
         self.display_surface = pygame.display.get_surface()
         self.game_state = game_state
         self.scene_num = scene_num
+        self.scene_change = False # 장면 바꾸는지 여부 -> level에서 이 상태 검사를 통해 True일 때 장면 전환 할 수 있도록 하기
+        self.next_scene = None # 다음 장면은 무엇인지
 
         # player, monster 객체 전달받기
         self.player = player
@@ -55,14 +57,14 @@ class Scene:
         self.monster.setTargetPos(self.player.hitbox.centerx) # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
-        # 디버그 코드
-        debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
-        debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
-        debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
-        debug("player_hp : " + str(self.player.hp), 10, 160)
-        debug("monster_hp : " + str(self.monster.hp), 10, 120)
-        #debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
-        #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
+        # # 디버그 코드
+        # debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
+        # debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
+        # debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
+        # debug("player_hp : " + str(self.player.hp), 10, 160)
+        # debug("monster_hp : " + str(self.monster.hp), 10, 120)
+        # #debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
+        # #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
 
         self.fade_in()
         debug(self.game_state, WIDTH // 2, HEIGHT // 2) #게임 장면 바뀌는 거 확인용
@@ -78,8 +80,15 @@ class Scene:
         self.display_surface.blit(self.fade_surf, (0, 0))
 
     def intro_update(self):
-        self.display_surface.fill((255, 255, 255))
-        debug(self.game_state, WIDTH // 2, HEIGHT // 2)
+        self.display_surface.fill(BLACK)
+        centerx = WIDTH//2
+        centery = HEIGHT//2
+        leading = 50
+
+        title_surf = LARGE_FONT.render("DEVIL's CASTLE", True, RED)
+        title_rect = title_surf.get_rect(center=(centerx, centery - 2 * leading))
+
+        self.display_surface.blit(title_surf, title_rect)
         self.fade_in()
         pygame.display.update()
 
