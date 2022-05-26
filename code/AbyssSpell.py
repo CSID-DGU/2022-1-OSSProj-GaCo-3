@@ -46,14 +46,13 @@ class AbyssSpell(pygame.sprite.Sprite):
             self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
                                                       MonsterInfo[spr_name]['idx'],
                                                       MonsterInfo[spr_name]['size'])
-        #self.spr['spell'] = import_folder(path)
 
     def ON(self, target_pos, initial_pos):
-        self.target_pos = target_pos # x value
+        # 플레이어가 왼쪽에 있으면 왼쪽 화면 바깥까지, 오른쪽에 있으면 오른쪽 화면 바깥까지 공격
+        self.target_pos = -100 if initial_pos[0] - target_pos >= 0 else 2800
         self.isAttack = True
         self.SkillON = True
         self.hitbox.center = initial_pos
-        # self.hitbox.x = target_pos - self.scale[0] / 16
         self.hitbox.y = 500
 
     def animate(self, df):
@@ -70,9 +69,6 @@ class AbyssSpell(pygame.sprite.Sprite):
 
         if self.frame_index >= len(spr):  # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = 0  # 다시 처음 이미지로 돌아가기
-            # self.SkillON = False
-            # self.hitbox.x = -500
-            # self.hitbox.y = -500
 
         self.image = spr[int(self.frame_index)]
         position = (self.hitbox.center[0] - 10, self.hitbox.center[1] + 20)
@@ -109,9 +105,21 @@ class AbyssSpell(pygame.sprite.Sprite):
         return attackBox
 
     def move(self):
-        # abyss attack2 공격 직후 생성하여 플레이어의 위치까지 움직임
+        # abyss attack2 공격 직후 생성하여 플레이어 방향으로 계속 움직임
+        # 수정사항 : 플레이어 위치까지만 움직이지 말고 화면 밖으로 계속 이동
         distance = self.target_pos - self.hitbox.x
         if self.SkillON: # 공격상태일 경우 움직임
+            # if distance < 0:  # 왼쪽 방향에 플레이어가 있음
+            #     self.hitbox.x -= self.speed
+            # else:  # 오른쪽 방향에 플레이어가 있음
+            #     self.hitbox.x += self.speed
+            #
+            # # 공격이 화면을 벗어나면 공격 중지
+            # if self.hitbox.x > WIDTH or self.hitbox.x < 0 :
+            #     self.SkillON = False
+            #     self.hitbox.x = -500
+            #     self.hitbox.y = -500
+
             if abs(distance) > self.boundary: # 스프라이트와 플레이어의 거리가 self.boundary 보다 멀면 동작
                 if distance < 0: # 왼쪽 방향에 플레이어가 있음
                     self.hitbox.x -= self.speed
