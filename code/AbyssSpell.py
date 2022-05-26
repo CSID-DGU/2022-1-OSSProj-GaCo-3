@@ -87,7 +87,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.animate(df)
         # 어택 박스 정보 갱신
         attackBox = pygame.Rect(self.hitbox)
-        attackBox = attackBox.inflate(-self.scale[0] / 16, -self.scale[1] / 3)
+        attackBox = attackBox.inflate(40, -30)
         attack_hitbox = sub_Coordinate(attackBox,
                                        (self.CameraOffset[0], self.CameraOffset[1] - self.scale[1] / 4, 0, 0))
 
@@ -109,17 +109,6 @@ class AbyssSpell(pygame.sprite.Sprite):
         # 수정사항 : 플레이어 위치까지만 움직이지 말고 화면 밖으로 계속 이동
         distance = self.target_pos - self.hitbox.x
         if self.SkillON: # 공격상태일 경우 움직임
-            # if distance < 0:  # 왼쪽 방향에 플레이어가 있음
-            #     self.hitbox.x -= self.speed
-            # else:  # 오른쪽 방향에 플레이어가 있음
-            #     self.hitbox.x += self.speed
-            #
-            # # 공격이 화면을 벗어나면 공격 중지
-            # if self.hitbox.x > WIDTH or self.hitbox.x < 0 :
-            #     self.SkillON = False
-            #     self.hitbox.x = -500
-            #     self.hitbox.y = -500
-
             if abs(distance) > self.boundary: # 스프라이트와 플레이어의 거리가 self.boundary 보다 멀면 동작
                 if distance < 0: # 왼쪽 방향에 플레이어가 있음
                     self.hitbox.x -= self.speed
