@@ -52,7 +52,7 @@ class Scene:
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
-        self.monster.setTargetPos(self.player.hitbox.x) # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
+        self.monster.setTargetPos(self.player.hitbox.centerx) # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
         # 디버그 코드

@@ -21,15 +21,15 @@ class Abyss(Monster):
 
         # 공격
         self.targetPos = 200.0 # 맨 처음에 플레이어 위치를 타겟으로 설정하는 건가?
-        self.attackBox = pygame.Rect(self.hitbox.topleft, (MONSTER_SIZE[0]//2, MONSTER_SIZE[1]//2))
+        self.attackBox = pygame.Rect(self.hitbox.topleft, (MONSTER_SIZE[0]-100, MONSTER_SIZE[1]-20))
         self.attackBox.topright = self.hitbox.topleft
+        self.boundary = 150 # 플레이어와의 거리가 이 거리 이상일 경우 몬스터가 플레이어 방향으로 움직임
 
-        # 아직 어비스 주문 마법을 생성하지 않았으므로 브링어의 주문을 일단 생성
         self.spell = AbyssSpell((-500, -500), groups, self.obstacle_sprites)
         # spell 공격 상태 및 쿨타임 설정
         self.can_spell = True
         self.spell_time = None
-        self.spell_duration_time = 5000 # 5초에 한 번씩 마법 공격 사용
+        self.spell_duration_time = 3000 # 3초에 한 번씩 마법 공격 사용
 
         self.isAttack = False
         self.isDead = False
@@ -40,7 +40,7 @@ class Abyss(Monster):
         # attack1 상태 및 쿨타임 설정
         self.can_attack = True
         self.attack_time = None
-        self.attack_duration_time = 4000 # 4초에 한 번씩 공격 하기
+        self.attack_duration_time = 3000 # 2초에 한 번씩 공격 하기
 
         self.can_hurt = True # default는 공격당할 수 있는 상태, 공격 당한 직후에는 쿨 타임 찰 동안 공격 못 받게 함
         self.hurt_time = None # 공격 당한 직후 해당 시간을 저장, 루프마다 coolsdown()에서 쿨타임 시간 지났는지 확인하기.
@@ -48,9 +48,6 @@ class Abyss(Monster):
 
         self.AttackPower = 10 # 공격력
         self.hp = ABYSS_HP # 체력
-
-    # def spellON(self): # 얘는 하는 일이 너무 적음. 수정 필요할 듯
-    #     self.spell.ON(self.targetPos)
 
     def import_monster_assets(self):
         self.spr = {'idleL':[], 'idleR':[],
@@ -92,56 +89,34 @@ class Abyss(Monster):
 
         if 'death' in self.status and self.animation_end:
             #임시적 조치로 죽음 모션의 마지막 프레임일 경우 화면 밖으로 내보낸다.
-            self.kill()
-            self.hitbox.x = 90000
-            self.spell.kill()
+            self.kill_monster()
             return
 
     def AI(self, df):
-        # 플레이어 hitbox의 x 좌표 : self.targetPos
-        # 플레이어와 몬스터의 x좌표 거리가 100이상일 경우, 플레이어 쪽으로 몬스터를 이동시킨다.
-        distanceX = self.getHitBox().x - self.targetPos # 0보다 크면 플레이어가 왼쪽에 있음, 0보다 작으면 플레이어가 오른쪽에 있음
+        if not self.isDead:
+            # 플레이어 hitbox의 x 좌표 : self.targetPos
+            # 플레이어와 몬스터의 x좌표 거리가 100이상일 경우, 플레이어 쪽으로 몬스터를 이동시킨다.
+            distanceX = self.getHitBox().centerx - self.targetPos # 0보다 크면 플레이어가 왼쪽에 있음, 0보다 작으면 플레이어가 오른쪽에 있음
 
-        if not self.spell.SkillON:
-            # 죽지 않았을 경우, 피격상태가 아닐 경우, 공격 상태가 아닐 경우
-            if (not self.isDead) and ('hurt' not in self.status) and ('attack' not in self.status):
+            # 방향 전환
+            if distanceX > 0:  # 플레이어가 왼쪽에 있으면
+                self.direction, self.look_direction = -1, -1  # 움직일 때 x값이 작아질 수 있게.
+            else:  # 플레이어가 오른쪽에 있으면
+                self.direction, self.look_direction = 1, 1  # 움직일 때 x값이 커질 수 있게.
 
-                if not self.animation_end: # 애니메이션이 끝나지 않았으면
-                    return # 상태 변경하지 않도록 ai 종료
-                else: # 애니메이션 재생 끝났으면
-                    # 기존 방향에 맞춰 idle 상태로 변경해주기
-                    if self.look_direction == 1:
-                        self.status = 'idleR'
-                    else:
-                        self.status = 'idleL'
 
-                if abs(distanceX) > 100: # 플레이어와의 거리가 100 이상일 경우에, 플레이어 쪽으로 움직이기.
-                    if distanceX > 0: # 플레이어가 왼쪽에 있으면
-                        self.status = 'runL' # 왼쪽으로 움직이는 상태로 변경
-                        self.direction = -1 # 움직일 때 x값이 작아질 수 있게.
-                        self.look_direction = -1
+            if 'attack' not in self.status: # 공격중이지 않을 때
+                if abs(distanceX) > self.boundary: # 거리가 멀면 움직이고
+                    self.status = 'runL' if self.direction == -1 else 'runR'
+                    self.can_attack = True # 거리가 멀어졌다가 다시 가까워졌을 때, 쿨타임 상관 없이 다시 기본공격 할 수 있도록 상태 바꿔줌
 
-                    else: # 플레이어가 오른쪽에 있으면
-                        self.status = 'runR' # 오른쪽으로 움직이는 상태로 변경
-                        self.direction = 1 # 움직일 때 x값이 커질 수 있게.
-                        self.look_direction = 1
-
-                else: # 플레이어와의 거리가 200이하일 경우, 플레이어 방향에 맞춰서 몬스터 방향도 변경해줘야하는 건 동일.
-                    if distanceX > 0:  # 플레이어가 왼쪽에 있으면
-                        self.status = 'idleL'
-                        self.direction = -1  # 움직일 때 x값이 작아질 수 있게.
-                        self.look_direction = -1
-
-                    else:  # 플레이어가 오른쪽에 있으면
-                        self.status = 'idleR'
-                        self.direction = 1  # 움직일 때 x값이 커질 수 있게.
-                        self.look_direction = 1
-
+                else: # 가까우면 안 움직인다
+                    self.status = 'idleL' if self.direction == -1 else 'idleR'
                     # 쿨 타임 주고 기본 공격 사용
-                    if self.can_attack: # 공격 가능 상태일 경우
-                        self.attack_time = pygame.time.get_ticks() # 쿨타임 계산을 위한 공격 시작 시간 저장
-                        self.can_attack = False # 쿨 타임 차기 전까지 공격 못 하도록 can_attack을 False로 변경
-                        self.status = 'attack1L' if self.direction == -1 else 'attack1R' # 방향에 맞게 attack1 상태로 변경
+                    if self.can_attack:  # 공격 가능 상태일 경우
+                        self.attack_time = pygame.time.get_ticks()  # 쿨타임 계산을 위한 공격 시작 시간 저장
+                        self.can_attack = False  # 쿨 타임 차기 전까지 공격 못 하도록 can_attack을 False로 변경
+                        self.status = 'attack1L' if self.direction == -1 else 'attack1R'  # 방향에 맞게 attack1 상태로 변경
 
             # 쿨 타임을 주고 spell 공격 사용
             if self.can_spell:  # 마법 공격 가능 상태일 경우
@@ -161,7 +136,6 @@ class Abyss(Monster):
     def update(self, df):
         self.AI(df)
         self.animate(df)
-        #self.get_status()
         self.move()
         self.coodsdown()
 
@@ -179,9 +153,9 @@ class Abyss(Monster):
         # attack animation notify
         # 애니메이션 프레임에 따라서, 스프라이트의 몇 번째 그림에 정확히 공격 이미지가 생성되고 사라지는지를
         # 공격시 어택박스 생성, isAttack 시그널로 사용하기.
-        if 'attack1' in self.status and not self.isDead:
+        if 'attack1' in self.status:
             if (self.frame_index < 6 and self.frame_index > 2): # 어비스 공격 스프라이트의 4, 5, 6 에 공격 이미지 있음
-                # pygame.draw.rect(self.display_surface, (0, 0, 255), self.attackBox, 3)  # 파란색
+                pygame.draw.rect(self.display_surface, (0, 0, 255), self.attackBox, 3)  # 파란색
                 self.isAttack = True
             else:
                 self.isAttack = False
@@ -195,11 +169,10 @@ class Abyss(Monster):
         # 플레이어 어택박스, 몬스터 히트박스 충돌 and 몬스터가 피격 가능 상태 and 플레이어가 공격 중일 경우
         if collision_check(self.playerAttackbox,self.getHitBox()) and self.can_hurt and self.playerisAttack:
             self.hp -= self.playerPower
-            self.status = 'hurtL' if self.direction == -1 else 'hurtR'
             self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
             self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
 
-            if 'attack' not in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+            if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
                 # 플레이어 어택박스 위치가 바뀌면 hurt상태를 벗어남. -> colission check 방식을 바꿔야하나?
@@ -225,7 +198,7 @@ class Abyss(Monster):
             if current_time - self.spell_time >= self.spell_duration_time:
                 self.can_spell = True # 쿨타임 시간이 지나면 다시 마법 공격 가능 상태로 바꿔준다.
 
-    # scene.py > level_update() 에서 player.hitbox의 x좌표 값을 받아옴.
+    # scene.py > level_update() 에서 player.hitbox의 center x좌표 값을 받아옴.
     # 플레이어를 따라다닐 때 사용할 것.
     def setTargetPos(self, posX):
         self.targetPos = posX
@@ -238,3 +211,8 @@ class Abyss(Monster):
 
     def getSpellAttackBox(self):
         return self.spell.getHitBox()
+
+    def kill_monster(self):
+        self.kill()
+        self.hitbox.x = 90000
+        self.spell.kill()
