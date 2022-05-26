@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('image/player2/idle.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
+        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/5) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
         self.healthbar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
         self.manabar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16 + PLAYER_SIZE[1]/32,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
 
@@ -364,7 +364,7 @@ class Player(pygame.sprite.Sprite):
 
     def set_pos(self, pos): # 장면 바뀔 때 위치 초기화하는 함수
         self.rect.topleft = pos
-        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/8)
+        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/5)
 
     def set_state_ini(self):
         self.status = 'idle'  # 시작은 오른쪽 방향을 보고 서있기
