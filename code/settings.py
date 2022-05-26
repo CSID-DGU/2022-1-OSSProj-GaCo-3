@@ -55,6 +55,7 @@ MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'im
 
 # monster1 spell settings
 ABYSS_SPELL_SIZE = (100, 100)
+ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE}}
 
 # monster2 spell settings
 BRINGER_SPELL_SIZE = (560, 372)

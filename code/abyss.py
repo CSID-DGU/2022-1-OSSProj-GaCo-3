@@ -199,7 +199,7 @@ class Abyss(Monster):
             self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
             self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
 
-            if not 'attack' in self.status:
+            if 'attack' not in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
                 # 플레이어 어택박스 위치가 바뀌면 hurt상태를 벗어남. -> colission check 방식을 바꿔야하나?
