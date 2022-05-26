@@ -49,11 +49,12 @@ class AbyssSpell(pygame.sprite.Sprite):
 
     def ON(self, target_pos, initial_pos):
         # 플레이어가 왼쪽에 있으면 왼쪽 화면 바깥까지, 오른쪽에 있으면 오른쪽 화면 바깥까지 공격
-        self.target_pos = -100 if initial_pos[0] - target_pos >= 0 else 2800
+        distance = initial_pos[0] - target_pos
+        self.target_pos = -100 if distance >= 0 else 2800
         self.isAttack = True
         self.SkillON = True
-        self.hitbox.center = initial_pos
-        self.hitbox.y = 500
+        self.hitbox.centerx = initial_pos[0] - 70 if distance >= 0 else initial_pos[0] + 70
+        self.hitbox.y = 460
 
     def animate(self, df):
         spr = self.spr[self.status]

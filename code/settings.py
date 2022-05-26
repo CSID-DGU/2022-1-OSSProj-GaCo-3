@@ -25,7 +25,7 @@ PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': (300, 300)}, 'idleL': {'idx': 11,
 
 # monster1 settings - abyss
 ABYSS_SIZE = (300, 300)
-ABYSS_COOR_ini = (700, 385)
+ABYSS_COOR_ini = (700, 395)
 ABYSS_IMG_INFO = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'size': ABYSS_SIZE},
                   'runL': {'idx': 8, 'size': ABYSS_SIZE}, 'runR': {'idx': 8, 'size': ABYSS_SIZE},
                   'attack1L': {'idx': 8, 'size': ABYSS_SIZE}, 'attack1R': {'idx': 8, 'size': ABYSS_SIZE},
@@ -54,7 +54,7 @@ MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'im
                 'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
 
 # monster1 spell settings
-ABYSS_SPELL_SIZE = (100, 100)
+ABYSS_SPELL_SIZE = (150, 150)
 ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE}}
 
 # monster2 spell settings
