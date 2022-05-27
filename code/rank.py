@@ -31,7 +31,6 @@ def sort_rank_file():
     for line in lines: # 한 줄 한 줄 읽어서 rank_dict에 'user_name':score 형태로 저장
         line = line.rstrip()
         line = line.split(',')
-        print(line)
         user_name, score = line[0], int(line[1])
         rank_dict[user_name] = score
 
