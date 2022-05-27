@@ -7,6 +7,7 @@ from Monster import *
 from level import *
 from debug import *
 from AbyssSpell import *
+from soundManager import * 
 
 class Abyss(Monster):
     def __init__(self, pos, MONSTER_SIZE, groups, obstacle_sprites):
@@ -18,6 +19,15 @@ class Abyss(Monster):
         self.hitbox = self.rect.inflate(-220, -200)
         self.OffsetX = self.scale[0] / 4 #??
         self.look_direction = -1
+
+        #사운드 로딩
+        self.attackSound1 = soundManager.load_sound('abyss_attack1', 'sound/abyss/abyss_attack1.wav')
+        self.attackSound1.set_volume(0.5)
+        self.attackSound2 = soundManager.load_sound('abyss_attack2', 'sound/abyss/abyss_attack2.wav')
+        self.attackSound2.set_volume(0.5)
+        self.hitSound = soundManager.load_sound('abyss_hit', 'sound/abyss/abyss_hit.mp3')
+        self.deathSound = soundManager.load_sound('abyss_death', 'sound/abyss/abyss_death.wav')
+        self.castSound = soundManager.load_sound('abyss_cast', 'sound/abyss/abyss_spell.wav')
 
         # 공격
         self.targetPos = 200.0 # 맨 처음에 플레이어 위치를 타겟으로 설정하는 건가?
@@ -117,12 +127,14 @@ class Abyss(Monster):
                         self.attack_time = pygame.time.get_ticks()  # 쿨타임 계산을 위한 공격 시작 시간 저장
                         self.can_attack = False  # 쿨 타임 차기 전까지 공격 못 하도록 can_attack을 False로 변경
                         self.status = 'attack1L' if self.direction == -1 else 'attack1R'  # 방향에 맞게 attack1 상태로 변경
+                        self.attackSound1.play()
 
             # 쿨 타임을 주고 spell 공격 사용
             if self.can_spell:  # 마법 공격 가능 상태일 경우
                 self.spell_time = pygame.time.get_ticks()  # 마법 공격 수행 시간 체크
                 self.status = 'attack2L' if 'L' in self.status else 'attack2R'  # 마법 공격 상태로 변경
                 self.can_spell = False  # 마법 불가능 상태로 변경 -> coodsdown에서 시간 지나면 다시 마법 가능 상태로 변경해줌
+                self.attackSound2.play()
 
     def move(self):
         if 'run' in self.status:
@@ -174,6 +186,7 @@ class Abyss(Monster):
 
             if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
+                self.hitSound.play()
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
                 # 플레이어 어택박스 위치가 바뀌면 hurt상태를 벗어남. -> colission check 방식을 바꿔야하나?
                 # 일단은 hurt로 상태 변경하자 마자 플레이어 어택박스 위치를 임의로 화변 밖으로 위치시켜서 해당 현상 해결
@@ -181,6 +194,7 @@ class Abyss(Monster):
 
             if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
                 self.status = 'deathR' if self.look_direction == 1 else 'deathL'
+                self.deathSound.play()
                 self.isDead = True
 
     def coodsdown(self):

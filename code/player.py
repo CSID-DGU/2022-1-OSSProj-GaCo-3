@@ -18,9 +18,14 @@ class Player(pygame.sprite.Sprite):
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
 
-        #테스트용으로 약공격 사운드 로드
-        soundManager.load_sound('test_attack', 'sound/sword_slash.wav')
-        self.attackSound = soundManager.find_sound('test_attack')
+        self.attackSound1 = soundManager.load_sound('player_attack1', 'sound/player/player_attack1.wav')
+        self.attackSound2 = soundManager.load_sound('player_attack2', 'sound/player/player_attack2.ogg')
+        self.hitSound = soundManager.load_sound('player_hit', 'sound/player/player_hit.wav')
+        self.deathSound = soundManager.load_sound('player_death', 'sound/player/player_death.mp3')
+        self.jumpSound = soundManager.load_sound('player_jump', 'sound/player/player_jump.wav')
+        self.landSound = soundManager.load_sound('player_land', 'sound/player/player_landing.wav')
+        self.jumpSound.set_volume(1.0)
+        self.landSound.set_volume(0.3)
 
         #공격력
         self.AttackPower = 10
@@ -152,8 +157,10 @@ class Player(pygame.sprite.Sprite):
                 self.control(-1,'runL',0,1,False,self.RUNNING_SPEED)
             if keys[pygame.K_SPACE] and self.status=='run':
                 self.control(1,'jump',0,2,True,self.JUMPMOVE_SPEED)
+                self.jumpSound.play()
             if keys[pygame.K_SPACE] and self.status=='runL':
                 self.control(-1,'jumpL',0,2,True,self.JUMPMOVE_SPEED)
+                self.jumpSound.play()
             if keys[pygame.K_a] and self.status=='run':
                 self.control(0,'attack1',0,4,False,self.RUNNING_SPEED)
             if keys[pygame.K_a] and self.status=='runL':
@@ -236,8 +243,9 @@ class Player(pygame.sprite.Sprite):
                 self.attackBox.height = PLAYER_SIZE[1]/2
                 if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-            self.attackSound.play()
-        if self.status_num == 5:
+            self.attackSound1.play()
+
+        elif self.status_num == 5:
             if self.status == 'attack2':
                 self.attackBox.x = self.hitbox.x
                 self.attackBox.width = PLAYER_SIZE[0]*3/5
@@ -250,25 +258,34 @@ class Player(pygame.sprite.Sprite):
                 self.attackBox.height = PLAYER_SIZE[1]/2
                 if self.frame_index == 6:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+            if self.frame_index >=2 and self.frame_index <3:
+                self.attackSound2.play()
+                    
     def hitted(self):
-        if self.status_num == 6 and self.frame_index==3:
-            if self.jumping == False:
-                if not 'L' in self.status:
-                    self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+        if self.status_num == 6:
+            if self.frame_index==3:
+                if self.jumping == False:
+                    if not 'L' in self.status:
+                        self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                    else:
+                        self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
                 else:
-                    self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-            else:
-                if not 'L' in self.status:
-                    self.control(0,'fall',0,3,True,self.RUNNING_SPEED)
-                else:
-                    self.control(0,'fallL',0,3,True,self.RUNNING_SPEED)
+                    if not 'L' in self.status:
+                        self.control(0,'fall',0,3,True,self.RUNNING_SPEED)
+                    else:
+                        self.control(0,'fallL',0,3,True,self.RUNNING_SPEED)
+            elif self.frame_index <1:
+                self.hitSound.play()
     
     def dead(self):
-        if self.status_num == 7 and self.frame_index==10:
-            self.hp = PLAYER_HP
-            self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-            self.hitbox.x = 231
-            self.hitbox.y = 551
+        if self.status_num == 7:
+            if self.frame_index==10:
+                self.hp = PLAYER_HP
+                self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                self.hitbox.x = 231
+                self.hitbox.y = 551
+            elif self.frame_index <1:
+                self.deathSound.play()
 
     def jump(self,df):
         # 점프할 때의 y값 변경
@@ -306,6 +323,7 @@ class Player(pygame.sprite.Sprite):
                     self.control(-1,'runL',0,1,False,self.RUNNING_SPEED)
                 elif self.status == 'fallL' and not keys[pygame.K_LEFT]:
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+            self.landSound.play()
 
     def animate(self,df):
         # 플레이어 생성시 준비한 spr 딕셔너리에서
