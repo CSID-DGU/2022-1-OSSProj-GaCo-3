@@ -20,7 +20,6 @@ class Scene:
         self.game_state = game_state
         self.scene_num = scene_num
         self.scene_change = False # 장면 바꾸는지 여부 -> level에서 이 상태 검사를 통해 True일 때 장면 전환 할 수 있도록 하기
-        self.next_scene = None # 다음 장면은 무엇인지
 
         # player, monster 객체 전달받기
         self.player = player
@@ -40,21 +39,10 @@ class Scene:
         self.fade_surf.set_alpha(self.alpha)
 
     def update(self, df):
-        if self.game_state == 'intro':
-            self.intro_update()
-            return
-
-        if self.game_state == 'ending':
-            self.ending_update()
-            return
-
-        self.level_update(df)
-
-    def level_update(self, df):
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
-        self.monster.setTargetPos(self.player.hitbox.centerx) # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
+        self.monster.setTargetPos(self.player.hitbox.centerx)  # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
         # # 디버그 코드
@@ -67,7 +55,7 @@ class Scene:
         # #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
 
         self.fade_in()
-        debug(self.game_state, WIDTH // 2, HEIGHT // 2) #게임 장면 바뀌는 거 확인용
+        debug(self.game_state, WIDTH // 2, HEIGHT // 2)  # 게임 장면 바뀌는 거 확인용
 
         pygame.display.update()
 
@@ -79,6 +67,7 @@ class Scene:
         self.fade_surf.set_alpha(self.alpha)
         self.display_surface.blit(self.fade_surf, (0, 0))
 
+    # no use
     def intro_update(self):
         self.display_surface.fill(BLACK)
         centerx = WIDTH//2
@@ -92,6 +81,7 @@ class Scene:
         self.fade_in()
         pygame.display.update()
 
+    # no use
     def ending_update(self):
         self.display_surface.fill((255, 255, 255))
         debug(self.game_state, WIDTH // 2, HEIGHT // 2)

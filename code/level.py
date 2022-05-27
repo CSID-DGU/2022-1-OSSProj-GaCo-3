@@ -31,11 +31,17 @@ class Level:
         #sprite setup
         self.create_map()
 
+        # 게임 클리어했는지 여부
+        self.is_clear = False # 레벨3까지 플레이어가 죽지 않고, 레벨3에서 보스가 죽으면 True로 전환한다.
+
+        # 플레이어가 죽거나 / 레벨3의 보스 몬스터가 죽으면 self.done == True 가 된다.
+        self.done = False
+
     def create_map(self):
         # player 생성
         self.player = Player(PLAYER_COOR_ini, PLAYER_SIZE, [self.visible_sprites], self.obstacle_sprites)
         # monster 생성
-        self.monster = Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+        self.monster = Abyss(ABYSS_COOR_ini, ABYSS_SIZE, [self.visible_sprites], self.obstacle_sprites)
         # scene 생성
         self.scene = Scene(self.player, self.monster, self.scene_num, self.game_state, self.visible_sprites) #시작은 game_state = 'intro'임
 
@@ -70,8 +76,10 @@ class Level:
             # scene_num 증가시켜서 game_state 바꾸기
             if self.scene_num < len(GAME_STATES) - 1:
                 self.scene_num += 1
-            else:
+            else: # game_state 끝까지 재생했을 경우 : 레벨3에서 다시 장면 바꾸고자 scene_change 를 호출했을 경우
                 self.scene_num = 0
+                self.done = True # 게임을 종료하고 메뉴 화면으로 돌아가기
+
             self.game_state = GAME_STATES[self.scene_num]
 
             self.monster.kill()  # 이전 레벨 몬스터 죽이기

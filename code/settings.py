@@ -7,11 +7,13 @@ HEIGHT  = 720 #세로 크기
 FPS     = 60
 
 # 게임 장면 이름
-GAME_STATES = ['intro', 'level1', 'level2', 'level3', 'ending']
+GAME_STATES = ['level1', 'level2', 'level3']
+# GAME_STATES = ['intro', 'level1', 'level2', 'level3', 'ending']
 
 # font setup
 LARGE_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 60)
-MENU_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 30)
+MENU_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 40)
+CONTENT_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 25)
 
 # colors
 WHITE   = (255, 255, 255)
