@@ -38,13 +38,14 @@ class Scene:
         self.alpha = 255 # 장면 생성 처음엔 까만 화면
         self.fade_surf.set_alpha(self.alpha)
 
-    def update(self, df):
+    def update(self, df, time):
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
         self.monster.setTargetPos(self.player.hitbox.centerx)  # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
+        debug(f"timer : {time:.2f}(sec)", 100, 100)
         # # 디버그 코드
         # debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
         # debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)

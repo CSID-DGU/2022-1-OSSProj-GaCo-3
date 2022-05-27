@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
 
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
+        self.isDead = False
 
         #테스트용으로 약공격 사운드 로드
         soundManager.load_sound('test_attack', 'sound/sword_slash.wav')
@@ -265,7 +266,8 @@ class Player(pygame.sprite.Sprite):
     
     def dead(self):
         if self.status_num == 7 and self.frame_index==10:
-            self.hp = PLAYER_HP
+            self.isDead = True
+            # self.hp = PLAYER_HP
             self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
             self.hitbox.x = 231
             self.hitbox.y = 551

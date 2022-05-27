@@ -31,7 +31,7 @@ def sort_rank_file():
     for line in lines: # 한 줄 한 줄 읽어서 rank_dict에 'user_name':score 형태로 저장
         line = line.rstrip()
         line = line.split(',')
-        user_name, score = line[0], int(line[1])
+        user_name, score = line[0], float(line[1].strip())
         rank_dict[user_name] = score
 
     # 딕셔너리를 score(value) 기준으로 정렬하기
