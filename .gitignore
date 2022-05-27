@@ -133,3 +133,6 @@ ref
 
 # idea files
 .idea/
+
+# rank 정보
+rank/

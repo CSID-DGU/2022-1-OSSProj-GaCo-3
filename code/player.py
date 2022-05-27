@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
 
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
+        self.isDead = False
 
         self.attackSound1 = soundManager.load_sound('player_attack1', 'sound/player/player_attack1.wav')
         self.attackSound2 = soundManager.load_sound('player_attack2', 'sound/player/player_attack2.ogg')
@@ -280,7 +281,8 @@ class Player(pygame.sprite.Sprite):
     def dead(self):
         if self.status_num == 7:
             if self.frame_index==10:
-                self.hp = PLAYER_HP
+                self.isDead = True
+                self.hp = 0
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
                 self.hitbox.x = 231
                 self.hitbox.y = 551

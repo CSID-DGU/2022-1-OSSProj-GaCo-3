@@ -80,6 +80,7 @@ class Bringer(Monster):
         spr = self.spr[self.status]
         if 'death' in self.status and self.animation_end:
             #임시적 조치로 죽음 모션의 마지막 프레임일 경우 화면 밖으로 내보낸다.
+            self.isDead = True
             self.kill()
             self.hitbox.x = 90000
             return
