@@ -10,7 +10,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self, groups)
         # 생성시 처음 이미지 지정 상속받는 각 몬스터 클래스에서 지정해줘야한다.
         self.display_surface = pygame.display.get_surface()
-        self.image = pygame.image.load('image/Monster/AbyssSpell/1.png').convert_alpha()
+        self.image = pygame.image.load('image/Monster/AbyssSpell/spell.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, ABYSS_SPELL_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-50, -30)  # 이미지 사각형의 크기 줄여 hitbox로 사용
@@ -20,7 +20,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.isAttack = False
 
         # graphic setup
-        self.import_assets('image/Monster/AbyssSpell')
+        self.import_assets('image/Monster/AbyssSpell/', ABYSS_SPELL_INFO)
         self.status = 'spell'
 
         # animation 바꿀 때 사용
@@ -39,17 +39,22 @@ class AbyssSpell(pygame.sprite.Sprite):
 
         self.target_pos = 0 # 플레이어의 위치 정보
 
-    def import_assets(self, path):
+    def import_assets(self, path, MonsterInfo):
         self.spr = {'spell': []}
-        self.spr['spell'] = import_folder(path)
+
+        for spr_name in self.spr.keys():
+            self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
+                                                      MonsterInfo[spr_name]['idx'],
+                                                      MonsterInfo[spr_name]['size'])
 
     def ON(self, target_pos, initial_pos):
-        self.target_pos = target_pos # x value
+        # 플레이어가 왼쪽에 있으면 왼쪽 화면 바깥까지, 오른쪽에 있으면 오른쪽 화면 바깥까지 공격
+        distance = initial_pos[0] - target_pos
+        self.target_pos = -100 if distance >= 0 else 2800
         self.isAttack = True
         self.SkillON = True
-        self.hitbox.center = initial_pos
-        # self.hitbox.x = target_pos - self.scale[0] / 16
-        self.hitbox.y = 500
+        self.hitbox.centerx = initial_pos[0] - 70 if distance >= 0 else initial_pos[0] + 70
+        self.hitbox.y = 460
 
     def animate(self, df):
         spr = self.spr[self.status]
@@ -65,9 +70,6 @@ class AbyssSpell(pygame.sprite.Sprite):
 
         if self.frame_index >= len(spr):  # 스프라이트 마지막 이미지까지 보여준 뒤
             self.frame_index = 0  # 다시 처음 이미지로 돌아가기
-            # self.SkillON = False
-            # self.hitbox.x = -500
-            # self.hitbox.y = -500
 
         self.image = spr[int(self.frame_index)]
         position = (self.hitbox.center[0] - 10, self.hitbox.center[1] + 20)
@@ -86,7 +88,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.animate(df)
         # 어택 박스 정보 갱신
         attackBox = pygame.Rect(self.hitbox)
-        attackBox = attackBox.inflate(-self.scale[0] / 16, -self.scale[1] / 3)
+        attackBox = attackBox.inflate(40, -30)
         attack_hitbox = sub_Coordinate(attackBox,
                                        (self.CameraOffset[0], self.CameraOffset[1] - self.scale[1] / 4, 0, 0))
 
@@ -104,7 +106,8 @@ class AbyssSpell(pygame.sprite.Sprite):
         return attackBox
 
     def move(self):
-        # abyss attack2 공격 직후 생성하여 플레이어의 위치까지 움직임
+        # abyss attack2 공격 직후 생성하여 플레이어 방향으로 계속 움직임
+        # 수정사항 : 플레이어 위치까지만 움직이지 말고 화면 밖으로 계속 이동
         distance = self.target_pos - self.hitbox.x
         if self.SkillON: # 공격상태일 경우 움직임
             if abs(distance) > self.boundary: # 스프라이트와 플레이어의 거리가 self.boundary 보다 멀면 동작
