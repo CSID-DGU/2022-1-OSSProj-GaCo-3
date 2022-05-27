@@ -20,6 +20,7 @@ class Level:
         self.game_state = GAME_STATES[self.scene_num] # intro 부터 시작
         self.stage_changing = False
         self.can_change_stage = True
+        self.time = None # game.py -> run() 에서 보내줌
 
         #get the display surface
         self.display_surface = pygame.display.get_surface()
@@ -46,7 +47,7 @@ class Level:
         self.scene = Scene(self.player, self.monster, self.scene_num, self.game_state, self.visible_sprites) #시작은 game_state = 'intro'임
 
     def run(self, df):
-        self.scene.update(df)
+        self.scene.update(df, self.time)
         self.scene_manager(self.scene)
 
     def monster_create(self, game_state):
@@ -72,16 +73,24 @@ class Level:
                 scene.fade_out() # 장면 fade_out
                 scene_change = True
 
+        if self.player.isDead: # 플레이어가 죽었으면
+            self.done = True # 게임 종료
+
+        if self.monster.isDead: # 몬스터가 죽었으면
+            scene_change = True # 장면 전환
+
         if scene_change:
             # scene_num 증가시켜서 game_state 바꾸기
             if self.scene_num < len(GAME_STATES) - 1:
                 self.scene_num += 1
             else: # game_state 끝까지 재생했을 경우 : 레벨3에서 다시 장면 바꾸고자 scene_change 를 호출했을 경우
                 self.scene_num = 0
+                self.is_clear = True
                 self.done = True # 게임을 종료하고 메뉴 화면으로 돌아가기
 
             self.game_state = GAME_STATES[self.scene_num]
 
+            self.player.hp = PLAYER_HP # 레벨 바뀌면 플레이어 hp 회복하기
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
             self.monster.spell.kill() # 몬스터 스펠 죽이기
             self.monster = self.monster_create(self.game_state)  # 몬스터 생성
