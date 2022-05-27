@@ -4,6 +4,7 @@ import pygame
 from settings import *
 from support import *
 from game import *
+from soundManager import *
 
 class BringerSpell(pygame.sprite.Sprite):
     def __init__(self, pos, SIZE, groups, obstacle_sprites):
@@ -21,6 +22,9 @@ class BringerSpell(pygame.sprite.Sprite):
         #graphic setup
         self.import_assets('image/Monster/bringer/', BRINGER_SPELL_INFO)
         self.status = 'spell'
+        
+        self.thunderSound = soundManager.load_sound('Bringer_thunder', 'sound/bringer/bringer_thunder.wav')
+        self.thunderSound.set_volume(0.4)
 
         # animation 바꿀 때 사용
         self.frame_index = 0
@@ -50,6 +54,7 @@ class BringerSpell(pygame.sprite.Sprite):
         self.SkillON = True
         self.hitbox.x = posX - self.scale[0]/16
         self.hitbox.y = 250
+        self.thunderSound.play()
 
     def animate(self, df):
         spr = self.spr[self.status]

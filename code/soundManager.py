@@ -18,17 +18,18 @@ class soundManager():
         return Sound
 
     @staticmethod
-    def load_sound(name, path)-> bool:
+    def load_sound(name, path)-> sound:
         #중복된 이름의 사운드가 있을 경우 false 리턴
         #사운드를 사용하는 곳에서 Load 함수 이후에 반드시 위의 find_sound 함수로 사운드를 가져와서 사용할 것
+        Sound = soundManager.SoundMap.get(name)
         if(soundManager.SoundMap.get(name) != None):
-            return False
+            return Sound
 
         Sound = sound(name, path)
         
         soundManager.SoundMap[name] = Sound
 
-        return True
+        return Sound
         
     @staticmethod
     def play(name, loop = False)-> None:

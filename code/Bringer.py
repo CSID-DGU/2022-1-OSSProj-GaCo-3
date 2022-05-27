@@ -8,6 +8,7 @@ from Monster import *
 from level import * 
 from debug import *
 from BringerSpell import *
+from soundManager import *
 
 class Bringer(Monster):
     def __init__(self, pos, MONSTER_SIZE, groups, obstacle_sprites):
@@ -16,6 +17,11 @@ class Bringer(Monster):
         self.image = pygame.transform.scale(self.image, MONSTER_SIZE)
 
         super(Bringer, self).__init__(pos, MONSTER_SIZE, groups, obstacle_sprites)
+
+        self.attackSound = soundManager.load_sound('Bringer_attack1', 'sound/bringer/bringer_attack.wav')
+        self.hitSound = soundManager.load_sound('Bringer_hit', 'sound/bringer/bringer_hit.wav')
+        self.deathSound = soundManager.load_sound('Bringer_death', 'sound/bringer/bringer_death.wav')
+        self.castSound = soundManager.load_sound('Bringer_cast', 'sound/bringer/bringer_cast.wav')
 
         self.IdleTimeMax = 1.5
         self.IdleTime = 0.0
@@ -65,6 +71,9 @@ class Bringer(Monster):
         #피격 모션인 경우 애니메이션이 느리게 재생되도록 줄어든 델타타임을 인자로 넘김
         if 'hurt' in self.status:
             dt /= 2.0
+        
+        elif 'death' in self.status:
+            dt /= 1.5
 
         super(Bringer, self).animate(dt)
 
@@ -124,6 +133,9 @@ class Bringer(Monster):
                 else:
                     self.status = 'attackR'
                     self.attackBox.x = self.hitbox.x + BRINGER_SIZE[0] / 4
+                
+                self.attackSound.stop()
+                self.attackSound.play()
                 self.direction = 0
         else:
             self.CastTime = 0.0
@@ -131,6 +143,8 @@ class Bringer(Monster):
                 self.status = 'castL'
             else:
                 self.status = 'castR'
+            
+            self.castSound.play()
             
 
         if 'R' in self.status:
@@ -190,12 +204,14 @@ class Bringer(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
+                self.hitSound.play()
             
             if self.hp <= 0:
-                    if self.look_direction == 1:
-                        self.status = 'deathR'
-                    else:
-                        self.status = 'deathL'
+                if self.look_direction == 1:
+                    self.status = 'deathR'
+                else:
+                    self.status = 'deathL'
+                self.deathSound.play()
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0
