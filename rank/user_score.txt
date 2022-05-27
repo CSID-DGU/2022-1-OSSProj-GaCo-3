@@ -1,1 +1,5 @@
-
+als, 2
+sss, 13
+nori, 60
+sangmin, 80
+seaaa, 191
