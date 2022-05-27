@@ -281,7 +281,8 @@ class Player(pygame.sprite.Sprite):
     def dead(self):
         if self.status_num == 7:
             if self.frame_index==10:
-                self.hp = PLAYER_HP
+                self.isDead = True
+                self.hp = 0
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
                 self.hitbox.x = 231
                 self.hitbox.y = 551
