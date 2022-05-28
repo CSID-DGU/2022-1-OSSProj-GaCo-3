@@ -27,7 +27,11 @@ class Game:
 
     def menu(self): # 맨 처음 시작. 메뉴 화면
         while True:
-            self.screen.fill(BLACK)
+            background_surf = pygame.image.load('image/map/intro.png').convert_alpha()
+            background_surf = pygame.transform.scale(background_surf, (WIDTH, HEIGHT))
+            background_rect = background_surf.get_rect(topleft=(0, 0))
+            self.screen.blit(background_surf, background_rect)
+            # self.screen.fill(BLACK)
             centerx = WIDTH//2
             centery = HEIGHT//2
             leading = 50
@@ -37,7 +41,7 @@ class Game:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
             # 제목
-            title_surf = LARGE_FONT.render("DEVIL's CASTLE", True, RED)
+            title_surf = LARGE_FONT.render("DEVIL's CASTLE", True, WHITE)
             title_rect = title_surf.get_rect(center=(centerx, centery - 2 * leading))
 
             # 유저 네임 입력 창
