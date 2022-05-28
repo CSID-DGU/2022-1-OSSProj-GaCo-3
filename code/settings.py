@@ -68,6 +68,14 @@ MAP_IMG_INFO = {'intro': {'background': 'image/map/background.png', 'floor': 'im
                 'level3': {'background': 'image/map/boss_background.png', 'floor': 'image/map/boss_background.png'},
                 'ending': {'background': 'image/map/background.png', 'floor': 'image/map/new_floor.png'}}
 
+#BGM 정보
+BGM_INFO = {'intro':'sound/BGM/Title.ogg' ,
+            'level1': 'sound/BGM/Stage1.wav',
+            'level2': 'sound/BGM/Stage2.wav',
+            'level3':  'sound/BGM/Stage3.mp3',
+            'ending': 'sound/BGM/'}
+BGM_DEFAULT_VOLUME = 0.5
+
 # monster1 spell settings
 ABYSS_SPELL_SIZE = (150, 150)
 ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE}}

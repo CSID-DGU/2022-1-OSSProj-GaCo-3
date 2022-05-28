@@ -74,9 +74,11 @@ class Level:
                 scene_change = True
 
         if self.player.isDead: # 플레이어가 죽었으면
+            self.scene.BGM.stop()#BGM 종료
             self.done = True # 게임 종료
 
         if self.monster.isDead: # 몬스터가 죽었으면
+            self.scene.BGM.stop()#BGM 종료
             scene_change = True # 장면 전환
 
         if scene_change:
@@ -94,4 +96,5 @@ class Level:
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
             self.monster.spell.kill() # 몬스터 스펠 죽이기
             self.monster = self.monster_create(self.game_state)  # 몬스터 생성
+            self.scene.BGM.stop()
             self.scene = Scene(self.player, self.monster, self.scene_num, self.game_state, self.visible_sprites)  # 다음 장면 생성

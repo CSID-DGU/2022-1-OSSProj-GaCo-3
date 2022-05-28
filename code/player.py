@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.deathSound = soundManager.load_sound('player_death', 'sound/player/player_death.mp3')
         self.jumpSound = soundManager.load_sound('player_jump', 'sound/player/player_jump.wav')
         self.landSound = soundManager.load_sound('player_land', 'sound/player/player_landing.wav')
+        self.potionSound = soundManager.load_sound('player_potion', 'sound/player/player_potion.wav')
         self.jumpSound.set_volume(1.0)
         self.landSound.set_volume(0.3)
 
@@ -127,9 +128,11 @@ class Player(pygame.sprite.Sprite):
             if event.type == pygame.KEYDOWN and event.key == pygame.K_z and self.hp_potion >=1:
                 self.hp_potion-=1
                 self.hp = PLAYER_HP
+                self.potionSound.play()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_x and self.mp_potion >=1:
                 self.mp_potion-=1
                 self.mp = PLAYER_MP
+                self.potionSound.play()
         keys = pygame.key.get_pressed()
 
         #정지상태
