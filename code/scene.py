@@ -10,6 +10,7 @@ from player import *
 from Bringer import *
 from random import choice
 from debug import *
+from soundManager import *
 
 pygame.init()
 font = pygame.font.Font(None, 30)
@@ -20,6 +21,10 @@ class Scene:
         self.game_state = game_state
         self.scene_num = scene_num
         self.scene_change = False # 장면 바꾸는지 여부 -> level에서 이 상태 검사를 통해 True일 때 장면 전환 할 수 있도록 하기
+
+        #스테이지에 맞는 bgm 얻어오고 재생
+        self.BGM = soundManager.load_sound(game_state, BGM_INFO[game_state])
+        self.BGM.set_volume(BGM_DEFAULT_VOLUME)
 
         # player, monster 객체 전달받기
         self.player = player
@@ -39,6 +44,7 @@ class Scene:
         self.fade_surf.set_alpha(self.alpha)
 
     def update(self, df, time):
+        self.BGM.play(True)
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
         self.player.update(df)
 
