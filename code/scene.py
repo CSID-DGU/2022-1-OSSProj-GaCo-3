@@ -46,15 +46,17 @@ class Scene:
     def update(self, df, time):
         self.BGM.play(True)
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
-        self.player.update(df)
 
         self.monster.setTargetPos(self.player.hitbox.centerx)  # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
+        self.player.setTargetPos(self.monster.getHitBox()[0])  # 몬스터 hitbox x 값 player targetpos 로 넘겨주기.
+        self.player.update(df)
+
         debug(f"timer : {time:.2f}(sec)", 100, 100)
         # # 디버그 코드
-        # debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
-        # debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
+        debug("self.status : " + str(self.player.status), 10, 0)
+        debug("player_status_num : " + str(self.player.status_num), 10, 40)
         # debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
         # debug("player_hp : " + str(self.player.hp), 10, 160)
         # debug("monster_hp : " + str(self.monster.hp), 10, 120)
@@ -153,7 +155,7 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.icon_setting() # 아이콘 세팅
 
         # ui그리기
-        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,620, 450,200), 0)
+        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,640, 450,60), 0)
         self.display_surface.blit(self.skill_missile_icon, (50, 650))
         self.display_surface.blit(self.skill_thunder_icon, (150, 650))
         self.display_surface.blit(self.Health_Potion_icon, (250, 650))

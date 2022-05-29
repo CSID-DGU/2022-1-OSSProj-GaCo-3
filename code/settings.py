@@ -28,8 +28,12 @@ PLAYER_MP   = 100
 ABYSS_HP    = 100
 BRINGER_HP  = 150
 
-# player settings
+#Size
 PLAYER_SIZE     = (300, 300)
+ABYSS_SIZE      = (300, 300)
+BRINGER_SIZE     = (420, 279)
+
+# player settings
 PLAYER_COOR_ini = (100, 420) # 플레이어 초기 위치
 PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': PLAYER_SIZE}, 'idleL': {'idx': 11, 'size': PLAYER_SIZE},
                      'run': {'idx': 8, 'size': PLAYER_SIZE}, 'runL': {'idx': 8, 'size': PLAYER_SIZE},
@@ -38,11 +42,12 @@ PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': PLAYER_SIZE}, 'idleL': {'idx': 11
                      'death': {'idx': 11, 'size': PLAYER_SIZE}, 'deathL': {'idx': 11, 'size': PLAYER_SIZE},
                      'hitted': {'idx': 4, 'size': PLAYER_SIZE}, 'hittedL': {'idx': 4, 'size': PLAYER_SIZE},
                      'attack1': {'idx': 7, 'size': PLAYER_SIZE}, 'attack1L': {'idx': 7, 'size': PLAYER_SIZE},
-                     'attack2': {'idx': 7, 'size': PLAYER_SIZE}, 'attack2L': {'idx': 7, 'size': PLAYER_SIZE}
+                     'attack2': {'idx': 7, 'size': PLAYER_SIZE}, 'attack2L': {'idx': 7, 'size': PLAYER_SIZE},
+                     'cast1': {'idx': 8, 'size': ABYSS_SIZE}, 'cast1L':{'idx':8, 'size': ABYSS_SIZE},
+                     'cast2': {'idx': 9, 'size': BRINGER_SIZE}, 'cast2L': {'idx': 9, 'size': BRINGER_SIZE}
                      }
 
 # monster1 settings - abyss
-ABYSS_SIZE      = (300, 300)
 ABYSS_COOR_ini  = (700, 395)
 ABYSS_IMG_INFO  = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'size': ABYSS_SIZE},
                   'runL': {'idx': 8, 'size': ABYSS_SIZE}, 'runR': {'idx': 8, 'size': ABYSS_SIZE},
@@ -52,7 +57,6 @@ ABYSS_IMG_INFO  = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'siz
                   'hurtL': {'idx': 4, 'size': ABYSS_SIZE}, 'hurtR': {'idx': 4, 'size': ABYSS_SIZE} }
 
 # monster2 settings
-BRINGER_SIZE     = (420, 279)
 BRINGER_COOR_ini = (700, 335) # 몬스터2(BRINGER) 초기 위치
 BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 8, 'size': BRINGER_SIZE},
                      'walkL': {'idx': 8, 'size': BRINGER_SIZE}, 'walkR': {'idx': 8, 'size': BRINGER_SIZE},

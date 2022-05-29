@@ -2,7 +2,6 @@
 
 import pygame, sys
 from settings import *
-from player import *
 from level import *
 from rank import *
 
