@@ -180,18 +180,26 @@ class Player(pygame.sprite.Sprite):
                 self.control(0,'attack2',0,5,False,self.RUNNING_SPEED)
             if keys[pygame.K_s] and self.status=='idleL':
                 self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
-            if keys[pygame.K_q] and self.status=='idle':
+            if keys[pygame.K_q] and self.status=='idle' and self.mp >=10:
                 self.control(0,'cast1',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_R()
-            if keys[pygame.K_q] and self.status=='idleL':
+                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
+                self.mp -= 10
+            if keys[pygame.K_q] and self.status=='idleL' and self.mp >=10:
                 self.control(0,'cast1L',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_L()
-            if keys[pygame.K_w] and self.status=='idle':
+                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
+                self.mp -= 10
+            if keys[pygame.K_w] and self.status=='idle' and self.mp >=20:
                 self.control(0,'cast2',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
-            if keys[pygame.K_w] and self.status=='idleL':
+                self.mp -= 20
+                #self.hitbox.x += BRINGER_SIZE[0] /3
+            if keys[pygame.K_w] and self.status=='idleL' and self.mp >=20:
                 self.control(0,'cast2L',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
+                self.mp -= 20
+                #self.hitbox.x -= BRINGER_SIZE[0] /3
         #달리기상태
         if self.status_num==1:
             if keys[pygame.K_RIGHT] and self.status=='runL':
@@ -310,15 +318,19 @@ class Player(pygame.sprite.Sprite):
         if self.status_num == 8:
             if self.status == 'cast1' and self.frame_index >= 7:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                self.hitbox.y += PLAYER_SPELL1_YCHANGE
             if self.status == 'cast1L' and self.frame_index >= 7:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+                self.hitbox.y += PLAYER_SPELL1_YCHANGE
             #self.attackSound1.play()
 
         elif self.status_num == 9:
             if self.status == 'cast2' and self.frame_index >= 8:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                #self.hitbox.x -= BRINGER_SIZE[0] /3
             if self.status == 'cast2L' and self.frame_index >= 8:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+                #self.hitbox.x += BRINGER_SIZE[0] /3
             #if self.frame_index >=2 and self.frame_index <3:
                # self.attackSound2.play()
 
@@ -495,7 +507,7 @@ class Player(pygame.sprite.Sprite):
                 self.isAttack = False
         #충돌구현
         #몬스터 어택박스, 플레이어 히트박스 충돌시
-        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0:
+        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -514,7 +526,7 @@ class Player(pygame.sprite.Sprite):
                     self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
                     self.isAttack = False
         #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
-        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0:
+        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
