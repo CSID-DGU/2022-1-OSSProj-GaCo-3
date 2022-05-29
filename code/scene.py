@@ -153,19 +153,16 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.icon_setting() # 아이콘 세팅
 
         # ui그리기
-        self.display_surface.blit(self.skill_thunder_icon, (50, 650))
-        self.display_surface.blit(self.skill_stone_icon, (150, 650))
+        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,620, 450,200), 0)
+        self.display_surface.blit(self.skill_missile_icon, (50, 650))
+        self.display_surface.blit(self.skill_thunder_icon, (150, 650))
         self.display_surface.blit(self.Health_Potion_icon, (250, 650))
         self.display_surface.blit(self.Mana_Potion_icon, (350, 650))
 
         # 글자쓰기
-        debug_surf = font.render(str(player.thunder_cool), True, (0, 0, 0)) #낙뢰마법 쿨
-        self.display_surface.blit(debug_surf, (100, 650))
-        debug_surf = font.render(str(player.stone_cool), True, (0, 0, 0)) #염력마법 쿨
-        self.display_surface.blit(debug_surf, (200, 650))
-        debug_surf = font.render(str(player.hp_potion), True, (0, 0, 0)) #체력포션 개수
+        debug_surf = font.render(str(player.hp_potion), True, (255, 255, 255)) #체력포션 개수
         self.display_surface.blit(debug_surf, (300, 650))
-        debug_surf = font.render(str(player.mp_potion), True, (0, 0, 0)) #마나포션 개수
+        debug_surf = font.render(str(player.mp_potion), True, (255, 255, 255)) #마나포션 개수
         self.display_surface.blit(debug_surf, (400, 650))
 
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
@@ -244,8 +241,8 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.skill_thunder_icon = pygame.image.load('image/UI/thunder_icon.png')
         self.skill_thunder_icon = pygame.transform.scale(self.skill_thunder_icon, (40, 40))
 
-        self.skill_stone_icon = pygame.image.load('image/UI/stone_icon.png')
-        self.skill_stone_icon = pygame.transform.scale(self.skill_stone_icon, (40, 40))
+        self.skill_missile_icon = pygame.image.load('image/UI/missile_icon.png')
+        self.skill_missile_icon = pygame.transform.scale(self.skill_missile_icon, (40, 40))
 
         self.Health_Potion_icon = pygame.image.load('image/UI/Health_Potion.png')
         self.Health_Potion_icon = pygame.transform.scale(self.Health_Potion_icon, (40, 40))
