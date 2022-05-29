@@ -46,15 +46,17 @@ class Scene:
     def update(self, df, time):
         self.BGM.play(True)
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
-        self.player.update(df)
 
         self.monster.setTargetPos(self.player.hitbox.centerx)  # 플레이어 hitbox x 값 monster targetpos 로 넘겨주기.
         self.monster.update(df)
 
+        self.player.setTargetPos(self.monster.getHitBox()[0])  # 몬스터 hitbox x 값 player targetpos 로 넘겨주기.
+        self.player.update(df)
+
         debug(f"timer : {time:.2f}(sec)", 100, 100)
         # # 디버그 코드
-        # debug("monster_Attackbox : " + str(self.monster.getAttackBox()), 10, 0)
-        # debug("spell_Attackbox : " + str(self.monster.getSpellAttackBox()), 10, 40)
+        debug("self.status : " + str(self.player.status), 10, 0)
+        debug("player_status_num : " + str(self.player.status_num), 10, 40)
         # debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
         # debug("player_hp : " + str(self.player.hp), 10, 160)
         # debug("monster_hp : " + str(self.monster.hp), 10, 120)
@@ -153,19 +155,16 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.icon_setting() # 아이콘 세팅
 
         # ui그리기
-        self.display_surface.blit(self.skill_thunder_icon, (50, 650))
-        self.display_surface.blit(self.skill_stone_icon, (150, 650))
+        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,640, 450,60), 0)
+        self.display_surface.blit(self.skill_missile_icon, (50, 650))
+        self.display_surface.blit(self.skill_thunder_icon, (150, 650))
         self.display_surface.blit(self.Health_Potion_icon, (250, 650))
         self.display_surface.blit(self.Mana_Potion_icon, (350, 650))
 
         # 글자쓰기
-        debug_surf = font.render(str(player.thunder_cool), True, (0, 0, 0)) #낙뢰마법 쿨
-        self.display_surface.blit(debug_surf, (100, 650))
-        debug_surf = font.render(str(player.stone_cool), True, (0, 0, 0)) #염력마법 쿨
-        self.display_surface.blit(debug_surf, (200, 650))
-        debug_surf = font.render(str(player.hp_potion), True, (0, 0, 0)) #체력포션 개수
+        debug_surf = font.render(str(player.hp_potion), True, (255, 255, 255)) #체력포션 개수
         self.display_surface.blit(debug_surf, (300, 650))
-        debug_surf = font.render(str(player.mp_potion), True, (0, 0, 0)) #마나포션 개수
+        debug_surf = font.render(str(player.mp_potion), True, (255, 255, 255)) #마나포션 개수
         self.display_surface.blit(debug_surf, (400, 650))
 
         self.offset_transfer(player, monster) # player, monster에게 오프셋 전달
@@ -244,8 +243,8 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.skill_thunder_icon = pygame.image.load('image/UI/thunder_icon.png')
         self.skill_thunder_icon = pygame.transform.scale(self.skill_thunder_icon, (40, 40))
 
-        self.skill_stone_icon = pygame.image.load('image/UI/stone_icon.png')
-        self.skill_stone_icon = pygame.transform.scale(self.skill_stone_icon, (40, 40))
+        self.skill_missile_icon = pygame.image.load('image/UI/missile_icon.png')
+        self.skill_missile_icon = pygame.transform.scale(self.skill_missile_icon, (40, 40))
 
         self.Health_Potion_icon = pygame.image.load('image/UI/Health_Potion.png')
         self.Health_Potion_icon = pygame.transform.scale(self.Health_Potion_icon, (40, 40))

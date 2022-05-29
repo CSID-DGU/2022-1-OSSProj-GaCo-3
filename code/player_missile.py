@@ -5,15 +5,15 @@ from settings import *
 from support import *
 from game import *
 
-class AbyssSpell(pygame.sprite.Sprite):
+class player_missile(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
-        # ìƒì„±ì‹œ ì²˜ìŒ ì´ë¯¸ì§€ ì§€ì • ìƒì†ë°›ëŠ” ê° ëª¬ìŠ¤í„° í´ë˜ìŠ¤ì—ì„œ ì§€ì •í•´ì¤˜ì•¼í•œë‹¤.
+        # »ı¼º½Ã Ã³À½ ÀÌ¹ÌÁö ÁöÁ¤ »ó¼Ó¹Ş´Â °¢ ¸ó½ºÅÍ Å¬·¡½º¿¡¼­ ÁöÁ¤ÇØÁà¾ßÇÑ´Ù.
         self.display_surface = pygame.display.get_surface()
         self.image = pygame.image.load('image/Monster/AbyssSpell/spell.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, ABYSS_SPELL_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-50, -30)  # ì´ë¯¸ì§€ ì‚¬ê°í˜•ì˜ í¬ê¸° ì¤„ì—¬ hitboxë¡œ ì‚¬ìš©
+        self.hitbox = self.rect.inflate(-50, -30)  # ÀÌ¹ÌÁö »ç°¢ÇüÀÇ Å©±â ÁÙ¿© hitbox·Î »ç¿ë
 
         self.scale = ABYSS_SPELL_SIZE
         self.CameraOffset = [0, 0]
@@ -23,7 +23,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.import_assets('image/Monster/AbyssSpell/', ABYSS_SPELL_INFO)
         self.status = 'spell'
 
-        # animation ë°”ê¿€ ë•Œ ì‚¬ìš©
+        # animation ¹Ù²Ü ¶§ »ç¿ë
         self.frame_index = 0
         self.animation_speed = 0.25
         self.animation_time = 0.0
@@ -37,7 +37,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.boundary = 10
         self.obstacle_sprites = obstacle_sprites
 
-        self.target_pos = 0 # í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ ì •ë³´
+        self.target_pos = 0 # ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡ Á¤º¸
 
     def import_assets(self, path, MonsterInfo):
         self.spr = {'spell': []}
@@ -48,30 +48,12 @@ class AbyssSpell(pygame.sprite.Sprite):
                                                       MonsterInfo[spr_name]['size'])
 
     def ON(self, target_pos, initial_pos):
-        # í”Œë ˆì´ì–´ê°€ ì™¼ìª½ì— ìˆìœ¼ë©´ ì™¼ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€, ì˜¤ë¥¸ìª½ì— ìˆìœ¼ë©´ ì˜¤ë¥¸ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€ ê³µê²©
+        # ÇÃ·¹ÀÌ¾î°¡ ¿ŞÂÊ¿¡ ÀÖÀ¸¸é ¿ŞÂÊ È­¸é ¹Ù±ù±îÁö, ¿À¸¥ÂÊ¿¡ ÀÖÀ¸¸é ¿À¸¥ÂÊ È­¸é ¹Ù±ù±îÁö °ø°İ
         distance = initial_pos[0] - target_pos
         self.target_pos = -100 if distance >= 0 else 2800
         self.isAttack = True
         self.SkillON = True
         self.hitbox.centerx = initial_pos[0] - 70 if distance >= 0 else initial_pos[0] + 70
-        self.hitbox.y = 460
-
-    def ON_P_R(self, target_pos, initial_pos):
-        # í”Œë ˆì´ì–´ê°€ ì™¼ìª½ì— ìˆìœ¼ë©´ ì™¼ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€, ì˜¤ë¥¸ìª½ì— ìˆìœ¼ë©´ ì˜¤ë¥¸ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€ ê³µê²©
-        distance = initial_pos[0] - target_pos
-        self.target_pos = 2800
-        self.isAttack = True
-        self.SkillON = True
-        self.hitbox.centerx = initial_pos[0] + 70
-        self.hitbox.y = 460
-
-    def ON_P_L(self, target_pos, initial_pos):
-        # í”Œë ˆì´ì–´ê°€ ì™¼ìª½ì— ìˆìœ¼ë©´ ì™¼ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€, ì˜¤ë¥¸ìª½ì— ìˆìœ¼ë©´ ì˜¤ë¥¸ìª½ í™”ë©´ ë°”ê¹¥ê¹Œì§€ ê³µê²©
-        distance = initial_pos[0] - target_pos
-        self.target_pos = -100
-        self.isAttack = True
-        self.SkillON = True
-        self.hitbox.centerx = initial_pos[0] - 70
         self.hitbox.y = 460
 
     def animate(self, df):
@@ -86,8 +68,8 @@ class AbyssSpell(pygame.sprite.Sprite):
         else:
             self.frame_index = 0
 
-        if self.frame_index >= len(spr):  # ìŠ¤í”„ë¼ì´íŠ¸ ë§ˆì§€ë§‰ ì´ë¯¸ì§€ê¹Œì§€ ë³´ì—¬ì¤€ ë’¤
-            self.frame_index = 0  # ë‹¤ì‹œ ì²˜ìŒ ì´ë¯¸ì§€ë¡œ ëŒì•„ê°€ê¸°
+        if self.frame_index >= len(spr):  # ½ºÇÁ¶óÀÌÆ® ¸¶Áö¸· ÀÌ¹ÌÁö±îÁö º¸¿©ÁØ µÚ
+            self.frame_index = 0  # ´Ù½Ã Ã³À½ ÀÌ¹ÌÁö·Î µ¹¾Æ°¡±â
 
         self.image = spr[int(self.frame_index)]
         position = (self.hitbox.center[0] - 10, self.hitbox.center[1] + 20)
@@ -104,7 +86,7 @@ class AbyssSpell(pygame.sprite.Sprite):
 
     def update(self, df):
         self.animate(df)
-        # ì–´íƒ ë°•ìŠ¤ ì •ë³´ ê°±ì‹ 
+        # ¾îÅÃ ¹Ú½º Á¤º¸ °»½Å
         attackBox = pygame.Rect(self.hitbox)
         attackBox = attackBox.inflate(40, -30)
         attack_hitbox = sub_Coordinate(attackBox,
@@ -124,14 +106,14 @@ class AbyssSpell(pygame.sprite.Sprite):
         return attackBox
 
     def move(self):
-        # abyss attack2 ê³µê²© ì§í›„ ìƒì„±í•˜ì—¬ í”Œë ˆì´ì–´ ë°©í–¥ìœ¼ë¡œ ê³„ì† ì›€ì§ì„
-        # ìˆ˜ì •ì‚¬í•­ : í”Œë ˆì´ì–´ ìœ„ì¹˜ê¹Œì§€ë§Œ ì›€ì§ì´ì§€ ë§ê³  í™”ë©´ ë°–ìœ¼ë¡œ ê³„ì† ì´ë™
+        # abyss attack2 °ø°İ Á÷ÈÄ »ı¼ºÇÏ¿© ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î °è¼Ó ¿òÁ÷ÀÓ
+        # ¼öÁ¤»çÇ× : ÇÃ·¹ÀÌ¾î À§Ä¡±îÁö¸¸ ¿òÁ÷ÀÌÁö ¸»°í È­¸é ¹ÛÀ¸·Î °è¼Ó ÀÌµ¿
         distance = self.target_pos - self.hitbox.x
-        if self.SkillON: # ê³µê²©ìƒíƒœì¼ ê²½ìš° ì›€ì§ì„
-            if abs(distance) > self.boundary: # ìŠ¤í”„ë¼ì´íŠ¸ì™€ í”Œë ˆì´ì–´ì˜ ê±°ë¦¬ê°€ self.boundary ë³´ë‹¤ ë©€ë©´ ë™ì‘
-                if distance < 0: # ì™¼ìª½ ë°©í–¥ì— í”Œë ˆì´ì–´ê°€ ìˆìŒ
+        if self.SkillON: # °ø°İ»óÅÂÀÏ °æ¿ì ¿òÁ÷ÀÓ
+            if abs(distance) > self.boundary: # ½ºÇÁ¶óÀÌÆ®¿Í ÇÃ·¹ÀÌ¾îÀÇ °Å¸®°¡ self.boundary º¸´Ù ¸Ö¸é µ¿ÀÛ
+                if distance < 0: # ¿ŞÂÊ ¹æÇâ¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖÀ½
                     self.hitbox.x -= self.speed
-                else: # ì˜¤ë¥¸ìª½ ë°©í–¥ì— í”Œë ˆì´ì–´ê°€ ìˆìŒ
+                else: # ¿À¸¥ÂÊ ¹æÇâ¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖÀ½
                     self.hitbox.x += self.speed
             else:
                 self.SkillON = False

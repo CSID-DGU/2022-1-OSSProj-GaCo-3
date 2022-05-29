@@ -3,21 +3,34 @@
 import pygame
 from settings import *
 from support import *
+from game import *
+from level import *
 from debug import *
+from AbyssSpell import *
+from BringerSpell import *
 from soundManager import *
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, PLAYER_SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
         self.image = pygame.image.load('image/player2/idle.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, PLAYER_SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/5) # 아직 하는 일 없음. 충돌 검사 때 사용해야함
+        self.hitbox = pygame.Rect(self.rect[0]+7*PLAYER_SIZE[0]/16,self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/8,PLAYER_SIZE[1]/5) #히트박스
         self.healthbar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
-        self.manabar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16 + PLAYER_SIZE[1]/32,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 체력바
+        self.manabar = pygame.Rect(self.rect[0],self.rect[1]+7*PLAYER_SIZE[1]/16 + PLAYER_SIZE[1]/32,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/32) # 마나바
 
         self.attackBox = pygame.Rect(self.rect[0] , self.rect[1]+PLAYER_SIZE[0]/4,PLAYER_SIZE[0]/3,PLAYER_SIZE[1]/3)  #플레이어 어택박스
         self.isAttack = False
         self.isDead = False
+
+        #spell
+        self.spell1 = AbyssSpell((-500, -500), groups, obstacle_sprites)
+        self.spell2 = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, obstacle_sprites)
+
+        #몬스터 위치
+        self.targetPos = 200.0
 
         self.attackSound1 = soundManager.load_sound('player_attack1', 'sound/player/player_attack1.wav')
         self.attackSound2 = soundManager.load_sound('player_attack2', 'sound/player/player_attack2.ogg')
@@ -40,11 +53,11 @@ class Player(pygame.sprite.Sprite):
 
         #쿨타임
         self.thunder_cool = 5
-        self.stone_cool = 3
+        self.missile_cool = 5
 
         #포션
-        self.hp_potion = 3
-        self.mp_potion = 3
+        self.hp_potion = 1
+        self.mp_potion = 1
 
         #충돌관련 받아올 변수들
         #받아올 몬스터 박스들
@@ -63,7 +76,7 @@ class Player(pygame.sprite.Sprite):
         #graphic setup
         self.import_player_assets()
         self.status = 'idle' # 시작은 오른쪽 방향을 보고 서있기
-        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death, 8:thunder, 9:stone
+        self.status_num = 0  #0: idle, 1: run, 2: jump, 3: fall, 4: attack, 5: attack2, 6: hitted, 7: death, 8:missile, 9:thunder
 
         # animation 바꿀 때 사용
         self.frame_index = 0
@@ -92,6 +105,18 @@ class Player(pygame.sprite.Sprite):
         self.CameraOffset = [0,0]
         self.display_surface = pygame.display.get_surface()
 
+    def spell1ON_R(self):
+        TargetPos = self.targetPos
+        self.spell1.ON_P_R(TargetPos, self.hitbox.center)
+
+    def spell1ON_L(self):
+        TargetPos = self.targetPos
+        self.spell1.ON_P_L(TargetPos, self.hitbox.center)
+
+    def spell2ON(self):
+        TargetPos = self.targetPos
+        self.spell2.ON(TargetPos)
+
     def import_player_assets(self):
         # 플레이어를 생성할 때 스프라이트 이미지 세트들도 함께 저장한다.
         # 스프라이트 구현할 때 편하게 하기 위해 각 상태의 이름은 이미지 폴더에 실재하는 이름과 같게 바꿨음
@@ -110,7 +135,9 @@ class Player(pygame.sprite.Sprite):
                     'attack1':[], 'attack1L':[],
                     'attack2':[], 'attack2L':[],
                     'death':[], 'deathL':[],
-                    'hitted':[], 'hittedL':[]
+                    'hitted':[], 'hittedL':[],
+                    'cast1':[], 'cast1L':[],
+                    'cast2':[], 'cast2L':[]
                     }
 
         for spr_name in self.spr.keys():
@@ -153,6 +180,26 @@ class Player(pygame.sprite.Sprite):
                 self.control(0,'attack2',0,5,False,self.RUNNING_SPEED)
             if keys[pygame.K_s] and self.status=='idleL':
                 self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
+            if keys[pygame.K_q] and self.status=='idle' and self.mp >=10:
+                self.control(0,'cast1',0,8,False,self.RUNNING_SPEED)
+                self.spell1ON_R()
+                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
+                self.mp -= 10
+            if keys[pygame.K_q] and self.status=='idleL' and self.mp >=10:
+                self.control(0,'cast1L',0,8,False,self.RUNNING_SPEED)
+                self.spell1ON_L()
+                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
+                self.mp -= 10
+            if keys[pygame.K_w] and self.status=='idle' and self.mp >=20:
+                self.control(0,'cast2',0,9,False,self.RUNNING_SPEED)
+                self.spell2ON()
+                self.mp -= 20
+                #self.hitbox.x += BRINGER_SIZE[0] /3
+            if keys[pygame.K_w] and self.status=='idleL' and self.mp >=20:
+                self.control(0,'cast2L',0,9,False,self.RUNNING_SPEED)
+                self.spell2ON()
+                self.mp -= 20
+                #self.hitbox.x -= BRINGER_SIZE[0] /3
         #달리기상태
         if self.status_num==1:
             if keys[pygame.K_RIGHT] and self.status=='runL':
@@ -201,6 +248,8 @@ class Player(pygame.sprite.Sprite):
 
         #공격1상태, 공격2상태(각각 프레임이 일정수치에 가면 다음 상태로 넘어가도록 해줌)
         self.attack()
+        #마법1상태, 마법2상태(각각 프레임이 일정수치에 가면 다음 상태로 넘어가도록 해줌)
+        self.spell()
         #피격상태
         self.hitted()
         #사망
@@ -264,7 +313,27 @@ class Player(pygame.sprite.Sprite):
                     self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
             if self.frame_index >=2 and self.frame_index <3:
                 self.attackSound2.play()
-                    
+    
+    def spell(self):
+        if self.status_num == 8:
+            if self.status == 'cast1' and self.frame_index >= 7:
+                self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                self.hitbox.y += PLAYER_SPELL1_YCHANGE
+            if self.status == 'cast1L' and self.frame_index >= 7:
+                self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+                self.hitbox.y += PLAYER_SPELL1_YCHANGE
+            #self.attackSound1.play()
+
+        elif self.status_num == 9:
+            if self.status == 'cast2' and self.frame_index >= 8:
+                self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
+                #self.hitbox.x -= BRINGER_SIZE[0] /3
+            if self.status == 'cast2L' and self.frame_index >= 8:
+                self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
+                #self.hitbox.x += BRINGER_SIZE[0] /3
+            #if self.frame_index >=2 and self.frame_index <3:
+               # self.attackSound2.play()
+
     def hitted(self):
         if self.status_num == 6:
             if self.frame_index==3:
@@ -410,7 +479,12 @@ class Player(pygame.sprite.Sprite):
         self.move(df)
         self.animate(df)
 
-        #낙뢰주문
+        #spell
+        self.spell1.CameraOffset = self.CameraOffset
+        self.spell1.update(df)
+
+        self.spell2.CameraOffset = self.CameraOffset
+        self.spell2.update(df)
 
         #어택 박스 정보 갱신
         attack_playerhitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))
@@ -433,7 +507,7 @@ class Player(pygame.sprite.Sprite):
                 self.isAttack = False
         #충돌구현
         #몬스터 어택박스, 플레이어 히트박스 충돌시
-        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0:
+        if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -452,7 +526,7 @@ class Player(pygame.sprite.Sprite):
                     self.control(0,'hittedL',0,6,False,self.RUNNING_SPEED)
                     self.isAttack = False
         #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
-        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0:
+        if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -493,4 +567,6 @@ class Player(pygame.sprite.Sprite):
     def getPlayerMiddle(self):
         return self.hitbox.x+ self.hitbox.width/2
 
-    #플레이어 낙뢰주문 위치 반환
+    #몬스터 위치
+    def setTargetPos(self, posX):
+        self.targetPos = posX
