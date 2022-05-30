@@ -12,6 +12,7 @@ from random import choice
 from debug import *
 from scene import *
 from abyss import *
+from Devil import *
 
 class Level:
     def __init__(self):
@@ -58,7 +59,7 @@ class Level:
             return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
         if game_state == 'level3': # boss 생성 후 바꿔야함
-            return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
+            return Devil(DEVIL_COOR_ini, DEVIL_SIZE, [self.visible_sprites], self.obstacle_sprites)
 
         # intro, ending
         return Bringer(BRINGER_COOR_ini, BRINGER_SIZE, [self.visible_sprites], self.obstacle_sprites)
