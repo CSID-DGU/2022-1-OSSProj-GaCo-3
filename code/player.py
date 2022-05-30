@@ -45,8 +45,12 @@ class Player(pygame.sprite.Sprite):
         self.jumpSound.set_volume(1.0)
         self.landSound.set_volume(0.3)
 
-        #공격력
+        #검 공격력
         self.AttackPower = 10
+        #마법1 공격력
+        self.Spell1AttackPower = 20
+        #마법2 공격력
+        self.Spell2AttackPower = 30
         #체력
         self.hp = PLAYER_HP
         #마나
@@ -527,6 +531,7 @@ class Player(pygame.sprite.Sprite):
         #충돌구현
         #몬스터 어택박스, 플레이어 히트박스 충돌시
         if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
+            self.monsterisAttack = False  #같은 공격에 중복 데미지 안입도록
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -590,3 +595,9 @@ class Player(pygame.sprite.Sprite):
     #몬스터 위치
     def setTargetPos(self, posX):
         self.targetPos = posX
+
+    def getSpell1AttackBox(self):
+        return self.spell1.getHitBox() 
+
+    def getSpell2AttackBox(self):
+        return self.spell2.getHitBox() 

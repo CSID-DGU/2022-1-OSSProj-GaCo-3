@@ -208,14 +208,21 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         #몬스터 인스턴스에 플레이어 박스들 전달
         monster.playerHitbox = player.hitbox
         monster.playerAttackbox = player.attackBox
-        #플레이어 인스턴스에 몬스터2 박스들 전달
+        monster.playerSpell1Attackbox = player.getSpell1AttackBox()
+        monster.playerSpell2Attackbox = player.getSpell2AttackBox()
+
+        #플레이어 인스턴스에 몬스터 박스들 전달
         player.monsterHitbox = monster.getHitBox()
         player.monsterAttackbox = monster.getAttackBox()
         player.monsterSpellAttackbox = monster.getSpellAttackBox()
 
     def playerinfo_transfer(self, player, monster):
         monster.playerisAttack = player.isAttack
+        monster.playerspell1isAttack = player.spell1.isAttack
+        monster.playerspell2isAttack = player.spell2.isAttack
         monster.playerPower = player.AttackPower
+        monster.playerSpell1Power = player.Spell1AttackPower
+        monster.playerSpell2Power = player.Spell2AttackPower
     
     def monsterinfo_transfer(self, player, monster):
         player.monsterisAttack = monster.isAttack

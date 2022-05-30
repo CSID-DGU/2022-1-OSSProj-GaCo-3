@@ -197,6 +197,46 @@ class Abyss(Monster):
                 self.deathSound.play()
                 self.isDead = True
 
+        #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.hitbox,self.playerSpell1Attackbox) and self.playerspell1isAttack and self.can_hurt:
+            self.playerspell1isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell1Power
+            self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
+            self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
+
+            if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+                self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
+                self.hitSound.play()
+                # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
+                # 플레이어 어택박스 위치가 바뀌면 hurt상태를 벗어남. -> colission check 방식을 바꿔야하나?
+                # 일단은 hurt로 상태 변경하자 마자 플레이어 어택박스 위치를 임의로 화변 밖으로 위치시켜서 해당 현상 해결
+                self.playerAttackbox.x = -100
+
+            if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
+                self.status = 'deathR' if self.look_direction == 1 else 'deathL'
+                self.deathSound.play()
+                self.isDead = True
+
+        #플레이어 주문2 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.hitbox,self.playerSpell2Attackbox) and self.playerspell2isAttack and self.can_hurt:
+            self.playerspell2isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell2Power
+            self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
+            self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
+
+            if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+                self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
+                self.hitSound.play()
+                # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
+                # 플레이어 어택박스 위치가 바뀌면 hurt상태를 벗어남. -> colission check 방식을 바꿔야하나?
+                # 일단은 hurt로 상태 변경하자 마자 플레이어 어택박스 위치를 임의로 화변 밖으로 위치시켜서 해당 현상 해결
+                self.playerAttackbox.x = -100
+
+            if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
+                self.status = 'deathR' if self.look_direction == 1 else 'deathL'
+                self.deathSound.play()
+                self.isDead = True
+
     def coodsdown(self):
         current_time = pygame.time.get_ticks()
 
