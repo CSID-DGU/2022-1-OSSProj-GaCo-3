@@ -546,6 +546,7 @@ class Player(pygame.sprite.Sprite):
                     self.isAttack = False
         #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
         if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
+            self.monsterspellisAttack = False  #같은 스펠에 중복 데미지 안입도록
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
