@@ -35,6 +35,10 @@ BRINGER_SIZE     = (420, 279)
 
 # player settings
 PLAYER_SPELL1_YCHANGE = 30
+PLAYER_SPELL1_MP = 10
+PLAYER_SPELL2_MP = 20
+PLAYER_SPELL1_CASTTIME = 3.0
+PLAYER_SPELL2_CASTTIME = 5.0
 PLAYER_COOR_ini = (100, 420) # 플레이어 초기 위치
 PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': PLAYER_SIZE}, 'idleL': {'idx': 11, 'size': PLAYER_SIZE},
                      'run': {'idx': 8, 'size': PLAYER_SIZE}, 'runL': {'idx': 8, 'size': PLAYER_SIZE},

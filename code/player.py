@@ -39,11 +39,18 @@ class Player(pygame.sprite.Sprite):
         self.jumpSound = soundManager.load_sound('player_jump', 'sound/player/player_jump.wav')
         self.landSound = soundManager.load_sound('player_land', 'sound/player/player_landing.wav')
         self.potionSound = soundManager.load_sound('player_potion', 'sound/player/player_potion.wav')
+        self.castSound = soundManager.load_sound('player_spell', 'sound/abyss/abyss_attack2.wav')
+        self.castSound.set_volume(0.5)
+        self.cast2Sound = soundManager.load_sound('player_spell2', 'sound/bringer/bringer_cast.wav')
         self.jumpSound.set_volume(1.0)
         self.landSound.set_volume(0.3)
 
-        #공격력
+        #검 공격력
         self.AttackPower = 10
+        #마법1 공격력
+        self.Spell1AttackPower = 20
+        #마법2 공격력
+        self.Spell2AttackPower = 30
         #체력
         self.hp = PLAYER_HP
         #마나
@@ -52,8 +59,10 @@ class Player(pygame.sprite.Sprite):
         self.hittedTime = 0
 
         #쿨타임
-        self.thunder_cool = 5
-        self.missile_cool = 5
+        self.missile_CastTime = 0.0
+        self.missile_CastTimeMax = PLAYER_SPELL1_CASTTIME
+        self.thunder_CastTime = 0.0
+        self.thunder_CastTimeMax = PLAYER_SPELL2_CASTTIME
 
         #포션
         self.hp_potion = 1
@@ -180,25 +189,35 @@ class Player(pygame.sprite.Sprite):
                 self.control(0,'attack2',0,5,False,self.RUNNING_SPEED)
             if keys[pygame.K_s] and self.status=='idleL':
                 self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
-            if keys[pygame.K_q] and self.status=='idle' and self.mp >=10:
+            #spell1
+            if keys[pygame.K_q] and self.status=='idle' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_R()
                 self.hitbox.y -= PLAYER_SPELL1_YCHANGE
-                self.mp -= 10
-            if keys[pygame.K_q] and self.status=='idleL' and self.mp >=10:
+                self.mp -= PLAYER_SPELL1_MP
+                self.castSound.play()
+                self.missile_CastTime = 0.0
+            if keys[pygame.K_q] and self.status=='idleL' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1L',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_L()
                 self.hitbox.y -= PLAYER_SPELL1_YCHANGE
-                self.mp -= 10
-            if keys[pygame.K_w] and self.status=='idle' and self.mp >=20:
+                self.mp -= PLAYER_SPELL1_MP
+                self.castSound.play()
+                self.missile_CastTime = 0.0
+            #spell2
+            if keys[pygame.K_w] and self.status=='idle' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
                 self.control(0,'cast2',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
-                self.mp -= 20
+                self.mp -= PLAYER_SPELL2_MP
+                self.cast2Sound.play()
+                self.thunder_CastTime = 0.0
                 #self.hitbox.x += BRINGER_SIZE[0] /3
-            if keys[pygame.K_w] and self.status=='idleL' and self.mp >=20:
+            if keys[pygame.K_w] and self.status=='idleL' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
                 self.control(0,'cast2L',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
-                self.mp -= 20
+                self.mp -= PLAYER_SPELL2_MP
+                self.cast2Sound.play()
+                self.thunder_CastTime = 0.0
                 #self.hitbox.x -= BRINGER_SIZE[0] /3
         #달리기상태
         if self.status_num==1:
@@ -479,6 +498,10 @@ class Player(pygame.sprite.Sprite):
         self.move(df)
         self.animate(df)
 
+        #마법 공격 쿨타임
+        self.thunder_CastTime += df/ 1000.0
+        self.missile_CastTime += df/ 1000.0
+
         #spell
         self.spell1.CameraOffset = self.CameraOffset
         self.spell1.update(df)
@@ -508,6 +531,7 @@ class Player(pygame.sprite.Sprite):
         #충돌구현
         #몬스터 어택박스, 플레이어 히트박스 충돌시
         if collision_check(self.hitbox,self.monsterAttackbox) and self.monsterisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
+            self.monsterisAttack = False  #같은 공격에 중복 데미지 안입도록
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -527,6 +551,7 @@ class Player(pygame.sprite.Sprite):
                     self.isAttack = False
         #몬스터 주문 히트박스, 플레이어 히트박스 충돌시
         if collision_check(self.hitbox,self.monsterSpellAttackbox) and self.monsterspellisAttack and self.hittedTime < 0 and self.status_num!=8 and self.status_num!=9:
+            self.monsterspellisAttack = False  #같은 스펠에 중복 데미지 안입도록
             self.hp -= self.monsterPower
             self.hittedTime = 0.5
             #피격상태
@@ -570,3 +595,9 @@ class Player(pygame.sprite.Sprite):
     #몬스터 위치
     def setTargetPos(self, posX):
         self.targetPos = posX
+
+    def getSpell1AttackBox(self):
+        return self.spell1.getHitBox() 
+
+    def getSpell2AttackBox(self):
+        return self.spell2.getHitBox() 

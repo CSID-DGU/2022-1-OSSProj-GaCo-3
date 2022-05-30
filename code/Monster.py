@@ -35,10 +35,17 @@ class Monster(pygame.sprite.Sprite):
         #받아올 플레이어 박스들
         self.playerHitbox = pygame.Rect(0,0,0,0)
         self.playerAttackbox = pygame.Rect(0,0,0,0)
+        self.playerSpell1Attackbox = pygame.Rect(0,0,0,0)
+        self.playerSpell2Attackbox = pygame.Rect(0,0,0,0)
         #플레이어가 공격중인가?
         self.playerisAttack = False
+        #플레이어가 마법공격중인가?
+        self.playerspell1isAttack = False
+        self.playerspell2isAttack = False
         #플레이어의 공격력
         self.playerPower = 0
+        self.playerSpell1Power = 0
+        self.playerSpell2Power = 0
 
         self.direction = -1
 

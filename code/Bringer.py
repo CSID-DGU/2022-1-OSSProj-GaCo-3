@@ -212,6 +212,46 @@ class Bringer(Monster):
                 else:
                     self.status = 'deathL'
                 self.deathSound.play()
+
+        #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.playerSpell1Attackbox,self.getHitBox()) and self.playerspell1isAttack and self.hittedTime < 0:
+            self.playerspell1isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell1Power
+            self.hittedTime = 0.5
+
+            if not 'attack' in self.status and not 'cast' in self.status:
+                if self.look_direction == 1:
+                    self.status = 'hurtR'
+                else:
+                    self.status = 'hurtL'
+                self.hitSound.play()
+            
+            if self.hp <= 0:
+                if self.look_direction == 1:
+                    self.status = 'deathR'
+                else:
+                    self.status = 'deathL'
+                self.deathSound.play()
+
+        #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.playerSpell2Attackbox,self.getHitBox()) and self.playerspell2isAttack and self.hittedTime < 0:
+            self.playerspell2isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell2Power
+            self.hittedTime = 0.5
+
+            if not 'attack' in self.status and not 'cast' in self.status:
+                if self.look_direction == 1:
+                    self.status = 'hurtR'
+                else:
+                    self.status = 'hurtL'
+                self.hitSound.play()
+            
+            if self.hp <= 0:
+                if self.look_direction == 1:
+                    self.status = 'deathR'
+                else:
+                    self.status = 'deathL'
+                self.deathSound.play()
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0
