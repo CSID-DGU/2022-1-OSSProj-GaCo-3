@@ -156,8 +156,10 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
 
         # ui그리기
         pygame.draw.rect(self.display_surface, (0, 0, 0), (0,640, 450,60), 0)
-        self.display_surface.blit(self.skill_missile_icon, (50, 650))
-        self.display_surface.blit(self.skill_thunder_icon, (150, 650))
+        if player.missile_CastTime >= player.missile_CastTimeMax:
+            self.display_surface.blit(self.skill_missile_icon, (50, 650))
+        if player.thunder_CastTime >= player.thunder_CastTimeMax:
+            self.display_surface.blit(self.skill_thunder_icon, (150, 650))
         self.display_surface.blit(self.Health_Potion_icon, (250, 650))
         self.display_surface.blit(self.Mana_Potion_icon, (350, 650))
 
