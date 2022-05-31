@@ -27,7 +27,7 @@ class Game:
 
     def menu(self): # 맨 처음 시작. 메뉴 화면
         while True:
-            background_surf = pygame.image.load('image/map/intro.png').convert_alpha()
+            background_surf = pygame.image.load('image/etc/intro.png').convert_alpha()
             background_surf = pygame.transform.scale(background_surf, (WIDTH, HEIGHT))
             background_rect = background_surf.get_rect(topleft=(0, 0))
             self.screen.blit(background_surf, background_rect)
