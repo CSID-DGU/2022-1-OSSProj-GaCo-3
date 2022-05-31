@@ -133,6 +133,36 @@ class Game:
             #self.fade_in()
             pygame.display.update()
 
+    # 랭킹 정보 그리기
+    def ranks_draw(self, ranking_list):
+        # 이름, 순위 공통의 시작 y축이 필요
+        rank_start_y = HEIGHT // 3 + 20
+
+        # 이름 center x 축이 필요하고
+        name_centerx = WIDTH // 2 - 105
+
+        # 순위 center x 축이 필요하다
+        rank_centerx = (WIDTH // 3) * 2 + 65
+
+        # 순위 사이의 간격도 확인해야함
+        rank_leading = 38
+
+        if len(ranking_list) == 0:  # 랭킹 정보가 아무것도 없으면
+            surf = MENU_FONT.render("NO LOG", True, WHITE)
+            rect = surf.get_rect(center=(name_centerx, HEIGHT // 2))
+            self.screen.blit(surf, rect)
+
+        else:  # 랭킹 정보가 하나라도 있으면
+            for idx, info in enumerate(ranking_list):
+                name_surf = CONTENT_FONT.render(info[0], True, WHITE)
+                rank_surf = CONTENT_FONT.render(info[1].strip(), True, WHITE)
+
+                name_rect = name_surf.get_rect(center=(name_centerx, rank_start_y + rank_leading * idx))
+                rank_rect = rank_surf.get_rect(center=(rank_centerx, rank_start_y + rank_leading * idx))
+
+                self.screen.blit(name_surf, name_rect)
+                self.screen.blit(rank_surf, rank_rect)
+
     def ranks(self): # 랭킹 화면
         # 랭킹 정보 정렬 -> 이건 저장할 때 같이 해줘야하는 건데 일단 여기서 함. 나중에 필요 없으면 지울 것.
         sort_rank_file()
@@ -142,33 +172,7 @@ class Game:
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            # 랭킹 정보 그리기
-            # 이름, 순위 공통의 시작 y축이 필요
-            rank_start_y = HEIGHT//3 + 20
-
-            # 이름 center x 축이 필요하고
-            name_centerx = WIDTH // 2 - 100
-
-            # 순위 center x 축이 필요하다
-            rank_centerx = (WIDTH // 3) * 2 + 100
-
-            # 순위 사이의 간격도 확인해야함
-            rank_leading = 39
-
-            if len(ranking_list) == 0: # 랭킹 정보가 아무것도 없으면
-                surf = CONTENT_FONT.render("NO LOG", True, BLACK)
-                rect = surf.get_rect(topleft=(WIDTH//2, HEIGHT//2))
-                self.screen.blit(surf, rect)
-
-            else: # 랭킹 정보가 하나라도 있으면
-                for idx, info in enumerate(ranking_list):
-                    name_surf = CONTENT_FONT.render(f"{info[0]}", True, WHITE)
-                    rank_surf = CONTENT_FONT.render(f"{info[1]}", True, WHITE)
-                    name_rect = name_surf.get_rect(center = (name_centerx, rank_start_y + rank_leading * idx))
-                    rank_rect = name_surf.get_rect(center=(rank_centerx, rank_start_y + rank_leading * idx))
-
-                    self.screen.blit(name_surf, name_rect)
-                    self.screen.blit(rank_surf, rank_rect)
+            self.ranks_draw(ranking_list)
 
             # 버튼들
             self.screen.blit(self.back_to_menu_button_surf, self.back_to_menu_button) # 다시 메뉴로 돌아가는 버튼
@@ -180,9 +184,11 @@ class Game:
                     return # ranks() 종료하고 메뉴로 돌아가기
                 elif self.delete_button.collidepoint(mouse_x, mouse_y): # reset_rank_button rect를 누르면
                     delete_rank_all() # rank/user_score.txt 안의 내용을 모두 삭제
+                    sort_rank_file()
+                    ranking_list = ranking_info()
+                    self.ranks_draw(ranking_list)
 
             self.click_check()
-
             pygame.display.update()
 
     # 메인 게임 실행 루프
