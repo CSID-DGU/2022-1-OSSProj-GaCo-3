@@ -25,12 +25,20 @@ class Game:
 
         self.is_clicked = False # 메뉴에서 클릭 이벤트 저장
 
-        menu_button_height =  (HEIGHT//7) * 6
-        self.start_button_pos = (WIDTH//2, menu_button_height) # start button center 위치
-        self.ranks_button_pos = (WIDTH // 2 - WIDTH//7, menu_button_height)  # rank button center 위치
-        self.exit_button_pos = (WIDTH // 2 + WIDTH//7, menu_button_height)  # exit button center 위치
+        menu_button_height =  HEIGHT//7
+        self.start_button_pos = (WIDTH//2, menu_button_height * 6)  # start button center 위치
+        self.ranks_button_pos = (WIDTH // 2 - WIDTH//7, menu_button_height * 6)  # rank button center 위치
+        self.exit_button_pos = (WIDTH // 2 + WIDTH//7, menu_button_height * 6)  # exit button center 위치
+        self.story_button_pos = (WIDTH // 7, menu_button_height) # 임시
+        self.key_button_pos = ((WIDTH // 7) * 6, menu_button_height) # 임시
 
         self.import_assets() # 이미지 등을 모두 로드해놓고 시작하기
+
+        # for fade in/out
+        self.fade_surf = pygame.Surface((WIDTH, HEIGHT))
+        self.fade_surf.fill((0, 0, 0)) # surface 검은 색으로 채움
+        self.alpha = 255 # 장면 생성 처음엔 까만 화면
+        self.fade_surf.set_alpha(self.alpha)
 
     def import_assets(self):
         self.main_path = 'image/etc/'
@@ -65,6 +73,14 @@ class Game:
         self.exit_button_surf = pygame.image.load(f'{self.main_path}menu_exit.png').convert_alpha()
         self.exit_button = self.exit_button_surf.get_rect(center=self.exit_button_pos)
 
+        # 스토리 버튼 -> 스토리(배경) 설명 화면
+        self.story_button_surf = pygame.image.load(f'{self.main_path}menu_story.png').convert_alpha() # 이미지 교체 필요
+        self.story_button = self.exit_button_surf.get_rect(center=self.story_button_pos)
+
+        # 키 설명 버튼 -> 키 설명 화면으로
+        self.key_button_surf = pygame.image.load(f'{self.main_path}menu_key.png').convert_alpha() # 이미지 교체 필요
+        self.key_button = self.exit_button_surf.get_rect(center=self.key_button_pos)
+
     def menu(self): # 맨 처음 시작. 메뉴 화면
         self.intro()
         while True:
@@ -83,6 +99,10 @@ class Game:
                     # 게임 종료
                     pygame.quit()
                     sys.exit()
+                elif self.story_button.collidepoint(mouse_x, mouse_y):
+                    self.story_scene()
+                elif self.key_button.collidepoint(mouse_x, mouse_y):
+                    self.key_scene()
 
             # 이벤트 체크
             self.click_check()
@@ -91,6 +111,8 @@ class Game:
             self.screen.blit(self.start_button_surf, self.start_button)
             self.screen.blit(self.ranks_button_surf, self.ranks_button)
             self.screen.blit(self.exit_button_surf, self.exit_button)
+            self.screen.blit(self.story_button_surf, self.story_button)
+            self.screen.blit(self.key_button_surf, self.key_button)
 
             #self.fade_in()
             pygame.display.update()
@@ -257,8 +279,10 @@ class Game:
         while True:
             if intro_number == 1: # 게임 이름 화면
                 self.screen.blit(self.start_surf, self.start_rect)
+
             elif intro_number == 2: # 게임 배경(스토리) 설명 화면
                 self.screen.blit(self.story_surf, self.story_rect)
+
             elif intro_number == 3: # 게임 키 설명 화면
                 self.screen.blit(self.key_surf, self.key_rect)
             else:
@@ -268,6 +292,21 @@ class Game:
             if self.is_return_key_pressed():
                 intro_number += 1
 
+            self.fade_in()
+            pygame.display.update()
+
+    def story_scene(self): # 메뉴에서 스토리 버튼 누르면 함수 실행
+        while True:
+            self.screen.blit(self.story_surf, self.story_rect)
+            if self.is_return_key_pressed(): # 엔터 키 누르면
+                return # 종료
+            pygame.display.update()
+
+    def key_scene(self): # 메뉴에서 키 버튼 누르면 함수 실행
+        while True:
+            self.screen.blit(self.key_surf, self.key_rect)
+            if self.is_return_key_pressed(): # 엔터 키 누르면
+                return # 종료
             pygame.display.update()
 
     def is_return_key_pressed(self):
@@ -278,6 +317,20 @@ class Game:
                 if event.key == pygame.K_RETURN:
                     return True
         return False
+
+    def fade_in(self):
+        # alpha 값 조절해서 fade in 효과 내기
+        # scene 생성 후 alpha 값이 차츰 작아지다가 0 보다 작아지면 alpha 는 계속 0을 유지한다.
+        # scene 삭제 시 fade_out 함수를 호출하면 alpha 값이 다시 차츰 높아지게 한다.
+        self.alpha -= 30 if self.alpha > 0 else 0
+        self.fade_surf.set_alpha(self.alpha)
+        self.screen.blit(self.fade_surf, (0, 0))
+
+    def fade_out(self): # 장면 전환시, 다음 장면 생성 전에 이 함수를 호출하자
+        for alpha in range(0, 300):
+            self.fade_surf.set_alpha(alpha)
+            self.display_surface.blit(self.fade_surf, (0, 0))
+            pygame.display.update()
 
 if __name__ == '__main__':
     game = Game()
