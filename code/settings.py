@@ -13,7 +13,7 @@ GAME_STATES = ['level1', 'level2', 'level3']
 # font setup
 LARGE_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 60)
 MENU_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 40)
-CONTENT_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 25)
+CONTENT_FONT = pygame.font.Font('image/font/Thorn Font.ttf', 20)
 
 # colors
 WHITE   = (255, 255, 255)

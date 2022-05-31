@@ -42,10 +42,14 @@ class Game:
 
     def import_assets(self):
         self.main_path = 'image/etc/'
+        # 메뉴 레이아웃
+        self.leading = 50
+
         # menu background
         self.background_surf = pygame.image.load(f'{self.main_path}menu_background.png').convert_alpha()
         self.background_surf = pygame.transform.scale(self.background_surf, (WIDTH, HEIGHT))
         self.background_rect = self.background_surf.get_rect(topleft=(0, 0))
+
 
         # intro 화면들
         self.start_surf = pygame.image.load(f'{self.main_path}start_1.png').convert_alpha()
@@ -57,10 +61,22 @@ class Game:
         self.key_surf = pygame.image.load(f'{self.main_path}key_3.png').convert_alpha()
         self.key_rect = self.key_surf.get_rect(topleft=(0, 0))
 
-        # 메뉴 레이아웃
-        self.leading = 50
-        # self.button_size = (50, 20)
 
+        # 랭킹 화면
+        self.ranks_background_surf = pygame.image.load(f'{self.main_path}ranks.png').convert_alpha()
+        self.ranks_background_rect = self.ranks_background_surf.get_rect(topleft=(0, 0))
+
+        # 랭킹 화면 버튼들
+        # 메뉴로 돌아가는 버튼
+        self.back_to_menu_button_surf = pygame.image.load(f'{self.main_path}btn_to_menu.png').convert_alpha()
+        self.back_to_menu_button = self.back_to_menu_button_surf.get_rect(center=self.story_button_pos)
+
+        # 랭킹 기록 초기화 버튼
+        self.delete_button_surf = pygame.image.load(f'{self.main_path}ranks_delete.png').convert_alpha()
+        self.delete_button = self.delete_button_surf.get_rect(center=self.key_button_pos)
+
+
+        # 메뉴 화면 버튼들
         # 시작 버튼 -> intro 보여주고 run() 실행 ->
         self.start_button_surf = pygame.image.load(f'{self.main_path}menu_start.png').convert_alpha()
         self.start_button = self.start_button_surf.get_rect(center=self.start_button_pos)
@@ -122,52 +138,50 @@ class Game:
         sort_rank_file()
         ranking_list = ranking_info()
         while True:
-            self.screen.fill(WHITE)
-            centerx = WIDTH // 2
-            centery = HEIGHT // 2
-            leading = 50
-            button_size = (50, 20)
-
+            self.screen.blit(self.ranks_background_surf, self.ranks_background_rect)
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            # 제목
-            title_surf = LARGE_FONT.render("RANKING", True, RED)
-            title_rect = title_surf.get_rect(center=(centerx, centery - 6 * leading))
-
             # 랭킹 정보 그리기
-            rank_start_y = centery - 5 * leading # 랭킹 로그 시작할 y값
+            # 이름, 순위 공통의 시작 y축이 필요
+            rank_start_y = HEIGHT//3 + 20
+
+            # 이름 center x 축이 필요하고
+            name_centerx = WIDTH // 2 - 100
+
+            # 순위 center x 축이 필요하다
+            rank_centerx = (WIDTH // 3) * 2 + 100
+
+            # 순위 사이의 간격도 확인해야함
+            rank_leading = 39
 
             if len(ranking_list) == 0: # 랭킹 정보가 아무것도 없으면
                 surf = CONTENT_FONT.render("NO LOG", True, BLACK)
-                rect = surf.get_rect(topleft=(centerx, centery))
+                rect = surf.get_rect(topleft=(WIDTH//2, HEIGHT//2))
                 self.screen.blit(surf, rect)
 
             else: # 랭킹 정보가 하나라도 있으면
                 for idx, info in enumerate(ranking_list):
-                    surf = CONTENT_FONT.render(f"{idx} | {info[0]} : {info[1]}", True, BLACK)
-                    rect = surf.get_rect(topleft=(centerx, rank_start_y + idx * leading))
-                    self.screen.blit(surf, rect)
+                    name_surf = CONTENT_FONT.render(f"{info[0]}", True, WHITE)
+                    rank_surf = CONTENT_FONT.render(f"{info[1]}", True, WHITE)
+                    name_rect = name_surf.get_rect(center = (name_centerx, rank_start_y + rank_leading * idx))
+                    rank_rect = name_surf.get_rect(center=(rank_centerx, rank_start_y + rank_leading * idx))
 
-            # 다시 메뉴로 돌아가는 버튼
-            back_to_menu_button = pygame.Rect((centerx, centery + 5 * leading), button_size)
+                    self.screen.blit(name_surf, name_rect)
+                    self.screen.blit(rank_surf, rank_rect)
 
-            # 기록 초기화 버튼
-            reset_rank_button = pygame.Rect((centerx, centery + 6 * leading), button_size)
+            # 버튼들
+            self.screen.blit(self.back_to_menu_button_surf, self.back_to_menu_button) # 다시 메뉴로 돌아가는 버튼
+            self.screen.blit(self.delete_button_surf, self.delete_button)  # 기록 초기화 버튼
 
             # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
-                if back_to_menu_button.collidepoint(mouse_x, mouse_y): # back_to_menu_button rect를 누르면
+                if self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # back_to_menu_button rect를 누르면
                     return # ranks() 종료하고 메뉴로 돌아가기
-                elif reset_rank_button.collidepoint(mouse_x, mouse_y): # reset_rank_button rect를 누르면
+                elif self.delete_button.collidepoint(mouse_x, mouse_y): # reset_rank_button rect를 누르면
                     delete_rank_all() # rank/user_score.txt 안의 내용을 모두 삭제
 
             self.click_check()
-
-            # 화면 업데이트
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.rect(self.screen, RED, back_to_menu_button)  # 메뉴로 돌아가는 버튼 그리기
-            pygame.draw.rect(self.screen, GREEN, reset_rank_button)  # 랭킹 초기화 버튼 그리기
 
             pygame.display.update()
 
@@ -265,12 +279,12 @@ class Game:
 
             pygame.display.update()
 
-    def click_check(self):
+    def click_check(self): # 버튼을 눌렀다 뗐을 때를 감지
         self.is_clicked = False
         for event in pygame.event.get():
             quit_check(event)
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     self.is_clicked = True
 
