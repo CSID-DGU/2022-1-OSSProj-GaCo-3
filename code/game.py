@@ -25,43 +25,50 @@ class Game:
 
         self.is_clicked = False # 메뉴에서 클릭 이벤트 저장
 
+        menu_button_height =  (HEIGHT//7) * 6
+        self.start_button_pos = (WIDTH//2, menu_button_height) # start button center 위치
+        self.ranks_button_pos = (WIDTH // 2 - WIDTH//7, menu_button_height)  # rank button center 위치
+        self.exit_button_pos = (WIDTH // 2 + WIDTH//7, menu_button_height)  # exit button center 위치
+
+        self.import_assets() # 이미지 등을 모두 로드해놓고 시작하기
+
+    def import_assets(self):
+        # menu background
+        self.background_surf = pygame.image.load('image/etc/menu_background.png').convert_alpha()
+        self.background_surf = pygame.transform.scale(self.background_surf, (WIDTH, HEIGHT))
+        self.background_rect = self.background_surf.get_rect(topleft=(0, 0))
+
+        # 메뉴 레이아웃
+        self.leading = 50
+        # self.button_size = (50, 20)
+
+        # 시작 버튼 -> intro 보여주고 run() 실행 ->
+        self.start_button_surf = pygame.image.load('image/etc/menu_start.png').convert_alpha()
+        self.start_button = self.start_button_surf.get_rect(center=self.start_button_pos)
+
+        # 랭킹 버튼 -> ranks() 실행 (랭킹화면)
+        self.ranks_button_surf = pygame.image.load('image/etc/menu_rank.png').convert_alpha()
+        self.ranks_button = self.ranks_button_surf.get_rect(center=self.ranks_button_pos)
+
+        # 종료 버튼 -> 게임 종료, 화면 닫음
+        self.exit_button_surf = pygame.image.load('image/etc/menu_exit.png').convert_alpha()
+        self.exit_button = self.exit_button_surf.get_rect(center=self.exit_button_pos)
+
     def menu(self): # 맨 처음 시작. 메뉴 화면
+
         while True:
-            background_surf = pygame.image.load('image/etc/intro.png').convert_alpha()
-            background_surf = pygame.transform.scale(background_surf, (WIDTH, HEIGHT))
-            background_rect = background_surf.get_rect(topleft=(0, 0))
-            self.screen.blit(background_surf, background_rect)
-            # self.screen.fill(BLACK)
-            centerx = WIDTH//2
-            centery = HEIGHT//2
-            leading = 50
-            button_size = (50, 20)
+            self.screen.blit(self.background_surf, self.background_rect)
 
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            # 제목
-            title_surf = LARGE_FONT.render("DEVIL's CASTLE", True, WHITE)
-            title_rect = title_surf.get_rect(center=(centerx, centery - 2 * leading))
-
-            # 유저 네임 입력 창
-
-            # 시작 버튼 -> intro 보여주고 run() 실행 ->
-            start_button = pygame.Rect((centerx, centery), button_size)
-
-            # 랭킹 버튼 -> ranks() 실행 (랭킹화면)
-            ranks_button = pygame.Rect((centerx, centery + leading), button_size)
-
-            # 종료 버튼 -> 게임 종료, 화면 닫음
-            exit_button = pygame.Rect((centerx, centery + 2 * leading), button_size)
-
             # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
-                if start_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
+                if self.start_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
                     self.run() # 게임 시작
-                elif ranks_button.collidepoint(mouse_x, mouse_y):
+                elif self.ranks_button.collidepoint(mouse_x, mouse_y):
                     self.ranks() # 랭크 화면으로 이동
-                elif exit_button.collidepoint(mouse_x, mouse_y):
+                elif self.exit_button.collidepoint(mouse_x, mouse_y):
                     # 게임 종료
                     pygame.quit()
                     sys.exit()
@@ -70,10 +77,14 @@ class Game:
             self.click_check()
 
             # 화면 업데이트
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.rect(self.screen, RED, start_button) # 시작 버튼 그리기
-            pygame.draw.rect(self.screen, GREEN, ranks_button) # 랭킹 버튼 그리기
-            pygame.draw.rect(self.screen, BLUE, exit_button) # 종료 버튼 그리기
+            # self.screen.blit(title_surf, title_rect)
+            self.screen.blit(self.start_button_surf, self.start_button)
+            self.screen.blit(self.ranks_button_surf, self.ranks_button)
+            self.screen.blit(self.exit_button_surf, self.exit_button)
+
+            # pygame.draw.rect(self.screen, RED, self.start_button) # 시작 버튼 그리기
+            # pygame.draw.rect(self.screen, GREEN, self.ranks_button) # 랭킹 버튼 그리기
+            # pygame.draw.rect(self.screen, BLUE, self.exit_button) # 종료 버튼 그리기
 
             #self.fade_in()
             pygame.display.update()
