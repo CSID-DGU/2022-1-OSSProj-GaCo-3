@@ -33,29 +33,40 @@ class Game:
         self.import_assets() # 이미지 등을 모두 로드해놓고 시작하기
 
     def import_assets(self):
+        self.main_path = 'image/etc/'
         # menu background
-        self.background_surf = pygame.image.load('image/etc/menu_background.png').convert_alpha()
+        self.background_surf = pygame.image.load(f'{self.main_path}menu_background.png').convert_alpha()
         self.background_surf = pygame.transform.scale(self.background_surf, (WIDTH, HEIGHT))
         self.background_rect = self.background_surf.get_rect(topleft=(0, 0))
+
+        # intro 화면들
+        self.start_surf = pygame.image.load(f'{self.main_path}start_1.png').convert_alpha()
+        self.start_rect = self.start_surf.get_rect(topleft=(0, 0))
+
+        self.story_surf = pygame.image.load(f'{self.main_path}story_2.png').convert_alpha()
+        self.story_rect = self.story_surf.get_rect(topleft=(0, 0))
+
+        self.key_surf = pygame.image.load(f'{self.main_path}key_3.png').convert_alpha()
+        self.key_rect = self.key_surf.get_rect(topleft=(0, 0))
 
         # 메뉴 레이아웃
         self.leading = 50
         # self.button_size = (50, 20)
 
         # 시작 버튼 -> intro 보여주고 run() 실행 ->
-        self.start_button_surf = pygame.image.load('image/etc/menu_start.png').convert_alpha()
+        self.start_button_surf = pygame.image.load(f'{self.main_path}menu_start.png').convert_alpha()
         self.start_button = self.start_button_surf.get_rect(center=self.start_button_pos)
 
         # 랭킹 버튼 -> ranks() 실행 (랭킹화면)
-        self.ranks_button_surf = pygame.image.load('image/etc/menu_rank.png').convert_alpha()
+        self.ranks_button_surf = pygame.image.load(f'{self.main_path}menu_rank.png').convert_alpha()
         self.ranks_button = self.ranks_button_surf.get_rect(center=self.ranks_button_pos)
 
         # 종료 버튼 -> 게임 종료, 화면 닫음
-        self.exit_button_surf = pygame.image.load('image/etc/menu_exit.png').convert_alpha()
+        self.exit_button_surf = pygame.image.load(f'{self.main_path}menu_exit.png').convert_alpha()
         self.exit_button = self.exit_button_surf.get_rect(center=self.exit_button_pos)
 
     def menu(self): # 맨 처음 시작. 메뉴 화면
-
+        self.intro()
         while True:
             self.screen.blit(self.background_surf, self.background_rect)
 
@@ -77,14 +88,9 @@ class Game:
             self.click_check()
 
             # 화면 업데이트
-            # self.screen.blit(title_surf, title_rect)
             self.screen.blit(self.start_button_surf, self.start_button)
             self.screen.blit(self.ranks_button_surf, self.ranks_button)
             self.screen.blit(self.exit_button_surf, self.exit_button)
-
-            # pygame.draw.rect(self.screen, RED, self.start_button) # 시작 버튼 그리기
-            # pygame.draw.rect(self.screen, GREEN, self.ranks_button) # 랭킹 버튼 그리기
-            # pygame.draw.rect(self.screen, BLUE, self.exit_button) # 종료 버튼 그리기
 
             #self.fade_in()
             pygame.display.update()
@@ -245,6 +251,33 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.is_clicked = True
+
+    def intro(self): # 처음 시작화면.
+        intro_number = 1
+        while True:
+            if intro_number == 1: # 게임 이름 화면
+                self.screen.blit(self.start_surf, self.start_rect)
+            elif intro_number == 2: # 게임 배경(스토리) 설명 화면
+                self.screen.blit(self.story_surf, self.story_rect)
+            elif intro_number == 3: # 게임 키 설명 화면
+                self.screen.blit(self.key_surf, self.key_rect)
+            else:
+                return
+
+            # 엔터키 누르면 다음 화면으로 넘어감. + intro_number == 4 가 되면 intro() 종료하고 메뉴로 넘어감.
+            if self.is_return_key_pressed():
+                intro_number += 1
+
+            pygame.display.update()
+
+    def is_return_key_pressed(self):
+        for event in pygame.event.get():
+            quit_check(event)
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    return True
+        return False
 
 if __name__ == '__main__':
     game = Game()
