@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-
+import time
 import pygame, sys
 from settings import *
 from level import *
@@ -18,7 +18,7 @@ class Game:
         self.level = Level()
 
         # ranking setup
-        self.user_name = "Test_name" # 시작화면에서 입력받기
+        self.user_name = "클릭 후 이름 입력"
         self.game_start_time = None # 레벨1 시작할 때 시간
         self.game_end_time = None # 레벨3 클리어 했을 때 시간
         self.time_score = None # 게임 끝났을 때 시간 계산 후 저장
@@ -42,10 +42,14 @@ class Game:
 
     def import_assets(self):
         self.main_path = 'image/etc/'
+        # 메뉴 레이아웃
+        self.leading = 50
+
         # menu background
         self.background_surf = pygame.image.load(f'{self.main_path}menu_background.png').convert_alpha()
         self.background_surf = pygame.transform.scale(self.background_surf, (WIDTH, HEIGHT))
         self.background_rect = self.background_surf.get_rect(topleft=(0, 0))
+
 
         # intro 화면들
         self.start_surf = pygame.image.load(f'{self.main_path}start_1.png').convert_alpha()
@@ -57,10 +61,22 @@ class Game:
         self.key_surf = pygame.image.load(f'{self.main_path}key_3.png').convert_alpha()
         self.key_rect = self.key_surf.get_rect(topleft=(0, 0))
 
-        # 메뉴 레이아웃
-        self.leading = 50
-        # self.button_size = (50, 20)
 
+        # 랭킹 화면
+        self.ranks_background_surf = pygame.image.load(f'{self.main_path}ranks.png').convert_alpha()
+        self.ranks_background_rect = self.ranks_background_surf.get_rect(topleft=(0, 0))
+
+        # 랭킹 화면 버튼들
+        # 메뉴로 돌아가는 버튼
+        self.back_to_menu_button_surf = pygame.image.load(f'{self.main_path}btn_to_menu.png').convert_alpha()
+        self.back_to_menu_button = self.back_to_menu_button_surf.get_rect(center=self.story_button_pos)
+
+        # 랭킹 기록 초기화 버튼
+        self.delete_button_surf = pygame.image.load(f'{self.main_path}ranks_delete.png').convert_alpha()
+        self.delete_button = self.delete_button_surf.get_rect(center=self.key_button_pos)
+
+
+        # 메뉴 화면 버튼들
         # 시작 버튼 -> intro 보여주고 run() 실행 ->
         self.start_button_surf = pygame.image.load(f'{self.main_path}menu_start.png').convert_alpha()
         self.start_button = self.start_button_surf.get_rect(center=self.start_button_pos)
@@ -80,6 +96,26 @@ class Game:
         # 키 설명 버튼 -> 키 설명 화면으로
         self.key_button_surf = pygame.image.load(f'{self.main_path}menu_key.png').convert_alpha() # 이미지 교체 필요
         self.key_button = self.exit_button_surf.get_rect(center=self.key_button_pos)
+
+
+        # 이겼을 때 배경화면
+        self.win_background_surf = pygame.image.load(f'{self.main_path}clear_background.png').convert_alpha()
+        self.win_background_rect = self.win_background_surf.get_rect(topleft=(0, 0))
+
+        # 이겼을 때, 저장 후 배경화면
+        self.win_background_after_save_surf = pygame.image.load(f'{self.main_path}clear_background_after_save.png').convert_alpha()
+        self.win_background_after_save_rect = self.win_background_after_save_surf.get_rect(topleft=(0, 0))
+
+        # 이겼을 때, 기록 저장 버튼
+        self.save_button_surf = pygame.image.load(f'{self.main_path}save_button.png').convert_alpha()
+        self.save_button = self.save_button_surf.get_rect(center=self.start_button_pos)
+
+        # 이겼을 때, 유저 텍스트 인풋 커서
+        self.text_cursor = pygame.image.load(f'{self.main_path}text_cursor.png').convert_alpha()
+
+        # 졌을 때 배경화면
+        self.lose_background_surf = pygame.image.load(f'{self.main_path}lose_background.png').convert_alpha()
+        self.lose_background_rect = self.lose_background_surf.get_rect(topleft=(0, 0))
 
     def menu(self): # 맨 처음 시작. 메뉴 화면
         self.intro()
@@ -117,58 +153,62 @@ class Game:
             #self.fade_in()
             pygame.display.update()
 
+    # 랭킹 정보 그리기
+    def ranks_draw(self, ranking_list):
+        # 이름, 순위 공통의 시작 y축이 필요
+        rank_start_y = HEIGHT // 3 + 20
+
+        # 이름 center x 축이 필요하고
+        name_centerx = WIDTH // 2 - 105
+
+        # 순위 center x 축이 필요하다
+        rank_centerx = (WIDTH // 3) * 2 + 65
+
+        # 순위 사이의 간격도 확인해야함
+        rank_leading = 38
+
+        if len(ranking_list) == 0:  # 랭킹 정보가 아무것도 없으면
+            surf = MENU_FONT.render("NO LOG", True, WHITE)
+            rect = surf.get_rect(center=(name_centerx, HEIGHT // 2))
+            self.screen.blit(surf, rect)
+
+        else:  # 랭킹 정보가 하나라도 있으면
+            for idx, info in enumerate(ranking_list):
+                name_surf = CONTENT_FONT.render(info[0], True, WHITE)
+                rank_surf = CONTENT_FONT.render(info[1].strip(), True, WHITE)
+
+                name_rect = name_surf.get_rect(center=(name_centerx, rank_start_y + rank_leading * idx))
+                rank_rect = rank_surf.get_rect(center=(rank_centerx, rank_start_y + rank_leading * idx))
+
+                self.screen.blit(name_surf, name_rect)
+                self.screen.blit(rank_surf, rank_rect)
+
     def ranks(self): # 랭킹 화면
         # 랭킹 정보 정렬 -> 이건 저장할 때 같이 해줘야하는 건데 일단 여기서 함. 나중에 필요 없으면 지울 것.
         sort_rank_file()
         ranking_list = ranking_info()
         while True:
-            self.screen.fill(WHITE)
-            centerx = WIDTH // 2
-            centery = HEIGHT // 2
-            leading = 50
-            button_size = (50, 20)
-
+            self.screen.blit(self.ranks_background_surf, self.ranks_background_rect)
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            # 제목
-            title_surf = LARGE_FONT.render("RANKING", True, RED)
-            title_rect = title_surf.get_rect(center=(centerx, centery - 6 * leading))
+            self.ranks_draw(ranking_list)
 
-            # 랭킹 정보 그리기
-            rank_start_y = centery - 5 * leading # 랭킹 로그 시작할 y값
-
-            if len(ranking_list) == 0: # 랭킹 정보가 아무것도 없으면
-                surf = CONTENT_FONT.render("NO LOG", True, BLACK)
-                rect = surf.get_rect(topleft=(centerx, centery))
-                self.screen.blit(surf, rect)
-
-            else: # 랭킹 정보가 하나라도 있으면
-                for idx, info in enumerate(ranking_list):
-                    surf = CONTENT_FONT.render(f"{idx} | {info[0]} : {info[1]}", True, BLACK)
-                    rect = surf.get_rect(topleft=(centerx, rank_start_y + idx * leading))
-                    self.screen.blit(surf, rect)
-
-            # 다시 메뉴로 돌아가는 버튼
-            back_to_menu_button = pygame.Rect((centerx, centery + 5 * leading), button_size)
-
-            # 기록 초기화 버튼
-            reset_rank_button = pygame.Rect((centerx, centery + 6 * leading), button_size)
+            # 버튼들
+            self.screen.blit(self.back_to_menu_button_surf, self.back_to_menu_button) # 다시 메뉴로 돌아가는 버튼
+            self.screen.blit(self.delete_button_surf, self.delete_button)  # 기록 초기화 버튼
 
             # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
-                if back_to_menu_button.collidepoint(mouse_x, mouse_y): # back_to_menu_button rect를 누르면
+                if self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # back_to_menu_button rect를 누르면
                     return # ranks() 종료하고 메뉴로 돌아가기
-                elif reset_rank_button.collidepoint(mouse_x, mouse_y): # reset_rank_button rect를 누르면
+                elif self.delete_button.collidepoint(mouse_x, mouse_y): # reset_rank_button rect를 누르면
                     delete_rank_all() # rank/user_score.txt 안의 내용을 모두 삭제
+                    sort_rank_file()
+                    ranking_list = ranking_info()
+                    self.ranks_draw(ranking_list)
 
             self.click_check()
-
-            # 화면 업데이트
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.rect(self.screen, RED, back_to_menu_button)  # 메뉴로 돌아가는 버튼 그리기
-            pygame.draw.rect(self.screen, GREEN, reset_rank_button)  # 랭킹 초기화 버튼 그리기
-
             pygame.display.update()
 
     # 메인 게임 실행 루프
@@ -201,76 +241,160 @@ class Game:
         else: # 졌으면
             self.lose()
 
-    def win(self):
-        # 이겼으니까 user_name이랑 score 저장할 것.
-        save_current_score(self.user_name, self.time_score) # 아직 user_name 창을 안 만들어서.. 일단 test name으로 저장함
+    def user_input(self, input_box_width):
+        # input_box_width가 250 이상되면 더 입력못하게 하자
+        for event in pygame.event.get():
+            quit_check(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.user_name = self.user_name[:-1]
+                else:
+                    if input_box_width > 250: #일정 크기 이상을 넘어가면 유저인풋을 받지 않기.
+                        pass
+                    else:
+                        self.user_name += event.unicode
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.is_clicked = True
+
+    def user_name_mdify(self):
+        if self.user_name == "클릭 후 이름 입력": # 초기값
+            self.user_name == ""
+
+        replace_chars = [' ', ','] # 공백문자, 쉼표는 제거
+        for char in replace_chars:
+            if char in self.user_name:
+                self.user_name = self.user_name.replace(char, "")
+
+    def win(self): # True를 반환하면 다시 시작
+        self.user_name = "클릭 후 이름 입력"
+        name_rank_centerx = WIDTH//2 + 80
+        name_y = HEIGHT // 2 + 40
+        rank_y = HEIGHT // 2 - 40
+        name_input_box_rect = pygame.Rect((0, 0), (50, 40))
+        color_active = WHITE
+        color_passive = (50, 50, 50) # 회색
+        color = color_passive
+        input_active = False
+
+        # 저장버튼을 한 번이라도 눌렀으면 다시 저장 못하게 하고 메뉴로 돌아가라는 메세지만 띄우기
+        is_saved = False
+
+        # # 유저 인풋 박스에서 사용자 입력을 기다리는 커서
+        # line_color = 0
+        # input_line_color = (line_color, line_color, line_color)  # 인풋 박스가 활성화되면 깜빡거리게 하기
+
         while True:
-            self.screen.fill(BLACK)
-            centerx = WIDTH // 2
-            centery = HEIGHT // 2
-            leading = 50
-            button_size = (50, 20)
+            if not is_saved:
+                self.screen.blit(self.win_background_surf, self.win_background_rect)
+            else:
+                self.screen.blit(self.win_background_after_save_surf, self.win_background_after_save_rect)
 
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            # 제목
-            title_surf = LARGE_FONT.render("YOU WIN!", True, WHITE)
-            title_rect = title_surf.get_rect(center=(centerx, centery))
-
-            # 다시 메뉴로 돌아가는 버튼
-            back_to_menu_button = pygame.Rect((centerx, centery + 5 * leading), button_size)
-
-            # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
-                if back_to_menu_button.collidepoint(mouse_x, mouse_y): # back_to_menu_button rect를 누르면
-                    return # 종료하고 menu()로 돌아가기
+                if name_input_box_rect.collidepoint(mouse_x, mouse_y) and not is_saved: # 인풋박스를 누르면
+                    if self.user_name == "클릭 후 이름 입력": # 처음 클릭했을 때만 이름 삭제
+                        self.user_name = ""
+                    input_active = True
+                else:
+                    input_active = False
 
-            self.click_check()
+            self.is_clicked = False
+
+            if input_active:
+                color = color_active
+                line_color = 255 if time.time() % 1 > 0.5 else 0 # 커서가 깜빡일 수 있게
+            else:
+                color = color_passive
+                line_color = 0
+
+            # 커서 색 바꾸기
+            input_line_color = (line_color, line_color, line_color)
+
+            # 이벤트 체크, 유저 인풋 받기
+            for event in pygame.event.get():
+                quit_check(event)
+                if event.type == pygame.KEYDOWN:
+                    if input_active: # 유저인풋 박스가 활성화되었을 때만 입력받기
+                        pygame.draw.line(self.screen, input_line_color, name_input_box_rect.bottomleft,
+                                         name_input_box_rect.bottomright)
+                        if event.key == pygame.K_BACKSPACE:
+                            self.user_name = self.user_name[:-1]
+
+                        elif event.key == pygame.K_RETURN:  # 엔터 누르면 다시 인풋박스를 인에이블 상태로
+                            input_active = False
+                            color = color_passive
+
+                        else:
+                            if name_input_box_rect.w > 250:  # 일정 크기 이상을 넘어가면 유저인풋을 받지 않기.
+                                pass
+                            else:
+                                self.user_name += event.unicode
+
+                if event.type == pygame.MOUSEBUTTONUP:  # 클릭 체크
+                    if event.button == 1:
+                        self.is_clicked = True
+
+            self.screen.blit(self.save_button_surf, self.save_button)  # 저장 버튼 그리기
+            self.screen.blit(self.back_to_menu_button_surf, self.back_to_menu_button) #다시 돌아가기 버튼
+
+            # 저장 버튼 눌렸을 경우
+            if self.is_clicked: # 버튼이 눌렸는데
+                if self.save_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
+                    self.user_name_mdify() # 유저네임 가공
+                    if len(self.user_name) == 0: # 유저네임이 아무것도 입력되지 않았다면
+                        print('no user name')
+                        # 경고창을 띄우기
+
+                    else: # 유저네임에 어떤 글자가 들어가 있다면
+                        save_current_score(self.user_name, self.time_score) # 기록파일에 유저네임과 점수 저장
+                        is_saved = True  # 저장했다는 플래그
+                        # 저장했다는 알림, 메뉴로 돌아가세요라고 안내하기
+
+                elif self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # 돌아가기 버튼 눌릴 경우
+                    return # 함수 종료, 메뉴로 돌아가기
+
+            # 인풋박스 그리기
+            line_start_position = name_input_box_rect.bottomright - pygame.Vector2(30, 5)
+            line_end_position = name_input_box_rect.bottomright - pygame.Vector2(10, 5)
+            pygame.draw.rect(self.screen, color, name_input_box_rect, 2)
+            if input_active:
+                pygame.draw.line(self.screen, input_line_color, line_start_position, line_end_position, 5)
+
+            # 사용자 이름 사각형
+            user_name_surf = CONTENT_FONT.render(self.user_name, True, color)
+            name_input_box_rect.center = (name_rank_centerx, name_y)
+            self.screen.blit(user_name_surf, (name_input_box_rect.x + 10, name_input_box_rect.y))
+            name_input_box_rect.w = user_name_surf.get_width() + 40
+
+            # 방금 전 게임 기록 렌더링
+            score = str(self.time_score)
+            time_score_surf = CONTENT_FONT.render(score, True, WHITE)
+            time_score_rect = time_score_surf.get_rect(center=(name_rank_centerx, rank_y))
+            self.screen.blit(time_score_surf, time_score_rect)
 
             # 화면 업데이트
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.rect(self.screen, RED, back_to_menu_button)  # 메뉴로 돌아가는 버튼 그리기
-
             pygame.display.update()
 
-    def lose(self): # 수정필요
+    def lose(self):
         while True:
-            self.screen.fill(BLACK)
-            centerx = WIDTH // 2
-            centery = HEIGHT // 2
-            leading = 50
-            button_size = (50, 20)
+            self.screen.blit(self.lose_background_surf, self.lose_background_rect)
 
-            # mouse info
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-
-            # 제목
-            title_surf = LARGE_FONT.render("YOU LOSE!", True, WHITE)
-            title_rect = title_surf.get_rect(center=(centerx, centery))
-
-            # 다시 메뉴로 돌아가는 버튼
-            back_to_menu_button = pygame.Rect((centerx, centery + 5 * leading), button_size)
-
-            # 버튼 눌림 체크
-            if self.is_clicked:  # 버튼이 눌렸는데
-                if back_to_menu_button.collidepoint(mouse_x, mouse_y):  # back_to_menu_button rect를 누르면
-                    return  # 종료하고 menu()로 돌아가기
-
-            self.click_check()
+            if self.is_return_key_pressed():
+                return
 
             # 화면 업데이트
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.rect(self.screen, RED, back_to_menu_button)  # 메뉴로 돌아가는 버튼 그리기
-
             pygame.display.update()
 
-    def click_check(self):
+    def click_check(self): # 버튼을 눌렀다 뗐을 때를 감지
         self.is_clicked = False
         for event in pygame.event.get():
             quit_check(event)
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     self.is_clicked = True
 

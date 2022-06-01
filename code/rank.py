@@ -38,7 +38,7 @@ def sort_rank_file():
     sorted_rank_dict_list = sorted(rank_dict.items(), key=lambda item: item[1]) # 리스트됨
 
     for idx, dict_content in enumerate(sorted_rank_dict_list):
-        if idx == 9: # 상위 10개만 저장하기
+        if idx == 10: # 상위 10개만 저장하기
             break
         key, value = dict_content
         data = f"{key}, {rank_dict[key]}\n"
