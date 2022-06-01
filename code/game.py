@@ -241,26 +241,9 @@ class Game:
         else: # 졌으면
             self.lose()
 
-    def user_input(self, input_box_width):
-        # input_box_width가 250 이상되면 더 입력못하게 하자
-        for event in pygame.event.get():
-            quit_check(event)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
-                    self.user_name = self.user_name[:-1]
-                else:
-                    if input_box_width > 250: #일정 크기 이상을 넘어가면 유저인풋을 받지 않기.
-                        pass
-                    else:
-                        self.user_name += event.unicode
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    self.is_clicked = True
-
     def user_name_mdify(self):
         if self.user_name == "클릭 후 이름 입력": # 초기값
-            self.user_name == ""
+            self.user_name = ""
 
         replace_chars = [' ', ','] # 공백문자, 쉼표는 제거
         for char in replace_chars:
@@ -281,21 +264,20 @@ class Game:
         # 저장버튼을 한 번이라도 눌렀으면 다시 저장 못하게 하고 메뉴로 돌아가라는 메세지만 띄우기
         is_saved = False
 
-        # # 유저 인풋 박스에서 사용자 입력을 기다리는 커서
-        # line_color = 0
-        # input_line_color = (line_color, line_color, line_color)  # 인풋 박스가 활성화되면 깜빡거리게 하기
+        # 아무 이름도 입력하지 않고 저장하려 할 때 메시지 띄우기
+        no_user_name_flag = False
 
         while True:
-            if not is_saved:
-                self.screen.blit(self.win_background_surf, self.win_background_rect)
-            else:
-                self.screen.blit(self.win_background_after_save_surf, self.win_background_after_save_rect)
+            background_surf = self.win_background_surf if not is_saved else self.win_background_after_save_surf
+            background_rect = self.win_background_rect if not is_saved else self.win_background_after_save_rect
+            self.screen.blit(background_surf, background_rect)
 
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
             if self.is_clicked: # 버튼이 눌렸는데
                 if name_input_box_rect.collidepoint(mouse_x, mouse_y) and not is_saved: # 인풋박스를 누르면
+                    no_user_name_flag = False
                     if self.user_name == "클릭 후 이름 입력": # 처음 클릭했을 때만 이름 삭제
                         self.user_name = ""
                     input_active = True
@@ -338,21 +320,21 @@ class Game:
                     if event.button == 1:
                         self.is_clicked = True
 
-            self.screen.blit(self.save_button_surf, self.save_button)  # 저장 버튼 그리기
+            if not is_saved:  # 저장되고 나면 버튼 삭제
+                self.screen.blit(self.save_button_surf, self.save_button)  # 저장 버튼 그리기
             self.screen.blit(self.back_to_menu_button_surf, self.back_to_menu_button) #다시 돌아가기 버튼
 
             # 저장 버튼 눌렸을 경우
             if self.is_clicked: # 버튼이 눌렸는데
-                if self.save_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
+                if self.save_button.collidepoint(mouse_x, mouse_y): # save button rect를 누르면
                     self.user_name_mdify() # 유저네임 가공
+
                     if len(self.user_name) == 0: # 유저네임이 아무것도 입력되지 않았다면
-                        print('no user name')
-                        # 경고창을 띄우기
+                        no_user_name_flag = True
 
                     else: # 유저네임에 어떤 글자가 들어가 있다면
                         save_current_score(self.user_name, self.time_score) # 기록파일에 유저네임과 점수 저장
                         is_saved = True  # 저장했다는 플래그
-                        # 저장했다는 알림, 메뉴로 돌아가세요라고 안내하기
 
                 elif self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # 돌아가기 버튼 눌릴 경우
                     return # 함수 종료, 메뉴로 돌아가기
@@ -375,6 +357,12 @@ class Game:
             time_score_surf = CONTENT_FONT.render(score, True, WHITE)
             time_score_rect = time_score_surf.get_rect(center=(name_rank_centerx, rank_y))
             self.screen.blit(time_score_surf, time_score_rect)
+
+            # 이름을 입력하지 않고 저장하려했을 때, 이름을 입력하라는 문구 띄우기
+            if no_user_name_flag:
+                msg_surf = ALERT_FONT.render('이름을 입력해주세요!', True, RED)
+                msg_rect = msg_surf.get_rect(center=(name_rank_centerx, name_y + 40))
+                self.screen.blit(msg_surf, msg_rect)
 
             # 화면 업데이트
             pygame.display.update()
@@ -416,7 +404,6 @@ class Game:
             if self.is_return_key_pressed():
                 intro_number += 1
 
-            self.fade_in()
             pygame.display.update()
 
     def story_scene(self): # 메뉴에서 스토리 버튼 누르면 함수 실행
@@ -441,20 +428,6 @@ class Game:
                 if event.key == pygame.K_RETURN:
                     return True
         return False
-
-    def fade_in(self):
-        # alpha 값 조절해서 fade in 효과 내기
-        # scene 생성 후 alpha 값이 차츰 작아지다가 0 보다 작아지면 alpha 는 계속 0을 유지한다.
-        # scene 삭제 시 fade_out 함수를 호출하면 alpha 값이 다시 차츰 높아지게 한다.
-        self.alpha -= 30 if self.alpha > 0 else 0
-        self.fade_surf.set_alpha(self.alpha)
-        self.screen.blit(self.fade_surf, (0, 0))
-
-    def fade_out(self): # 장면 전환시, 다음 장면 생성 전에 이 함수를 호출하자
-        for alpha in range(0, 300):
-            self.fade_surf.set_alpha(alpha)
-            self.display_surface.blit(self.fade_surf, (0, 0))
-            pygame.display.update()
 
 if __name__ == '__main__':
     game = Game()
