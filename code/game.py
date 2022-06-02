@@ -184,8 +184,6 @@ class Game:
                 self.screen.blit(rank_surf, rank_rect)
 
     def ranks(self): # 랭킹 화면
-        # 랭킹 정보 정렬 -> 이건 저장할 때 같이 해줘야하는 건데 일단 여기서 함. 나중에 필요 없으면 지울 것.
-        sort_rank_file()
         ranking_list = ranking_info()
         while True:
             self.screen.blit(self.ranks_background_surf, self.ranks_background_rect)
@@ -334,6 +332,7 @@ class Game:
 
                     else: # 유저네임에 어떤 글자가 들어가 있다면
                         save_current_score(self.user_name, self.time_score) # 기록파일에 유저네임과 점수 저장
+                        sort_rank_file() # 기록 정렬
                         is_saved = True  # 저장했다는 플래그
 
                 elif self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # 돌아가기 버튼 눌릴 경우
