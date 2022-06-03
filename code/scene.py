@@ -43,6 +43,22 @@ class Scene:
         self.alpha = 255 # 장면 생성 처음엔 까만 화면
         self.fade_surf.set_alpha(self.alpha)
 
+    def time_render(self, time):
+        # 타임 띄우기
+        self.TIME_surf = CONTENT_FONT.render(f"TIME", True, RED)
+        self.TIME_rect = self.TIME_surf.get_rect(topleft= (WIDTH - 200, 30))
+
+        self.time_surf = CONTENT_FONT.render(f"{time:.2f}", True, WHITE)
+        self.time_rect = self.time_surf.get_rect(topleft= (WIDTH - 140, 30))
+
+        time_background_rect = pygame.Rect(WIDTH - 220, 27, 150, 45)
+        # 시간이 많이 지나도 시간 글자가 화면을 벗어나지 않도록
+        # 글자 rect가 처음에 지정한 넓이인 150보다 넓어지면 넓어지는 만큼 배경 넓이도 넓게 조정함
+        time_background_rect.w = max(150, self.TIME_rect.w + self.time_rect.w + 20)
+        pygame.draw.rect(self.display_surface, BLACK, time_background_rect)
+        self.display_surface.blit(self.time_surf, self.time_rect)
+        self.display_surface.blit(self.TIME_surf, self.TIME_rect)
+
     def update(self, df, time):
         self.BGM.play(True)
         self.visibile_sprites.custom_draw(self.player, self.game_state, self.monster)
@@ -53,7 +69,9 @@ class Scene:
         self.player.setTargetPos(self.monster.getHitBox()[0])  # 몬스터 hitbox x 값 player targetpos 로 넘겨주기.
         self.player.update(df)
 
-        debug(f"timer : {time:.2f}(sec)", 100, 100)
+        # 시간 오른쪽 상단에 위치시킴
+        self.time_render(time)
+
         # # 디버그 코드
         debug("self.status : " + str(self.player.status), 10, 0)
         debug("player_status_num : " + str(self.player.status_num), 10, 40)
