@@ -98,7 +98,8 @@ BGM_DEFAULT_VOLUME = 0.5
 
 # monster1 spell settings
 ABYSS_SPELL_SIZE = (150, 150)
-ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE}}
+ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE},
+                    'spellL': {'idx': 30, 'size': ABYSS_SPELL_SIZE}}
 
 # monster2 spell settings
 BRINGER_SPELL_SIZE = (560, 372)

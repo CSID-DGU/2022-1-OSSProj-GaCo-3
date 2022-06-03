@@ -25,7 +25,7 @@ class AbyssSpell(pygame.sprite.Sprite):
 
         # animation 바꿀 때 사용
         self.frame_index = 0
-        self.animation_speed = 0.25
+        self.animation_speed = 10.0
         self.animation_time = 0.0
         self.animation_time_max = 0.1
         self.animation_end = False
@@ -40,7 +40,8 @@ class AbyssSpell(pygame.sprite.Sprite):
         self.target_pos = 0 # 플레이어의 위치 정보
 
     def import_assets(self, path, MonsterInfo):
-        self.spr = {'spell': []}
+        self.spr = {'spell': [],
+                    'spellL' : []}
 
         for spr_name in self.spr.keys():
             self.spr[spr_name] = import_sprites_image(path, spr_name +'.png',
@@ -51,6 +52,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         # 플레이어가 왼쪽에 있으면 왼쪽 화면 바깥까지, 오른쪽에 있으면 오른쪽 화면 바깥까지 공격
         distance = initial_pos[0] - target_pos
         self.target_pos = -100 if distance >= 0 else 2800
+        self.status = 'spellL' if distance >= 0 else 'spell'
         self.isAttack = True
         self.SkillON = True
         self.hitbox.centerx = initial_pos[0] - 70 if distance >= 0 else initial_pos[0] + 70
@@ -78,7 +80,7 @@ class AbyssSpell(pygame.sprite.Sprite):
         spr = self.spr[self.status]
 
         if self.SkillON == True:
-            self.animation_time += df / 1000.0
+            self.animation_time += df / 1000.0 * self.animation_speed
 
             if self.animation_time >= self.animation_time_max:
                 self.animation_time = 0
