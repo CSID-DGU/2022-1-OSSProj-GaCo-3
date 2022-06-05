@@ -59,6 +59,9 @@ class Abyss(Monster):
         self.AttackPower = 10 # 공격력
         self.hp = ABYSS_HP # 체력
 
+        self.IdleTimeMax = 1.5
+        self.IdleTime = 0.0
+
     def import_monster_assets(self):
         self.spr = {'idleL':[], 'idleR':[],
                     'runL':[], 'runR':[],
@@ -114,6 +117,21 @@ class Abyss(Monster):
             else:  # 플레이어가 오른쪽에 있으면
                 self.direction, self.look_direction = 1, 1  # 움직일 때 x값이 커질 수 있게.
 
+            if ('hurt' in self.status) | ('death' in self.status) | ('attack1' in self.status) | ('attack2' in self.status)| ('idle' in self.status):
+                if not self.animation_end:
+                    return
+                else:
+                    if self.look_direction == 1:
+                        self.status = 'idleR'
+                    else:
+                        self.status = 'idleL'
+
+            if 'idle' in self.status:
+                if self.IdleTime < self.IdleTimeMax:
+                    self.IdleTime += df
+                    return
+                else:
+                    self.IdleTime = 0.0
 
             if 'attack' not in self.status: # 공격중이지 않을 때
                 if abs(distanceX) > self.boundary: # 거리가 멀면 움직이고
