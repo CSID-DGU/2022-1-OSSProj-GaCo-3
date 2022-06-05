@@ -77,3 +77,10 @@ class soundManager():
             return
 
         Sound.set_volume(volume)
+
+    @staticmethod
+    def initSound():
+        SoundList = soundManager.SoundMap.values()
+
+        for sound in SoundList:
+            sound.stop()
