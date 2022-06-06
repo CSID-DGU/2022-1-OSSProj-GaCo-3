@@ -25,6 +25,9 @@ class Player(pygame.sprite.Sprite):
         self.isAttack = False
         self.isDead = False
 
+        #scene_num
+        self.scene_num = 0
+
         #spell
         self.spell1 = AbyssSpell((-500, -500), groups, obstacle_sprites)
         self.spell2 = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, obstacle_sprites)
@@ -59,9 +62,9 @@ class Player(pygame.sprite.Sprite):
         self.hittedTime = 0
 
         #쿨타임
-        self.missile_CastTime = 0.0
+        self.missile_CastTime = PLAYER_SPELL1_CASTTIME
         self.missile_CastTimeMax = PLAYER_SPELL1_CASTTIME
-        self.thunder_CastTime = 0.0
+        self.thunder_CastTime = PLAYER_SPELL2_CASTTIME
         self.thunder_CastTimeMax = PLAYER_SPELL2_CASTTIME
 
         #포션
@@ -190,29 +193,27 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_s] and self.status=='idleL':
                 self.control(0,'attack2L',0,5,False,self.RUNNING_SPEED)
             #spell1
-            if keys[pygame.K_q] and self.status=='idle' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
+            if self.scene_num != 0 and keys[pygame.K_q] and self.status=='idle' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_R()
-                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
                 self.mp -= PLAYER_SPELL1_MP
                 self.castSound.play()
                 self.missile_CastTime = 0.0
-            if keys[pygame.K_q] and self.status=='idleL' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
+            if self.scene_num != 0 and keys[pygame.K_q] and self.status=='idleL' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1L',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_L()
-                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
                 self.mp -= PLAYER_SPELL1_MP
                 self.castSound.play()
                 self.missile_CastTime = 0.0
             #spell2
-            if keys[pygame.K_w] and self.status=='idle' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
+            if self.scene_num == 2 and keys[pygame.K_w] and self.status=='idle' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
                 self.control(0,'cast2',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
                 self.mp -= PLAYER_SPELL2_MP
                 self.cast2Sound.play()
                 self.thunder_CastTime = 0.0
                 #self.hitbox.x += BRINGER_SIZE[0] /3
-            if keys[pygame.K_w] and self.status=='idleL' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
+            if self.scene_num == 2 and keys[pygame.K_w] and self.status=='idleL' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
                 self.control(0,'cast2L',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
                 self.mp -= PLAYER_SPELL2_MP
@@ -337,21 +338,14 @@ class Player(pygame.sprite.Sprite):
         if self.status_num == 8:
             if self.status == 'cast1' and self.frame_index >= 7:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                self.hitbox.y += PLAYER_SPELL1_YCHANGE
             if self.status == 'cast1L' and self.frame_index >= 7:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-                self.hitbox.y += PLAYER_SPELL1_YCHANGE
-            #self.attackSound1.play()
 
         elif self.status_num == 9:
             if self.status == 'cast2' and self.frame_index >= 8:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                #self.hitbox.x -= BRINGER_SIZE[0] /3
             if self.status == 'cast2L' and self.frame_index >= 8:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-                #self.hitbox.x += BRINGER_SIZE[0] /3
-            #if self.frame_index >=2 and self.frame_index <3:
-               # self.attackSound2.play()
 
     def hitted(self):
         if self.status_num == 6:

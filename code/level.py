@@ -95,6 +95,17 @@ class Level:
 
             self.player.hp = PLAYER_HP # 레벨 바뀌면 플레이어 hp 회복하기
             self.player.mp = PLAYER_MP # 레벨 바뀌면 플레이어 mp 회복하기
+            #마법 쿨타임 초기화
+            self.player.missile_CastTime = PLAYER_SPELL1_CASTTIME
+            self.player.thunder_CastTime = PLAYER_SPELL2_CASTTIME
+            #씬 받기
+            self.player.scene_num = self.scene_num
+            # 플레이어 스펠 날리기
+            if self.player.spell1.status == 'spellL':
+                self.player.spell1.hitbox.x = -100
+            if self.player.spell1.status == 'spell':
+                self.player.spell1.hitbox.x = 2800
+            self.player.spell2.hitbox.x = 10000
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
             self.monster.spell.kill() # 몬스터 스펠 죽이기
             self.monster = self.monster_create(self.game_state)  # 몬스터 생성

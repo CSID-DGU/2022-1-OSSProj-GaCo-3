@@ -25,7 +25,7 @@ class AbyssSpell(pygame.sprite.Sprite):
 
         # animation 바꿀 때 사용
         self.frame_index = 0
-        self.animation_speed = 10.0
+        self.animation_speed = 20.0
         self.animation_time = 0.0
         self.animation_time_max = 0.1
         self.animation_end = False

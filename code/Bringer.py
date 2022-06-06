@@ -233,7 +233,7 @@ class Bringer(Monster):
                     self.status = 'deathL'
                 self.deathSound.play()
 
-        #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
+        #플레이어 주문2 히트박스, 몬스터 히트박스 충돌시
         if collision_check(self.playerSpell2Attackbox,self.getHitBox()) and self.playerspell2isAttack and self.hittedTime < 0:
             self.playerspell2isAttack = False  #같은 스펠에 중복 데미지 안입도록
             self.hp -= self.playerSpell2Power

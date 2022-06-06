@@ -75,7 +75,7 @@ class Scene:
         # # 디버그 코드
         debug("self.status : " + str(self.player.status), 10, 0)
         debug("player_status_num : " + str(self.player.status_num), 10, 40)
-        # debug("player_hitbox : " + str(self.player.hitbox), 10, 80)
+        debug("player_scene_num : " + str(self.player.scene_num), 10, 80)
         # debug("player_hp : " + str(self.player.hp), 10, 160)
         # debug("monster_hp : " + str(self.monster.hp), 10, 120)
         # #debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
@@ -173,11 +173,23 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.icon_setting() # 아이콘 세팅
 
         # ui그리기
-        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,640, 450,60), 0)
-        if player.missile_CastTime >= player.missile_CastTimeMax:
-            self.display_surface.blit(self.skill_missile_icon, (50, 650))
-        if player.thunder_CastTime >= player.thunder_CastTimeMax:
-            self.display_surface.blit(self.skill_thunder_icon, (150, 650))
+        pygame.draw.rect(self.display_surface, (0, 0, 0), (0,640, 450,60), 0) #판넬
+        if game_state == 'level2':     #level2
+            if player.missile_CastTime >= player.missile_CastTimeMax:
+                self.display_surface.blit(self.skill_missile_icon, (50, 650))
+            else:
+                self.display_surface.blit(self.B_skill_missile_icon, (50, 650))
+        if game_state == 'level3':     #level3
+            if player.missile_CastTime >= player.missile_CastTimeMax:
+                self.display_surface.blit(self.skill_missile_icon, (50, 650))
+            else:
+                self.display_surface.blit(self.B_skill_missile_icon, (50, 650))
+
+            if player.thunder_CastTime >= player.thunder_CastTimeMax:
+                self.display_surface.blit(self.skill_thunder_icon, (150, 650))
+            else:
+                self.display_surface.blit(self.B_skill_thunder_icon, (150, 650))
+
         self.display_surface.blit(self.Health_Potion_icon, (250, 650))
         self.display_surface.blit(self.Mana_Potion_icon, (350, 650))
 
@@ -270,8 +282,14 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.skill_thunder_icon = pygame.image.load('image/UI/thunder_icon.png')
         self.skill_thunder_icon = pygame.transform.scale(self.skill_thunder_icon, (40, 40))
 
+        self.B_skill_thunder_icon = pygame.image.load('image/UI/B_thunder_icon.png')
+        self.B_skill_thunder_icon = pygame.transform.scale(self.B_skill_thunder_icon, (40, 40))
+
         self.skill_missile_icon = pygame.image.load('image/UI/missile_icon.png')
         self.skill_missile_icon = pygame.transform.scale(self.skill_missile_icon, (40, 40))
+
+        self.B_skill_missile_icon = pygame.image.load('image/UI/B_missile_icon.png')
+        self.B_skill_missile_icon = pygame.transform.scale(self.B_skill_missile_icon, (40, 40))
 
         self.Health_Potion_icon = pygame.image.load('image/UI/Health_Potion.png')
         self.Health_Potion_icon = pygame.transform.scale(self.Health_Potion_icon, (40, 40))
