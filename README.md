@@ -179,8 +179,8 @@ $ python3 code/game.py
 
 * 박용준(Yongjun Park) <a href="https://github.com/Parkteams"><img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=Github&logoColor=white"/></a>
 
-* 서상민(Sangmin Seo) <a href="[https://github.com/Parkteams](https://github.com/SeoSangmin)"><img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=Github&logoColor=white"/></a>
+* 서상민(Sangmin Seo) <a href="https://github.com/SeoSangmin"><img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=Github&logoColor=white"/></a>
 
-* 유재헌(Jaeheon Yu) <a href="[https://github.com/Parkteams](https://github.com/midnight774)"><img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=Github&logoColor=white"/></a>
+* 유재헌(Jaeheon Yu) <a href="https://github.com/midnight774"><img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=Github&logoColor=white"/></a>
 
 <br><br><br>
