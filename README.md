@@ -19,7 +19,7 @@
 * git clone https://github.com/CSID-DGU/2022-1-OSSProj-GaCo-3
 
 
-'''
-  cd 2022-1-OSSProj-GaCo-3
-  python3 code/game.py
-'''
+
+`cd 2022-1-OSSProj-GaCo-3`
+
+`python3 code/game.py`
