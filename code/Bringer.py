@@ -154,12 +154,12 @@ class Bringer(Monster):
             if self.look_direction == 1:
                 self.hitbox.x += self.scale[0] /2.0
                 self.OffsetX = -BRINGER_SIZE[0]/4
-                self.attackBox.x = self.hitbox.x -self.OffsetX
 
             elif self.look_direction == -1:
                 self.hitbox.x -= self.scale[0] /2.0
                 self.OffsetX = BRINGER_SIZE[0]/4
-                self.attackBox.x = self.hitbox.x -self.OffsetX
+                
+        self.attackBox.x = self.hitbox.x -self.OffsetX
 
         if(self.prev_status != self.status):
             self.frame_index = 0 
