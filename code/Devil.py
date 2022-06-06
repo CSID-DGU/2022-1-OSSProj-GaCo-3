@@ -1,4 +1,5 @@
 # -*-coding:utf-8-*-
+import random
 from random import getstate
 import pygame
 from settings import *
@@ -7,7 +8,8 @@ from game import *
 from Monster import * 
 from level import * 
 from debug import *
-from BringerSpell import *
+from Devil_Darkbolt import *
+from Devil_Firebomb import *
 from soundManager import *
 
 class Devil(Monster):
@@ -37,37 +39,58 @@ class Devil(Monster):
         self.hitbox = self.rect.inflate(-MONSTER_SIZE[0]/10*8, - MONSTER_SIZE[1]/10*8)
 
         self.attackBox = pygame.Rect(self.hitbox[0] , self.hitbox[1] - MONSTER_SIZE[0]/10, MONSTER_SIZE[0]/5*2, MONSTER_SIZE[1]/5*2)
-        self.spell = BringerSpell((-500,-500), BRINGER_SPELL_SIZE, groups, self.obstacle_sprites)
+        self.temp = Devil_Darkbolt((-500,-500), DEVIL_DARKBOLT_SIZE, groups, self.obstacle_sprites)
+        self.spell = Devil_Darkbolt((-500,-500), DEVIL_DARKBOLT_SIZE, groups, self.obstacle_sprites)
+        self.spell2 = Devil_Firebomb((-500,-500), DEVIL_DARKBOLT_SIZE, groups, self.obstacle_sprites)
         self.isAttack = False
         self.isDead = False
 
         # 체력바
-        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], BRINGER_SIZE[0]/2, BRINGER_SIZE[1]/32)
+        self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], DEVIL_SIZE[0]/2, DEVIL_SIZE[1]/32)
 
         #공격력
-        self.AttackPower = 40
+        self.AttackPower = 20
         #체력
-        self.hp = BRINGER_HP
+        self.hp = DEVIL_HP
         #무적시간
         self.hittedTime = 0
 
 
-    def spellON(self):
+    def spellON(self):  #darkbolt
+        if self.spell.status == 'firebomb':
+            self.temp = self.spell
+            self.spell = self.spell2
+            self.spell2 = self.temp #swap
+
         TargetPos = self.targetPos
         self.spell.ON(TargetPos)
+        
+    def spell2ON(self):   #firebomb
+        if self.spell.status == 'darkbolt':
+            self.temp = self.spell
+            self.spell = self.spell2
+            self.spell2 = self.temp #swap
+
+        TargetPos = self.targetPos
+        self.spell.ON(TargetPos)
+
+        
 
     def import_monster_assets(self):
         self.spr = {'idleL':[], 'idleR':[],
                     'walkL':[], 'walkR':[],
                     'attack1L':[], 'attack1R':[],
-                    'attack2L':[], 'attack2R':[],
+                    'cast_explosionL':[], 'cast_explosionR':[],
+                    'cast_dazzleL':[], 'cast_dazzleR':[],
+                    'cast_thunderL':[], 'cast_thunderR':[],
                     'deathL':[], 'deathR':[],
                     'hurtL':[], 'hurtR':[]}
 
         super(Devil, self).import_monster_assets('image/Monster/Devil/', DEVIL_IMG_INFO, 'L')
 
         #왼쪽 이미지들만 컬러키 다르게 먹여야해서 일단 이렇게 해둠
-        leftList = ['idleL', 'walkL','attack1L','attack2L','deathL','hurtL']
+        leftList = ['idleL', 'walkL','attack1L','cast_explosionL','cast_dazzleL','cast_thunderL'
+                    ,'cast_dazzleR','cast_thunderR','deathL','hurtL']
 
         for LeftName in leftList:
             spr = self.spr[LeftName]
@@ -148,12 +171,22 @@ class Devil(Monster):
                 self.direction = 0
         else:
             self.CastTime = 0.0
-            if(distanceX) >= 0:
-                self.status = 'attack2L'
-            else:
-                self.status = 'attack2R'
-            
-            
+            attacktype = random.randint(0,2)
+            if attacktype == 0:
+                if(distanceX) >= 0:
+                    self.status = 'cast_explosionL'
+                else:
+                    self.status = 'cast_explosionR'
+            if attacktype == 1:
+                if(distanceX) >= 0:
+                    self.status = 'cast_dazzleL'
+                else:
+                    self.status = 'cast_dazzleR'
+            if attacktype == 2:
+                if(distanceX) >= 0:
+                    self.status = 'cast_thunderL'
+                else:
+                    self.status = 'cast_thunderR'
 
         if 'R' in self.status:
             self.look_direction = 1
@@ -181,10 +214,10 @@ class Devil(Monster):
         attack_hitbox = sub_Coordinate(self.attackBox, (self.CameraOffset[0], self.CameraOffset[1], 0, 0))               
 
         #체력바 위치 갱신
-        self.healthbar.x = self.getHitBox()[0] - DEVIL_SIZE[0]/ 25
+        self.healthbar.x = self.getHitBox()[0] - DEVIL_SIZE[0]/ 16
         self.healthbar.y = self.hitbox.y
 
-        self.healthbar[2] = BRINGER_SIZE[0]/2 / BRINGER_HP * self.hp
+        self.healthbar[2] = DEVIL_SIZE[0]*1/3 / DEVIL_HP * self.hp
 
        #attack animation notify
         if 'attack1' in self.status:
@@ -194,8 +227,10 @@ class Devil(Monster):
             else:
                 self.isAttack = False
 
-        elif 'cast' in self.status and self.animation_end:
+        elif 'cast_thunder' in self.status and self.animation_end:
             self.spellON()
+        elif 'cast_explosion' in self.status and self.animation_end:
+            self.spell2ON()
            
         
         self.spell.CameraOffset = self.CameraOffset
@@ -218,6 +253,46 @@ class Devil(Monster):
                     self.status = 'deathR'
                 else:
                     self.status = 'deathL'
+
+        #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.playerSpell1Attackbox,self.getHitBox()) and self.playerspell1isAttack and self.hittedTime < 0:
+            self.playerspell1isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell1Power
+            self.hittedTime = 0.5
+
+            if not 'attack' in self.status and not 'cast' in self.status:
+                if self.look_direction == 1:
+                    self.status = 'hurtR'
+                else:
+                    self.status = 'hurtL'
+                #self.hitSound.play()
+            
+            if self.hp <= 0:
+                if self.look_direction == 1:
+                    self.status = 'deathR'
+                else:
+                    self.status = 'deathL'
+                #self.deathSound.play()
+
+        #플레이어 주문2 히트박스, 몬스터 히트박스 충돌시
+        if collision_check(self.playerSpell2Attackbox,self.getHitBox()) and self.playerspell2isAttack and self.hittedTime < 0:
+            self.playerspell2isAttack = False  #같은 스펠에 중복 데미지 안입도록
+            self.hp -= self.playerSpell2Power
+            self.hittedTime = 0.5
+
+            if not 'attack' in self.status and not 'cast' in self.status:
+                if self.look_direction == 1:
+                    self.status = 'hurtR'
+                else:
+                    self.status = 'hurtL'
+                #self.hitSound.play()
+            
+            if self.hp <= 0:
+                if self.look_direction == 1:
+                    self.status = 'deathR'
+                else:
+                    self.status = 'deathL'
+                #self.deathSound.play()
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0

@@ -125,6 +125,7 @@ class Game:
             # mouse info
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
+
             # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
                 if self.start_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
