@@ -105,6 +105,8 @@ class Level:
                 self.player.spell1.hitbox.x = -100
             if self.player.spell1.status == 'spell':
                 self.player.spell1.hitbox.x = 2800
+            # 플레이어 어택 초기화
+            self.player.isAttack = False
             self.player.spell2.hitbox.x = 10000
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
             self.monster.spell.kill() # 몬스터 스펠 죽이기

@@ -61,11 +61,16 @@ class Player(pygame.sprite.Sprite):
         #무적시간
         self.hittedTime = 0
 
+        #현혹걸림(마왕에 의해서)
+        self.isdazzle = False
+
         #쿨타임
         self.missile_CastTime = PLAYER_SPELL1_CASTTIME
         self.missile_CastTimeMax = PLAYER_SPELL1_CASTTIME
         self.thunder_CastTime = PLAYER_SPELL2_CASTTIME
         self.thunder_CastTimeMax = PLAYER_SPELL2_CASTTIME
+        self.dazzleTime = 0
+        self.dazzleTimeMax = DEVIL_DAZZLE_TIME
 
         #포션
         self.hp_potion = 1
@@ -495,6 +500,26 @@ class Player(pygame.sprite.Sprite):
         #마법 공격 쿨타임
         self.thunder_CastTime += df/ 1000.0
         self.missile_CastTime += df/ 1000.0
+
+        #현혹걸리면
+        if self.isdazzle == True:
+            self.dazzleTime += df/ 1000.0
+            self.RUNNING_SPEED = 0.0  # 뛸 때 속도 상수
+            self.JUMPMOVE_SPEED = 0.0
+            self.RUNNINGATTACK_SPEED = 0.0
+            self.DASHATTACK_SPEED = 0.0
+            self.speed = self.RUNNING_SPEED # 플레이어 생성시, 걷는 속도로 초기화
+
+        #현혹걸렸다가 풀림
+        if self.isdazzle == True and self.dazzleTime > DEVIL_DAZZLE_TIME:
+            self.isdazzle = False
+            self.dazzleTime = 0
+            self.RUNNING_SPEED = 0.4  # 뛸 때 속도 상수
+            self.JUMPMOVE_SPEED = 0.3
+            self.RUNNINGATTACK_SPEED = 0.2
+            self.DASHATTACK_SPEED = 0.8
+            self.speed = self.RUNNING_SPEED # 플레이어 생성시, 걷는 속도로 초기화
+
 
         #spell
         self.spell1.CameraOffset = self.CameraOffset

@@ -24,15 +24,17 @@ GREEN   = (0, 255, 0)
 BLUE    = (0, 0, 255)
 
 # characters hp info
-PLAYER_HP   = 100
+PLAYER_HP   = 1000
 PLAYER_MP   = 100
 ABYSS_HP    = 100
 BRINGER_HP  = 150
+DEVIL_HP  = 200
 
 #Size
 PLAYER_SIZE     = (300, 300)
 ABYSS_SIZE      = (300, 300)
 BRINGER_SIZE     = (420, 279)
+DEVIL_SIZE     = (750, 750)
 
 # player settings
 PLAYER_SPELL1_MP = 10
@@ -71,12 +73,13 @@ BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 
                      'hurtL': {'idx': 3, 'size': BRINGER_SIZE}, 'hurtR': {'idx': 3, 'size': BRINGER_SIZE}}
 
 # monster3 settings - Devil
-DEVIL_SIZE     = (750, 750)
 DEVIL_COOR_ini = (1000, 125) # 몬스터3(Devil) 초기 위치
 DEVIL_IMG_INFO = {'idleL': {'idx': 8, 'size': DEVIL_SIZE}, 'idleR': {'idx': 8, 'size': DEVIL_SIZE},
                     'walkL': {'idx': 8, 'size': DEVIL_SIZE}, 'walkR': {'idx': 8, 'size': DEVIL_SIZE},
                     'attack1L': {'idx': 8, 'size': DEVIL_SIZE}, 'attack1R': {'idx': 8, 'size': DEVIL_SIZE},
-                    'attack2L':{'idx': 8, 'size': DEVIL_SIZE}, 'attack2R':{'idx': 8, 'size': DEVIL_SIZE}, 
+                    'cast_explosionL':{'idx': 8, 'size': DEVIL_SIZE}, 'cast_explosionR':{'idx': 8, 'size': DEVIL_SIZE}, 
+                    'cast_dazzleL':{'idx': 8, 'size': DEVIL_SIZE}, 'cast_dazzleR':{'idx': 8, 'size': DEVIL_SIZE}, 
+                    'cast_thunderL':{'idx': 8, 'size': DEVIL_SIZE}, 'cast_thunderR':{'idx': 8, 'size': DEVIL_SIZE}, 
                     'deathL': {'idx': 7, 'size': DEVIL_SIZE}, 'deathR': {'idx': 7, 'size': DEVIL_SIZE},
                     'hurtL': {'idx': 3, 'size': DEVIL_SIZE}, 'hurtR': {'idx': 3, 'size': DEVIL_SIZE}}
 
@@ -103,3 +106,10 @@ ABYSS_SPELL_INFO = {'spell': {'idx': 30, 'size': ABYSS_SPELL_SIZE},
 # monster2 spell settings
 BRINGER_SPELL_SIZE = (560, 372)
 BRINGER_SPELL_INFO = {'spell': {'idx': 16, 'size': BRINGER_SPELL_SIZE}}
+
+# devil spell settings
+DEVIL_DARKBOLT_SIZE = (560, 372)
+DEVIL_DARKBOLT_INFO = {'darkbolt': {'idx': 11, 'size': DEVIL_DARKBOLT_SIZE}}
+DEVIL_FIREBOMB_SIZE = (560, 372)
+DEVIL_FIREBOMB_INFO = {'firebomb': {'idx': 14, 'size': DEVIL_FIREBOMB_SIZE}}
+DEVIL_DAZZLE_TIME = 3.0

@@ -76,12 +76,14 @@ class Scene:
         debug("self.status : " + str(self.player.status), 10, 0)
         debug("player_status_num : " + str(self.player.status_num), 10, 40)
         debug("player_scene_num : " + str(self.player.scene_num), 10, 80)
-        # debug("player_hp : " + str(self.player.hp), 10, 160)
-        # debug("monster_hp : " + str(self.monster.hp), 10, 120)
-        # #debug("Monster_isAttack : " + str(self.monster.isAttack), 10, 120)
+        debug("monster_status : " + str(self.monster.status), 10, 120)
+        debug("player_isdazzle : " + str(self.player.isdazzle), 10, 160)
         # #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
 
         self.fade_in()
+
+        self.dazzle(self.monster, self.player) #dazzle
+
         debug(self.game_state, WIDTH // 2, HEIGHT // 2)  # 게임 장면 바뀌는 거 확인용
 
         pygame.display.update()
@@ -121,9 +123,10 @@ class Scene:
             self.display_surface.blit(self.fade_surf, (0, 0))
             pygame.display.update()
 
-    # Boss 할 때 혹시 사용할까 싶어서?
-    def shake(self):
-        pass
+    # 마왕 현혹스킬
+    def dazzle(self, monster, player):
+        if 'cast_dazzle' in monster.status and monster.animation_end:
+            player.isdazzle = True
 
 
 class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
