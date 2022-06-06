@@ -204,7 +204,7 @@ class Bringer(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
-                self.hitSound.play()
+                self.hit.play()
             
             if self.hp <= 0:
                 if self.look_direction == 1:
