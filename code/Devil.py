@@ -21,10 +21,14 @@ class Devil(Monster):
         super(Devil, self).__init__(pos, MONSTER_SIZE, groups, obstacle_sprites)
         self.speed = 6
 
-        # self.attackSound = soundManager.load_sound('Bringer_attack1', 'sound/bringer/bringer_attack.wav')
-        # self.hitSound = soundManager.load_sound('Bringer_hit', 'sound/bringer/bringer_hit.wav')
-        # self.deathSound = soundManager.load_sound('Bringer_death', 'sound/bringer/bringer_death.wav')
-        # self.castSound = soundManager.load_sound('Bringer_cast', 'sound/bringer/bringer_cast.wav')
+        self.attackSound = soundManager.load_sound('Devil_attack1', 'sound/devil/attack_1.wav')
+        self.hitSound = soundManager.load_sound('Devil_hit', 'sound/devil/hurt.wav')
+        self.deathSound = soundManager.load_sound('Devil_death', 'sound/devil/death.wav')
+        self.attack2Sound = soundManager.load_sound('Devil_attack2', 'sound/devil/attack_2.wav')
+        self.castSound = soundManager.load_sound('Devil_cast', 'sound/devil/cast.wav')
+        self.castSound.set_volume(1.5)
+        self.dazzleSound = soundManager.load_sound('Devil_dazzle', 'sound/devil/dazzle.wav')
+        self.dazzleSound.set_volume(3.0)
 
         self.IdleTimeMax = 1.5
         self.IdleTime = 0.0
@@ -168,6 +172,8 @@ class Devil(Monster):
                     self.status = 'attack1R'
                     self.attackBox.x = self.hitbox.x + DEVIL_SIZE[0] / 8
                 
+                self.attack2Sound.stop()
+                self.attack2Sound.play()
                 self.direction = 0
         else:
             self.CastTime = 0.0
@@ -182,11 +188,15 @@ class Devil(Monster):
                     self.status = 'cast_dazzleL'
                 else:
                     self.status = 'cast_dazzleR'
+                self.dazzleSound.play()
             if attacktype == 2:
                 if(distanceX) >= 0:
                     self.status = 'cast_thunderL'
                 else:
                     self.status = 'cast_thunderR'
+
+            self.attack2Sound.play()
+            self.castSound.play()
 
         if 'R' in self.status:
             self.look_direction = 1
@@ -247,12 +257,14 @@ class Devil(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
+                self.hitSound.play()
             
             if self.hp <= 0:
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:
                     self.status = 'deathL'
+                self.deathSound.play()
 
         #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
         if collision_check(self.playerSpell1Attackbox,self.getHitBox()) and self.playerspell1isAttack and self.hittedTime < 0:
@@ -265,14 +277,14 @@ class Devil(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
-                #self.hitSound.play()
+                self.hitSound.play()
             
             if self.hp <= 0:
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:
                     self.status = 'deathL'
-                #self.deathSound.play()
+                self.deathSound.play()
 
         #플레이어 주문2 히트박스, 몬스터 히트박스 충돌시
         if collision_check(self.playerSpell2Attackbox,self.getHitBox()) and self.playerspell2isAttack and self.hittedTime < 0:
@@ -285,14 +297,14 @@ class Devil(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
-                #self.hitSound.play()
+                self.hitSound.play()
             
             if self.hp <= 0:
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:
                     self.status = 'deathL'
-                #self.deathSound.play()
+                self.deathSound.play()
         
         #데미지 사이 시간
         self.hittedTime -= df/ 1000.0

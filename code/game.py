@@ -12,6 +12,11 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))  # 디스플레이 뜨게 하기
         pygame.display.set_caption("The Devil's Castle")  # 게임 이름
 
+        #배경음악
+        self.intro_music = soundManager.load_sound('game_intro_music', 'sound/BGM/intro_music.mp3')
+        self.intro_music.play()
+        #self.victory_music = soundManager.load_sound('game_victory_music', 'sound/BGM/Title.ogg')
+
         # FPS
         self.clock = pygame.time.Clock()
         
@@ -129,6 +134,7 @@ class Game:
             # 버튼 눌림 체크
             if self.is_clicked: # 버튼이 눌렸는데
                 if self.start_button.collidepoint(mouse_x, mouse_y): # start button rect를 누르면
+                    self.intro_music.stop()
                     self.run() # 게임 시작
                 elif self.ranks_button.collidepoint(mouse_x, mouse_y):
                     self.ranks() # 랭크 화면으로 이동
@@ -337,6 +343,7 @@ class Game:
                         is_saved = True  # 저장했다는 플래그
 
                 elif self.back_to_menu_button.collidepoint(mouse_x, mouse_y): # 돌아가기 버튼 눌릴 경우
+                    self.intro_music.play()
                     return # 함수 종료, 메뉴로 돌아가기
 
             # 인풋박스 그리기
@@ -372,6 +379,7 @@ class Game:
             self.screen.blit(self.lose_background_surf, self.lose_background_rect)
 
             if self.is_return_key_pressed():
+                self.intro_music.play()
                 return
 
             # 화면 업데이트

@@ -9,12 +9,12 @@ from soundManager import *
 class Devil_Darkbolt(pygame.sprite.Sprite):
     def __init__(self, pos, SIZE, groups, obstacle_sprites):
         pygame.sprite.Sprite.__init__(self, groups)
-        #»ı¼º½Ã Ã³À½ ÀÌ¹ÌÁö ÁöÁ¤ »ó¼Ó¹Ş´Â °¢ ¸ó½ºÅÍ Å¬·¡½º¿¡¼­ ÁöÁ¤ÇØÁà¾ßÇÑ´Ù.
+        #ìƒì„±ì‹œ ì²˜ìŒ ì´ë¯¸ì§€ ì§€ì • ìƒì†ë°›ëŠ” ê° ëª¬ìŠ¤í„° í´ë˜ìŠ¤ì—ì„œ ì§€ì •í•´ì¤˜ì•¼í•œë‹¤.
         self.display_surface = pygame.display.get_surface()
         self.image = pygame.image.load('image/Monster/Devil/darkbolt.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, SIZE)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-SIZE[0]/4, 0)#ÀÌ¹ÌÁö »ç°¢ÇüÀÇ Å©±â ÁÙ¿© HitBox·Î »ç¿ë
+        self.hitbox = self.rect.inflate(-SIZE[0]/4, 0)#ì´ë¯¸ì§€ ì‚¬ê°í˜•ì˜ í¬ê¸° ì¤„ì—¬ HitBoxë¡œ ì‚¬ìš©
         self.scale = SIZE
         self.CameraOffset = [0,0]
         self.isAttack = False
@@ -23,10 +23,10 @@ class Devil_Darkbolt(pygame.sprite.Sprite):
         self.import_assets('image/Monster/Devil/', DEVIL_DARKBOLT_INFO)
         self.status = 'darkbolt'
         
-        #self.thunderSound = soundManager.load_sound('Bringer_thunder', 'sound/bringer/bringer_thunder.wav')
+        self.thunderSound = soundManager.load_sound('Devil_Firestorm', 'sound/devil/thunder.wav')
         #self.thunderSound.set_volume(0.4)
 
-        # animation ¹Ù²Ü ¶§ »ç¿ë
+         # animation ë°”ê¿€ ë•Œ ì‚¬ìš©
         self.frame_index = 0
         self.animation_speed = 0.25
         self.animation_time = 0.0
@@ -54,13 +54,13 @@ class Devil_Darkbolt(pygame.sprite.Sprite):
         self.SkillON = True
         self.hitbox.x = posX - self.scale[0]/4
         self.hitbox.y = 250
-        #self.thunderSound.play()
+        self.thunderSound.play()
 
     def animate(self, df):
         spr = self.spr[self.status]
         # loop over the frame index
         #self.frame_index += self.animation_speed
-        # DeltaTimeÀÌ¿ëÇØ¼­ ¾Ö´Ï¸ŞÀÌ¼Ç ÇÁ·¹ÀÓ Ã³¸® 
+         # DeltaTimeì´ìš©í•´ì„œ ì• ë‹ˆë©”ì´ì…˜ í”„ë ˆì„ ì²˜ë¦¬ 
         #=============================================================
 
         if self.SkillON == True:
@@ -74,8 +74,8 @@ class Devil_Darkbolt(pygame.sprite.Sprite):
             self.frame_index = 0
         #===============================================================
 
-        if self.frame_index >= len(spr): # ½ºÇÁ¶óÀÌÆ® ¸¶Áö¸· ÀÌ¹ÌÁö±îÁö º¸¿©ÁØ µÚ
-            self.frame_index = 0 # ´Ù½Ã Ã³À½ ÀÌ¹ÌÁö·Î µ¹¾Æ°¡±â
+        if self.frame_index >= len(spr): # ìŠ¤í”„ë¼ì´íŠ¸ ë§ˆì§€ë§‰ ì´ë¯¸ì§€ê¹Œì§€ ë³´ì—¬ì¤€ ë’¤
+            self.frame_index = 0 # ë‹¤ì‹œ ì²˜ìŒ ì´ë¯¸ì§€ë¡œ ëŒì•„ê°€ê¸°
             self.SkillON = False
             self.hitbox.x = -500
             self.hitbox.y = -500
@@ -95,7 +95,7 @@ class Devil_Darkbolt(pygame.sprite.Sprite):
 
     def update(self, df):
         self.animate(df)
-        #¾îÅÃ ¹Ú½º Á¤º¸ °»½Å
+         #ì–´íƒ ë°•ìŠ¤ ì •ë³´ ê°±ì‹ 
         attackBox = pygame.Rect(self.hitbox)
         attackBox = attackBox.inflate(-self.scale[0]/16, -self.scale[1]/3)
         attack_hitbox = sub_Coordinate(attackBox, (self.CameraOffset[0], self.CameraOffset[1]-self.scale[1]/4, 0, 0))
