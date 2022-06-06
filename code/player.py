@@ -196,14 +196,12 @@ class Player(pygame.sprite.Sprite):
             if self.scene_num != 0 and keys[pygame.K_q] and self.status=='idle' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_R()
-                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
                 self.mp -= PLAYER_SPELL1_MP
                 self.castSound.play()
                 self.missile_CastTime = 0.0
             if self.scene_num != 0 and keys[pygame.K_q] and self.status=='idleL' and self.mp >=PLAYER_SPELL1_MP and self.missile_CastTime >= self.missile_CastTimeMax:
                 self.control(0,'cast1L',0,8,False,self.RUNNING_SPEED)
                 self.spell1ON_L()
-                self.hitbox.y -= PLAYER_SPELL1_YCHANGE
                 self.mp -= PLAYER_SPELL1_MP
                 self.castSound.play()
                 self.missile_CastTime = 0.0
@@ -340,21 +338,14 @@ class Player(pygame.sprite.Sprite):
         if self.status_num == 8:
             if self.status == 'cast1' and self.frame_index >= 7:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                self.hitbox.y += PLAYER_SPELL1_YCHANGE
             if self.status == 'cast1L' and self.frame_index >= 7:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-                self.hitbox.y += PLAYER_SPELL1_YCHANGE
-            #self.attackSound1.play()
 
         elif self.status_num == 9:
             if self.status == 'cast2' and self.frame_index >= 8:
                 self.control(0,'idle',0,0,False,self.RUNNING_SPEED)
-                #self.hitbox.x -= BRINGER_SIZE[0] /3
             if self.status == 'cast2L' and self.frame_index >= 8:
                 self.control(0,'idleL',0,0,False,self.RUNNING_SPEED)
-                #self.hitbox.x += BRINGER_SIZE[0] /3
-            #if self.frame_index >=2 and self.frame_index <3:
-               # self.attackSound2.play()
 
     def hitted(self):
         if self.status_num == 6:

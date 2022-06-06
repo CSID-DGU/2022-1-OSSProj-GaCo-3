@@ -35,7 +35,6 @@ ABYSS_SIZE      = (300, 300)
 BRINGER_SIZE     = (420, 279)
 
 # player settings
-PLAYER_SPELL1_YCHANGE = 30
 PLAYER_SPELL1_MP = 10
 PLAYER_SPELL2_MP = 20
 PLAYER_SPELL1_CASTTIME = 3.0
@@ -49,8 +48,8 @@ PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': PLAYER_SIZE}, 'idleL': {'idx': 11
                      'hitted': {'idx': 4, 'size': PLAYER_SIZE}, 'hittedL': {'idx': 4, 'size': PLAYER_SIZE},
                      'attack1': {'idx': 7, 'size': PLAYER_SIZE}, 'attack1L': {'idx': 7, 'size': PLAYER_SIZE},
                      'attack2': {'idx': 7, 'size': PLAYER_SIZE}, 'attack2L': {'idx': 7, 'size': PLAYER_SIZE},
-                     'cast1': {'idx': 8, 'size': ABYSS_SIZE}, 'cast1L':{'idx':8, 'size': ABYSS_SIZE},
-                     'cast2': {'idx': 9, 'size': BRINGER_SIZE}, 'cast2L': {'idx': 9, 'size': BRINGER_SIZE}
+                     'cast1': {'idx': 11, 'size': PLAYER_SIZE}, 'cast1L':{'idx':11, 'size': PLAYER_SIZE},
+                     'cast2': {'idx': 11, 'size': PLAYER_SIZE}, 'cast2L': {'idx': 11, 'size': PLAYER_SIZE}
                      }
 
 # monster1 settings - abyss

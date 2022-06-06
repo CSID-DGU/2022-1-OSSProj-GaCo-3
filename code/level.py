@@ -100,8 +100,12 @@ class Level:
             self.player.thunder_CastTime = PLAYER_SPELL2_CASTTIME
             #씬 받기
             self.player.scene_num = self.scene_num
-            #self.player.spell1.kill() # 플레이어 스펠 죽이기
-            #self.player.spell2.kill() # 플레이어 스펠 죽이기
+            # 플레이어 스펠 날리기
+            if self.player.spell1.status == 'spellL':
+                self.player.spell1.hitbox.x = -100
+            if self.player.spell1.status == 'spell':
+                self.player.spell1.hitbox.x = 2800
+            self.player.spell2.hitbox.x = 10000
             self.monster.kill()  # 이전 레벨 몬스터 죽이기
             self.monster.spell.kill() # 몬스터 스펠 죽이기
             self.monster = self.monster_create(self.game_state)  # 몬스터 생성
