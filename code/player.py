@@ -217,14 +217,12 @@ class Player(pygame.sprite.Sprite):
                 self.mp -= PLAYER_SPELL2_MP
                 self.cast2Sound.play()
                 self.thunder_CastTime = 0.0
-                #self.hitbox.x += BRINGER_SIZE[0] /3
             if self.scene_num == 2 and keys[pygame.K_w] and self.status=='idleL' and self.mp >=PLAYER_SPELL2_MP and self.thunder_CastTime >= self.thunder_CastTimeMax:
                 self.control(0,'cast2L',0,9,False,self.RUNNING_SPEED)
                 self.spell2ON()
                 self.mp -= PLAYER_SPELL2_MP
                 self.cast2Sound.play()
                 self.thunder_CastTime = 0.0
-                #self.hitbox.x -= BRINGER_SIZE[0] /3
         #달리기상태
         if self.status_num==1:
             if keys[pygame.K_RIGHT] and self.status=='runL':
@@ -543,7 +541,6 @@ class Player(pygame.sprite.Sprite):
         #attack animation notify
         if 'attack' in self.status:
             if(self.frame_index < 6 and self.frame_index > 2):
-                pygame.draw.rect(self.display_surface,(255, 255, 255), attack_playerhitbox, 3)
                 self.isAttack = True
             else:
                 self.isAttack = False

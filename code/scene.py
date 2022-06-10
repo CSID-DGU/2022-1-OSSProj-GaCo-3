@@ -159,7 +159,6 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.display_surface.blit(self.background_floor_surf, floor_offset_pos + (0, -80) )
 
         # UI 추가
-        self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.bar_draw(player, monster) # player 체력, 마나바 그리기, monster 체력바 그리기
         self.icon_setting() # 아이콘 세팅
 
