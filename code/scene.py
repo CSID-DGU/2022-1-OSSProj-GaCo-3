@@ -72,20 +72,8 @@ class Scene:
         # 시간 오른쪽 상단에 위치시킴
         self.time_render(time)
 
-        # # 디버그 코드
-        debug("self.status : " + str(self.player.status), 10, 0)
-        debug("player_status_num : " + str(self.player.status_num), 10, 40)
-        debug("player_scene_num : " + str(self.player.scene_num), 10, 80)
-        debug("monster_status : " + str(self.monster.status), 10, 120)
-        debug("player_isdazzle : " + str(self.player.isdazzle), 10, 160)
-        # #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
-
         self.fade_in()
-
         self.dazzle(self.monster, self.player) #dazzle
-
-        debug(self.game_state, WIDTH // 2, HEIGHT // 2)  # 게임 장면 바뀌는 거 확인용
-
         pygame.display.update()
 
     def fade_in(self):
