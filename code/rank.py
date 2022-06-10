@@ -70,11 +70,3 @@ def ranking_info() -> list: # 이중 리스트 반환. list = [[user_name, score
         ranking_list.append([user_name, score])
 
     return ranking_list
-
-# 테스트용 출력
-def print_rank_file():
-    rank_file = open(RANK_FILE_PATH, 'r')
-    lines = rank_file.readlines()
-    rank_file.close()
-    for line in lines:
-        print(line, end="")
