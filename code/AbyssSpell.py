@@ -117,7 +117,6 @@ class AbyssSpell(pygame.sprite.Sprite):
             self.isAttack = False
             self.hitbox.x = -500
             self.hitbox.y = -500
-        pygame.draw.rect(self.display_surface, (255, 0, 0), attack_hitbox, 3)
         self.move()
 
     def getHitBox(self):

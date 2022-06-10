@@ -101,7 +101,6 @@ class BringerSpell(pygame.sprite.Sprite):
         attack_hitbox = sub_Coordinate(attackBox, (self.CameraOffset[0], self.CameraOffset[1]-self.scale[1]/4, 0, 0))
         
         if(self.frame_index < 11 and self.frame_index > 6):
-            pygame.draw.rect(self.display_surface,(255, 255, 255), attack_hitbox, 3)
             self.isAttack = True
         else:
             self.isAttack = False

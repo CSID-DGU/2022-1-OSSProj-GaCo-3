@@ -181,7 +181,6 @@ class Bringer(Monster):
        #attack animation notify
         if 'attack' in self.status:
             if(self.frame_index < 7 and self.frame_index > 3):
-                pygame.draw.rect(self.display_surface,(255, 255, 255), attack_hitbox, 3)
                 self.isAttack = True
             else:
                 self.isAttack = False
@@ -204,7 +203,7 @@ class Bringer(Monster):
                     self.status = 'hurtR'
                 else:
                     self.status = 'hurtL'
-                self.hit.play()
+                self.hitSound.play()
             
             if self.hp <= 0:
                 if self.look_direction == 1:

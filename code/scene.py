@@ -72,20 +72,8 @@ class Scene:
         # 시간 오른쪽 상단에 위치시킴
         self.time_render(time)
 
-        # # 디버그 코드
-        debug("self.status : " + str(self.player.status), 10, 0)
-        debug("player_status_num : " + str(self.player.status_num), 10, 40)
-        debug("player_scene_num : " + str(self.player.scene_num), 10, 80)
-        debug("monster_status : " + str(self.monster.status), 10, 120)
-        debug("player_isdazzle : " + str(self.player.isdazzle), 10, 160)
-        # #debug("Spell_isAttack : " + str(self.monster.spell.isAttack), 10, 160)
-
         self.fade_in()
-
         self.dazzle(self.monster, self.player) #dazzle
-
-        debug(self.game_state, WIDTH // 2, HEIGHT // 2)  # 게임 장면 바뀌는 거 확인용
-
         pygame.display.update()
 
     def fade_in(self):
@@ -171,7 +159,6 @@ class CameraGroup(pygame.sprite.Group): # for level1, level2, level3
         self.display_surface.blit(self.background_floor_surf, floor_offset_pos + (0, -80) )
 
         # UI 추가
-        self.hitbox_draw(player, monster) # player, monster 히트박스 그리기
         self.bar_draw(player, monster) # player 체력, 마나바 그리기, monster 체력바 그리기
         self.icon_setting() # 아이콘 세팅
 

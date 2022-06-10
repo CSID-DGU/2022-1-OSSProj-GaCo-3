@@ -185,7 +185,6 @@ class Abyss(Monster):
         # 공격시 어택박스 생성, isAttack 시그널로 사용하기.
         if 'attack1' in self.status:
             if (self.frame_index < 6 and self.frame_index > 2): # 어비스 공격 스프라이트의 4, 5, 6 에 공격 이미지 있음
-                pygame.draw.rect(self.display_surface, (0, 0, 255), self.attackBox, 3)  # 파란색
                 self.isAttack = True
             else:
                 self.isAttack = False
