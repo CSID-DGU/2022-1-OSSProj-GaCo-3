@@ -93,8 +93,8 @@ class Level:
 
             self.game_state = GAME_STATES[self.scene_num]
 
-            self.player.hp = PLAYER_HP # 레벨 바뀌면 플레이어 hp 회복하기
-            self.player.mp = PLAYER_MP # 레벨 바뀌면 플레이어 mp 회복하기
+            self.player.hp_potion += 1 # 레벨 바뀌면 플레이어 hp포션 1개 회복하기
+            self.player.mp_potion += 1 # 레벨 바뀌면 플레이어 mp포션 1개 회복하기
             #마법 쿨타임 초기화
             self.player.missile_CastTime = PLAYER_SPELL1_CASTTIME
             self.player.thunder_CastTime = PLAYER_SPELL2_CASTTIME
