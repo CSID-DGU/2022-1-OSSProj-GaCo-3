@@ -268,23 +268,28 @@ $ python3 code/game.py
   
   ![stage3_attack(1)](https://user-images.githubusercontent.com/55090298/173202376-8c2edeae-ca6a-4ff9-a86b-0bbc5790f714.gif)
       
+  <br><br>
   (2) A magical attack that stops the player from moving.
   
   ![stage3_attack2-2](https://user-images.githubusercontent.com/55090298/173201347-6f55888e-9532-4ae6-a565-16dbd7008419.gif)
   
+  <br><br>
   (3) A magical attack dropping a huge lightning on the player's position.
   
   ![stage3_attack3](https://user-images.githubusercontent.com/55090298/173201380-08d59d0c-adc8-4448-b075-e2c4b43ab770.gif)
     
+  <br><br>
   (4) A magical attack explodes the player's position.
   
   ![stage3_attack1](https://user-images.githubusercontent.com/55090298/173201343-3d7cd03a-e533-46b1-babd-f5beba8a34b2.gif)
   
+  <br><br>
   <h3><li>WIN</li></h3>
   <p>If you clear all stages, Scene below will shown on the screen. You can save your score. Also you can go back to the main menu by clicking the button at the upper left corner.(Details on <a href="#lst7">here</a>)</p>
   
   <img width="1392" alt="image" src="https://user-images.githubusercontent.com/55090298/173202854-ff356751-55d6-4628-b0dd-9f8298d6b650.png">
   
+  <br><br>
   <h3><li>LOSE</li></h3>
   <p>If you lose, Scene below will shown on the screen. You can move on to the main menu scene by pressing 'RETURN' key.</p>
   
@@ -308,10 +313,17 @@ $ python3 code/game.py
 
 <ul>
   <p align="justify">A timer starts to work when stage starts. You can check this timer on the upper right corner on stage scenes. If the player clears all stages, the timer stops and shows the score to the 'WIN' scene. If you type your name in the name input box and click the Save button in the bottom middle, the corresponding score will be saved. If your score is 10th or higher, you can check your name and score in the 'RANKING' scene which is accessible from the menu. If the score is outside the 10th place, the score disappears from the record and cannot be checked.</p>
+  <br><br>
+  <span align="center">
+  
+  ![timer](https://user-images.githubusercontent.com/55090298/173204326-904b885f-f35f-4db1-9d5d-7152aadcde45.gif)
+  
+  </span>
+  <br><br>
   
   ![rank-win](https://user-images.githubusercontent.com/55090298/173204012-9dc39232-78aa-4b3e-a2d6-3af44de6038a.gif)
 
-  
+  <br><br>
   <p align="justify">The image below is the 'RANKING' scene. You can see the record up to 10th place. You can clear all records by pressing the initialization button in the upper right corner. You can go back to the main menu by clicking the button at the upper left corner.</p>
   
   ![rank-log](https://user-images.githubusercontent.com/55090298/173203898-e852a89d-051e-4dad-ad58-a7cd7c68923c.gif)
