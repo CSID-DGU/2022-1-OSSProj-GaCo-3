@@ -56,7 +56,7 @@ class Abyss(Monster):
         self.hurt_time = None # 공격 당한 직후 해당 시간을 저장, 루프마다 coolsdown()에서 쿨타임 시간 지났는지 확인하기.
         self.hurt_cooltime = 500 # 무적 시간 == 공격 안 받을 수 있는 시간 - 0.5초
 
-        self.AttackPower = 10 # 공격력
+        self.AttackPower = ABYSS_POWER # 공격력
         self.hp = ABYSS_HP # 체력
 
         self.IdleTimeMax = 1.5
@@ -75,6 +75,13 @@ class Abyss(Monster):
     def animate(self, df):
         spr = self.spr[self.status]
         self.animation_end = False
+
+        #피격 모션인 경우 애니메이션이 느리게 재생되도록 줄어든 델타타임을 인자로 넘김
+        if 'hurt' in self.status:
+            df /= 1.0
+        
+        elif 'death' in self.status:
+            df /= 2.0
 
         self.animation_time += df / 1000.0
 
@@ -194,14 +201,18 @@ class Abyss(Monster):
         self.spell.CameraOffset = self.CameraOffset
         self.spell.update(df)
 
+        if 'death' in self.status and self.animation_end: # 죽음 모션의 마지막 프레임일 경우 죽음 상태로 변경
+            self.isDead = True
+
         # 충돌
         # 플레이어 어택박스, 몬스터 히트박스 충돌 and 몬스터가 피격 가능 상태 and 플레이어가 공격 중일 경우
-        if collision_check(self.playerAttackbox,self.getHitBox()) and self.can_hurt and self.playerisAttack:
+        if collision_check(self.playerAttackbox,self.getHitBox()) and self.can_hurt and self.playerisAttack and not 'death' in self.status:
             self.hp -= self.playerPower
             self.hurt_time = pygame.time.get_ticks() # 공격 감지 직후 시간 체크. 쿨다운에서 비교할 시간
             self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
 
             if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+                self.frame_index = 0
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
                 self.hitSound.play()
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
@@ -209,10 +220,10 @@ class Abyss(Monster):
                 # 일단은 hurt로 상태 변경하자 마자 플레이어 어택박스 위치를 임의로 화변 밖으로 위치시켜서 해당 현상 해결
                 self.playerAttackbox.x = -100
 
-            if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
+            if self.hp<=0: # hp<=0이하일경우 death상태로 변경
+                self.frame_index = 0
                 self.status = 'deathR' if self.look_direction == 1 else 'deathL'
                 self.deathSound.play()
-                self.isDead = True
 
         #플레이어 주문1 히트박스, 몬스터 히트박스 충돌시
         if collision_check(self.hitbox,self.playerSpell1Attackbox) and self.playerspell1isAttack and self.can_hurt:
@@ -222,6 +233,7 @@ class Abyss(Monster):
             self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
 
             if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+                self.frame_index = 0
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
                 self.hitSound.play()
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
@@ -230,9 +242,9 @@ class Abyss(Monster):
                 self.playerAttackbox.x = -100
 
             if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
+                self.frame_index = 0
                 self.status = 'deathR' if self.look_direction == 1 else 'deathL'
                 self.deathSound.play()
-                self.isDead = True
 
         #플레이어 주문2 히트박스, 몬스터 히트박스 충돌시
         if collision_check(self.hitbox,self.playerSpell2Attackbox) and self.playerspell2isAttack and self.can_hurt:
@@ -242,6 +254,7 @@ class Abyss(Monster):
             self.can_hurt = False # self.coolsdown() 에서 쿨타임 지나면 다시 True로 바꿔줌
 
             if not 'attack' in self.status: # 몬스터가 공격하고 있지 않을 때만 hurt 모션으로 바꿔줌
+                self.frame_index = 0
                 self.status = 'hurtR' if self.look_direction == 1 else 'hurtL'
                 self.hitSound.play()
                 # 플레이어 어택박스가 사라지지 않고 몬스터를 계속 공격하는 현상 발견.
@@ -250,9 +263,9 @@ class Abyss(Monster):
                 self.playerAttackbox.x = -100
 
             if self.hp <= 0: # 몬스터 피가 0이하가 되면 죽음 상태로 변경
+                self.frame_index = 0
                 self.status = 'deathR' if self.look_direction == 1 else 'deathL'
                 self.deathSound.play()
-                self.isDead = True
 
     def coodsdown(self):
         current_time = pygame.time.get_ticks()

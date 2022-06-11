@@ -45,7 +45,7 @@ class Bringer(Monster):
         self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], BRINGER_SIZE[0]/2, BRINGER_SIZE[1]/32)
 
         #공격력
-        self.AttackPower = 40
+        self.AttackPower = BRINGER_POWER
         #체력
         self.hp = BRINGER_HP
         #무적시간
@@ -70,7 +70,7 @@ class Bringer(Monster):
 
         #피격 모션인 경우 애니메이션이 느리게 재생되도록 줄어든 델타타임을 인자로 넘김
         if 'hurt' in self.status:
-            dt /= 2.0
+            dt /= 1.0
         
         elif 'death' in self.status:
             dt /= 1.5
@@ -199,6 +199,7 @@ class Bringer(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:
@@ -206,6 +207,7 @@ class Bringer(Monster):
                 self.hitSound.play()
             
             if self.hp <= 0:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:
@@ -219,6 +221,7 @@ class Bringer(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:
@@ -226,6 +229,7 @@ class Bringer(Monster):
                 self.hitSound.play()
             
             if self.hp <= 0:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:
@@ -239,6 +243,7 @@ class Bringer(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:
@@ -246,6 +251,7 @@ class Bringer(Monster):
                 self.hitSound.play()
             
             if self.hp <= 0:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'deathR'
                 else:

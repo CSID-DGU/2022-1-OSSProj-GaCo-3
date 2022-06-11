@@ -1,3 +1,0 @@
-parkteam, 27.625
-dfdfdf, 53.7
-Test_name, 100.715

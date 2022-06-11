@@ -53,7 +53,7 @@ class Devil(Monster):
         self.healthbar = pygame.Rect(self.rect[0] , self.rect[1], DEVIL_SIZE[0]/2, DEVIL_SIZE[1]/32)
 
         #공격력
-        self.AttackPower = 20
+        self.AttackPower = DEVIL_POWER
         #체력
         self.hp = DEVIL_HP
         #무적시간
@@ -108,10 +108,10 @@ class Devil(Monster):
 
         #피격 모션인 경우 애니메이션이 느리게 재생되도록 줄어든 델타타임을 인자로 넘김
         if 'hurt' in self.status:
-            dt /= 4.0
+            dt /= 1.0
         
         elif 'death' in self.status:
-            dt /= 5.0
+            dt /= 4.0
 
         super(Devil, self).animate(dt)
 
@@ -252,6 +252,7 @@ class Devil(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:
@@ -272,6 +273,7 @@ class Devil(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:
@@ -292,6 +294,7 @@ class Devil(Monster):
             self.hittedTime = 0.5
 
             if not 'attack' in self.status and not 'cast' in self.status:
+                self.frame_index = 0
                 if self.look_direction == 1:
                     self.status = 'hurtR'
                 else:

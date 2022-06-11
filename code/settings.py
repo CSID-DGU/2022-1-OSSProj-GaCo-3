@@ -24,7 +24,7 @@ GREEN   = (0, 255, 0)
 BLUE    = (0, 0, 255)
 
 # characters hp info
-PLAYER_HP   = 1000
+PLAYER_HP   = 100
 PLAYER_MP   = 100
 ABYSS_HP    = 100
 BRINGER_HP  = 150
@@ -55,6 +55,7 @@ PLAYER_IMG_INFO = {'idle': {'idx': 11, 'size': PLAYER_SIZE}, 'idleL': {'idx': 11
                      }
 
 # monster1 settings - abyss
+ABYSS_POWER = 20
 ABYSS_COOR_ini  = (700, 395)
 ABYSS_IMG_INFO  = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'size': ABYSS_SIZE},
                   'runL': {'idx': 8, 'size': ABYSS_SIZE}, 'runR': {'idx': 8, 'size': ABYSS_SIZE},
@@ -64,6 +65,7 @@ ABYSS_IMG_INFO  = {'idleL':{'idx':6, 'size': ABYSS_SIZE}, 'idleR':{'idx':6, 'siz
                   'hurtL': {'idx': 4, 'size': ABYSS_SIZE}, 'hurtR': {'idx': 4, 'size': ABYSS_SIZE} }
 
 # monster2 settings
+BRINGER_POWER = 40
 BRINGER_COOR_ini = (700, 335) # 몬스터2(BRINGER) 초기 위치
 BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 8, 'size': BRINGER_SIZE},
                      'walkL': {'idx': 8, 'size': BRINGER_SIZE}, 'walkR': {'idx': 8, 'size': BRINGER_SIZE},
@@ -73,6 +75,7 @@ BRINGER_IMG_INFO = {'idleL': {'idx': 8, 'size': BRINGER_SIZE}, 'idleR': {'idx': 
                      'hurtL': {'idx': 3, 'size': BRINGER_SIZE}, 'hurtR': {'idx': 3, 'size': BRINGER_SIZE}}
 
 # monster3 settings - Devil
+DEVIL_POWER = 30
 DEVIL_COOR_ini = (1000, 125) # 몬스터3(Devil) 초기 위치
 DEVIL_IMG_INFO = {'idleL': {'idx': 8, 'size': DEVIL_SIZE}, 'idleR': {'idx': 8, 'size': DEVIL_SIZE},
                     'walkL': {'idx': 8, 'size': DEVIL_SIZE}, 'walkR': {'idx': 8, 'size': DEVIL_SIZE},
