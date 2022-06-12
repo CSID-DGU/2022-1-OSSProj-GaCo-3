@@ -120,7 +120,7 @@ $ python3 code/game.py
 
 
 <h1 id="lst3"> :open_file_folder: Project Structure Summary</h1>
-  <h2><li>Project Structure with tree</li></h2>
+  <h2><li>Project Structure Summary with tree</li></h2>
   <ul>
   
       .
@@ -279,13 +279,13 @@ $ python3 code/game.py
   
   <br><br>
   <h3><li>WIN</li></h3>
-  <p>If you clear all stages, Scene below will shown on the screen. You can save your score. Also you can go back to the main menu by clicking the button at the upper left corner.(Details on <a href="#lst7">here</a>)</p>
+  <p>If you clear all stages, Scene below will be shown on the screen. You can save your score. Also you can go back to the main menu by clicking the button at the upper left corner.(Details on <a href="#lst7">here</a>)</p>
   
   <img width="1392" alt="image" src="https://user-images.githubusercontent.com/55090298/173202854-ff356751-55d6-4628-b0dd-9f8298d6b650.png">
   
   <br><br>
   <h3><li>LOSE</li></h3>
-  <p>If you lose, Scene below will shown on the screen. You can move on to the main menu scene by pressing 'RETURN' key.</p>
+  <p>If you lose, Scene below will be shown on the screen. You can move on to the main menu scene by pressing 'RETURN' key.</p>
   
   <img width="1392" alt="image" src="https://user-images.githubusercontent.com/55090298/173203002-9e5b737a-9965-4573-8f76-b426a6574176.png">
 
