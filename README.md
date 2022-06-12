@@ -120,7 +120,6 @@ $ python3 code/game.py
 
 
 <h1 id="lst3"> :open_file_folder: Project Structure Summary</h1>
-<ol>
   <h2><li>Project Structure with tree</li></h2>
   <ul>
   
@@ -180,11 +179,6 @@ $ python3 code/game.py
 
 
 </ul>
-  <h2><li>Description of main files & functions</li></h2>
-    <ul>
-      설명.. 너무 귀찮아.... 더 써야할까..?
-    </ul>
-</ol>
 
 <br><br><br>
 
